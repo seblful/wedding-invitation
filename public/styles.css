@@ -21,7 +21,7 @@ body {
 }
 
 .corner-decoration img {
-  max-width: 650px;
+  max-width: 630px;
   height: auto;
   display: block;
 }
@@ -54,6 +54,19 @@ body {
   align-items: center;
   min-height: 100vh;
   width: 100%;
+}
+
+/* Faces Container */
+.faces-container {
+  display: flex;
+  gap: 25px;
+  justify-content: center;
+  align-items: center;
+}
+
+.face-image {
+  max-width: 200px;
+  height: auto;
 }
 
 /* Responsive Design */

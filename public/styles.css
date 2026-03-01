@@ -1,3 +1,11 @@
+/* Font Imports */
+@font-face {
+  font-family: 'InkVerse';
+  src: url('./fonts/InkVerse.otf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -5,13 +13,14 @@
 }
 
 body {
-  font-family: 'Georgia', 'Garamond', serif;
+  font-family: 'InkVerse', 'Georgia', 'Garamond', serif;
   background: #b9dfc6;
   color: #333;
   min-height: 100vh;
   position: relative;
   overflow: hidden;
 }
+
 
 /* Corner Decorations */
 .corner-decoration {
@@ -77,7 +86,7 @@ body {
 }
 
 .face-name {
-  font-size: 20px;
+  font-size: 22px;
   color: #333;
   margin-top: 10px;
 }
@@ -100,7 +109,7 @@ body {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  font-size: 32px;
+  font-size: 38px;
   color: #333;
   font-weight: bold;
   white-space: nowrap;

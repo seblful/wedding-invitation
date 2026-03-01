@@ -7,10 +7,17 @@
 }
 
 @font-face {
-  font-family: 'Open Sans';
-  src: url('./fonts/OpenSans.ttf') format('truetype');
+  font-family: 'Skolar PE';
+  src: url('./fonts/Skolar PE Variable Regular.ttf') format('truetype');
   font-weight: normal;
   font-style: normal;
+}
+
+@font-face {
+  font-family: 'Skolar PE';
+  src: url('./fonts/Skolar PE Variable Italic.ttf') format('truetype');
+  font-weight: normal;
+  font-style: italic;
 }
 
 * {
@@ -137,6 +144,7 @@ body {
 }
 
 .timer-title {
+  font-family: 'Skolar PE', serif;
   font-size: 42px;
   font-weight: bold;
   color: #333;
@@ -160,7 +168,7 @@ body {
 }
 
 .timer-number {
-  font-family: 'Open Sans', sans-serif;
+  font-family: 'Skolar PE', serif;
   font-size: 72px;
   font-weight: 700;
   color: #333;
@@ -175,7 +183,7 @@ body {
 }
 
 .timer-separator {
-  font-family: 'Open Sans', sans-serif;
+  font-family: 'Skolar PE', serif;
   font-size: 48px;
   font-weight: 700;
   color: #333;
@@ -183,7 +191,7 @@ body {
 }
 
 .timer-label {
-  font-family: 'Open Sans', sans-serif;
+  font-family: 'Skolar PE', serif;
   font-size: 16px;
   color: #333;
   font-weight: 600;
@@ -206,6 +214,7 @@ body {
 }
 
 .timeline-title {
+  font-family: 'Skolar PE', serif;
   font-size: 42px;
   font-weight: bold;
   color: #333;
@@ -256,7 +265,8 @@ body {
 .timeline-track::before {
   content: '';
   position: absolute;
-  top: 50px;
+  top: 60px;
+  transform: translateY(-50%);
   left: 0;
   right: 0;
   height: 3px;
@@ -269,7 +279,7 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 15px;
+  gap: 20px;
   min-width: 200px;
   flex-shrink: 0;
   position: relative;
@@ -294,10 +304,10 @@ body {
 
 .timeline-dot.active {
   background: #333;
-  width: 24px;
-  height: 24px;
+  width: 28px;
+  height: 28px;
   border-width: 4px;
-  box-shadow: 0 0 15px rgba(51, 51, 51, 0.3);
+  box-shadow: 0 0 18px rgba(51, 51, 51, 0.35);
 }
 
 .timeline-content {
@@ -306,6 +316,7 @@ body {
 }
 
 .timeline-date {
+  font-family: 'Skolar PE', serif;
   font-size: 18px;
   font-weight: bold;
   color: #333;
@@ -313,6 +324,8 @@ body {
 }
 
 .timeline-text {
+  font-family: 'Skolar PE', serif;
+  font-style: italic;
   font-size: 14px;
   color: #666;
   line-height: 1.4;

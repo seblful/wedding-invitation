@@ -36,5 +36,137 @@
       <p class="board-names">Аляксей i Дар'я</p>
     </div>
   </div>
+
+  <!-- Countdown Timer Section -->
+  <section class="timer-section">
+    <h2 class="timer-title">Лічым дні да нашага "шчаслівыя разам"</h2>
+    <div class="timer-container">
+      <div class="timer-item">
+        <div class="timer-number" id="days">0</div>
+        <div class="timer-label">Дзён</div>
+      </div>
+      <div class="timer-separator">:</div>
+      <div class="timer-item">
+        <div class="timer-number" id="hours">0</div>
+        <div class="timer-label">Гадзін</div>
+      </div>
+      <div class="timer-separator">:</div>
+      <div class="timer-item">
+        <div class="timer-number" id="minutes">0</div>
+        <div class="timer-label">Хвілін</div>
+      </div>
+      <div class="timer-separator">:</div>
+      <div class="timer-item">
+        <div class="timer-number" id="seconds">0</div>
+        <div class="timer-label">Секунд</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Timeline Section -->
+  <section class="timeline-section">
+    <h2 class="timeline-title">Наш шлях</h2>
+    <div class="timeline-container">
+      <div class="timeline-scroll">
+        <div class="timeline-track">
+          <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <div class="timeline-content">
+              <h3 class="timeline-date">Лета 2022</h3>
+              <p class="timeline-text">Першая зустрэча</p>
+            </div>
+          </div>
+          
+          <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <div class="timeline-content">
+              <h3 class="timeline-date">Лета 2023</h3>
+              <p class="timeline-text">Першае спатканне</p>
+            </div>
+          </div>
+          
+          <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <div class="timeline-content">
+              <h3 class="timeline-date">Лета 2023</h3>
+              <p class="timeline-text">Першы пацалунак</p>
+            </div>
+          </div>
+          
+          <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <div class="timeline-content">
+              <h3 class="timeline-date">Лета 2024</h3>
+              <p class="timeline-text">Першае падарожжа</p>
+            </div>
+          </div>
+          
+          <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <div class="timeline-content">
+              <h3 class="timeline-date">Лета 2024</h3>
+              <p class="timeline-text">Першае "кахаю"</p>
+            </div>
+          </div>
+
+          <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <div class="timeline-content">
+              <h3 class="timeline-date">Восень 2024</h3>
+              <p class="timeline-text">Першы агульны дом</p>
+            </div>
+          </div>
+
+          <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <div class="timeline-content">
+              <h3 class="timeline-date">Лета 2025</h3>
+              <p class="timeline-text">Запаветнае "Так"</p>
+            </div>
+          </div>
+          
+          <div class="timeline-item active final-milestone">
+            <div class="timeline-dot active"></div>
+            <div class="timeline-content">
+              <h3 class="timeline-date">Лета 2026</h3>
+              <p class="timeline-text">Стварэнне нашай сям'і.</p>
+            </div>
+          </div>
+
+
+         </div>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    function updateCountdown() {
+      const weddingDate = new Date('2026-08-02T00:00:00').getTime();
+      const now = new Date().getTime();
+      const timeRemaining = weddingDate - now;
+
+      if (timeRemaining <= 0) {
+        document.getElementById('days').textContent = '0';
+        document.getElementById('hours').textContent = '0';
+        document.getElementById('minutes').textContent = '0';
+        document.getElementById('seconds').textContent = '0';
+        return;
+      }
+
+      const days = Math.floor(timeRemaining / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((timeRemaining % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const minutes = Math.floor((timeRemaining % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((timeRemaining % (1000 * 60)) / 1000);
+
+      document.getElementById('days').textContent = String(days).padStart(2, '0');
+      document.getElementById('hours').textContent = String(hours).padStart(2, '0');
+      document.getElementById('minutes').textContent = String(minutes).padStart(2, '0');
+      document.getElementById('seconds').textContent = String(seconds).padStart(2, '0');
+    }
+
+    // Update countdown immediately and then every second
+    updateCountdown();
+    setInterval(updateCountdown, 1000);
+  </script>
 </body>
 </html>

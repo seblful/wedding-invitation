@@ -20,6 +20,18 @@
   font-style: italic;
 }
 
+/* Color Variables */
+:root {
+  --color-soft-pink: #fff1f1;
+  --color-soft-blue: #e4f7ff;
+  --color-soft-orange: #fcdcc0;
+  --color-soft-yellow: #fff9d2;
+  --color-soft-lavender: #eed0f5;
+  --color-soft-green: #d9fdd9;
+  --color-milky: #fdfff5;
+  --color-creamy: #fdf4e3;
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -28,7 +40,7 @@
 
 body {
   font-family: 'InkVerse', 'Georgia', 'Garamond', serif;
-  background: #b9dfc6;
+  background: var(--color-creamy);
   color: #333;
   position: relative;
   overflow-x: hidden;
@@ -175,7 +187,7 @@ body {
   min-width: 120px;
   text-align: center;
   line-height: 1;
-  background: rgba(255, 255, 255, 0.6);
+  background: var(--color-milky);
   padding: 30px 20px;
   border-radius: 15px;
   border: 3px solid #333;
@@ -290,7 +302,7 @@ body {
   width: 20px;
   height: 20px;
   border-radius: 50%;
-  background: #fff;
+  background: var(--color-creamy);
   border: 4px solid #333;
   flex-shrink: 0;
   transition: all 0.3s ease;
@@ -298,16 +310,16 @@ body {
 }
 
 .timeline-dot:hover {
-  background: #333;
+  background: var(--color-soft-pink);
   transform: scale(1.2);
 }
 
 .timeline-dot.active {
-  background: #333;
+  background: var(--color-soft-orange);
   width: 28px;
   height: 28px;
   border-width: 4px;
-  box-shadow: 0 0 18px rgba(51, 51, 51, 0.35);
+  box-shadow: 0 0 18px rgba(252, 220, 192, 0.6);
 }
 
 .timeline-content {
@@ -450,7 +462,7 @@ body {
   height: auto;
   border-radius: 15px;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
-  border: 3px solid #fff;
+  border: 3px solid var(--color-creamy);
   transition: all 0.3s ease;
   cursor: pointer;
   flex-shrink: 0;
@@ -485,7 +497,7 @@ body {
   font-size: 18px;
   font-weight: 600;
   color: #333;
-  background: rgba(255, 255, 255, 0.8);
+  background: var(--color-creamy);
   border: 3px solid #333;
   border-radius: 15px;
   text-decoration: none;
@@ -494,10 +506,9 @@ body {
 }
 
 .map-button:hover {
-  background: #333;
-  color: #fff;
+  background: var(--color-soft-orange);
   transform: translateY(-3px);
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 6px 20px rgba(252, 220, 192, 0.4);
 }
 
 .colors-container {

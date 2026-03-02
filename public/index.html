@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="be">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,37 +8,37 @@
 </head>
 <body>
   <!-- Corner Decorations -->
-  <div class="corner-decoration top-left">
-    <img src="images/background/flowers_TopLeft.png" alt="Flowers">
+  <div class="corner-decoration top-left" aria-hidden="true">
+    <img src="images/background/flowers_TopLeft.png" alt="Вяршнік дэкаратыўных кветак">
   </div>
-  <div class="corner-decoration top-right">
-    <img src="images/background/flowers_TopRight.png" alt="Flowers">
+  <div class="corner-decoration top-right" aria-hidden="true">
+    <img src="images/background/flowers_TopRight.png" alt="Вяршнік дэкаратыўных кветак">
   </div>
-  <div class="corner-decoration bottom-left">
-    <img src="images/background/flowers_BottomLeft.png" alt="Flowers">
+  <div class="corner-decoration bottom-left" aria-hidden="true">
+    <img src="images/background/flowers_BottomLeft.png" alt="Ніжні левы кут з кветкамі">
   </div>
-  <div class="corner-decoration bottom-right">
-    <img src="images/background/flowers_BottomRight.png" alt="Flowers">
+  <div class="corner-decoration bottom-right" aria-hidden="true">
+    <img src="images/background/flowers_BottomRight.png" alt="Ніжні правы кут з кветкамі">
   </div>
 
   <!-- Center Content -->
   <div class="center-content">
-    <div class="faces-container">
+    <div class="faces-container" role="img" aria-label="Партрэты маладых">
       <div class="face-card">
-        <img src="images/faces/Aliaksei.png" alt="Aliaksei" class="face-image">
+        <img src="images/faces/Aliaksei.png" alt="Партрэт жаніха Аляксея" class="face-image">
       </div>
       <div class="face-card">
-        <img src="images/faces/Daria.png" alt="Daria" class="face-image">
+        <img src="images/faces/Daria.png" alt="Партрэт нявесты Дар'і" class="face-image">
       </div>
     </div>
-    <div class="names-board">
-      <img src="images/faces/names_board.png" alt="Names Board" class="names-image">
+    <div class="names-board" role="img" aria-label="Назвы: Аляксей і Дар'я">
+      <img src="images/faces/names_board.png" alt="Рамка для імёнаў" class="names-image">
       <p class="board-names">Аляксей i Дар'я</p>
     </div>
   </div>
 
   <!-- Countdown Timer Section -->
-  <section class="timer-section">
+  <section class="timer-section" data-wedding-date="2026-08-02T00:00:00">
     <h2 class="timer-title">Лічым дні да нашага "шчаслівыя разам"</h2>
     <div class="timer-container">
       <div class="timer-item">
@@ -64,69 +64,69 @@
   </section>
 
   <!-- Timeline Section -->
-  <section class="timeline-section">
+  <section class="timeline-section" aria-label="Гадзінасць пара">
     <h2 class="timeline-title">Наш шлях</h2>
     <div class="timeline-container">
-      <div class="timeline-scroll">
-        <div class="timeline-track">
-          <div class="timeline-item">
-            <div class="timeline-dot"></div>
+      <div class="timeline-scroll" role="region" aria-label="Гарызантальная пракрутка гадзінасці">
+        <div class="timeline-track" role="list" aria-label="Асноўныя моманты адносін">
+          <div class="timeline-item" role="listitem">
+            <div class="timeline-dot" tabindex="0" role="button" aria-label="Першая зустрэча - лета 2022"></div>
             <div class="timeline-content">
               <h3 class="timeline-date">Лета 2022</h3>
               <p class="timeline-text">Першая зустрэча</p>
             </div>
           </div>
 
-          <div class="timeline-item">
-            <div class="timeline-dot"></div>
+          <div class="timeline-item" role="listitem">
+            <div class="timeline-dot" tabindex="0" role="button" aria-label="Першае спатканне - лета 2023"></div>
             <div class="timeline-content">
               <h3 class="timeline-date">Лета 2023</h3>
               <p class="timeline-text">Першае спатканне</p>
             </div>
           </div>
 
-          <div class="timeline-item">
-            <div class="timeline-dot"></div>
+          <div class="timeline-item" role="listitem">
+            <div class="timeline-dot" tabindex="0" role="button" aria-label="Першы пацалунак - лета 2023"></div>
             <div class="timeline-content">
               <h3 class="timeline-date">Лета 2023</h3>
               <p class="timeline-text">Першы пацалунак</p>
             </div>
           </div>
 
-          <div class="timeline-item">
-            <div class="timeline-dot"></div>
+          <div class="timeline-item" role="listitem">
+            <div class="timeline-dot" tabindex="0" role="button" aria-label="Першае падарожжа - лета 2024"></div>
             <div class="timeline-content">
               <h3 class="timeline-date">Лета 2024</h3>
               <p class="timeline-text">Першае падарожжа</p>
             </div>
           </div>
 
-          <div class="timeline-item">
-            <div class="timeline-dot"></div>
+          <div class="timeline-item" role="listitem">
+            <div class="timeline-dot" tabindex="0" role="button" aria-label="Першае 'кахаю' - лета 2024"></div>
             <div class="timeline-content">
               <h3 class="timeline-date">Лета 2024</h3>
               <p class="timeline-text">Першае "кахаю"</p>
             </div>
           </div>
 
-          <div class="timeline-item">
-            <div class="timeline-dot"></div>
+          <div class="timeline-item" role="listitem">
+            <div class="timeline-dot" tabindex="0" role="button" aria-label="Першы агульны дом - восень 2024"></div>
             <div class="timeline-content">
               <h3 class="timeline-date">Восень 2024</h3>
               <p class="timeline-text">Першы агульны дом</p>
             </div>
           </div>
 
-          <div class="timeline-item">
-            <div class="timeline-dot"></div>
+          <div class="timeline-item" role="listitem">
+            <div class="timeline-dot" tabindex="0" role="button" aria-label="Запаветнае 'Так' - лета 2025"></div>
             <div class="timeline-content">
               <h3 class="timeline-date">Лета 2025</h3>
               <p class="timeline-text">Запаветнае "Так"</p>
             </div>
           </div>
 
-          <div class="timeline-item active final-milestone">
-            <div class="timeline-dot active"></div>
+          <div class="timeline-item active final-milestone" role="listitem">
+            <div class="timeline-dot active" tabindex="0" role="button" aria-current="true" aria-label="Стварэнне сям'і - лета 2026"></div>
             <div class="timeline-content">
               <h3 class="timeline-date">Лета 2026</h3>
               <p class="timeline-text">Стварэнне нашай сям'і.</p>
@@ -140,7 +140,7 @@
   </section>
 
   <!-- Dresscode Section -->
-  <section class="dresscode-section">
+  <section class="dresscode-section" aria-label="Рэкамендацыі па дрэс-коду">
     <h2 class="dresscode-title">Дрэс-код</h2>
     <p class="dresscode-subtitle">Калі ласка, выбярыце адзін з гэтых колераў</p>
     <div class="colors-container">
@@ -180,17 +180,17 @@
   </section>
 
   <!-- Location Section -->
-  <section class="location-section">
+  <section class="location-section" aria-label="Інфармацыя пра месца правядзення">
     <h2 class="location-title">Месца правядзення</h2>
     <p class="location-subtitle">River Hall – госцевы комплекс</p>
     <div class="gallery-container">
-      <div class="gallery-scroll">
-        <img src="images/riverhall/frame1.jpg" alt="River Hall 1" class="gallery-image">
-        <img src="images/riverhall/frame2.jpg" alt="River Hall 2" class="gallery-image">
-        <img src="images/riverhall/frame3.jpg" alt="River Hall 3" class="gallery-image">
+      <div class="gallery-scroll" role="region" aria-label="Фотагалерэя месца правядзення">
+        <img src="images/riverhall/frame1.jpg" alt="Гасцёўня River Hall - экстэр'ер" class="gallery-image" loading="lazy">
+        <img src="images/riverhall/frame2.jpg" alt="Гасцёўня River Hall - інтэр'ер залі" class="gallery-image" loading="lazy">
+        <img src="images/riverhall/frame3.jpg" alt="Гасцёўня River Hall - тэраса" class="gallery-image" loading="lazy">
       </div>
     </div>
-    <p class="location-address">вул. Падольная, д. 23, г. Гродна</p>
+    <p class="location-address">вул. Падольная, д. 23, г. Гродно</p>
     <div class="map-container">
       <iframe
         class="yandex-map"
@@ -198,42 +198,16 @@
         width="100%"
         height="400"
         frameborder="0"
-        allowfullscreen="true">
+        title="Мапа размяшчэння River Hall"
+        allowfullscreen="true"
+        loading="lazy">
       </iframe>
     </div>
-    <a href="https://yandex.com/maps/-/CPqGnRmu" target="_blank" class="map-button">
+    <a href="https://yandex.com/maps/-/CPqGnRmu" target="_blank" rel="noopener noreferrer" class="map-button" aria-label="Адкрыць мапу Yandex (адкрываецца ў новым акне)">
       Адкрыць мапу Yandex
     </a>
   </section>
 
-  <script>
-    function updateCountdown() {
-      const weddingDate = new Date('2026-08-02T00:00:00').getTime();
-      const now = new Date().getTime();
-      const timeRemaining = weddingDate - now;
-
-      if (timeRemaining <= 0) {
-        document.getElementById('days').textContent = '0';
-        document.getElementById('hours').textContent = '0';
-        document.getElementById('minutes').textContent = '0';
-        document.getElementById('seconds').textContent = '0';
-        return;
-      }
-
-      const days = Math.floor(timeRemaining / (1000 * 60 * 60 * 24));
-      const hours = Math.floor((timeRemaining % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-      const minutes = Math.floor((timeRemaining % (1000 * 60 * 60)) / (1000 * 60));
-      const seconds = Math.floor((timeRemaining % (1000 * 60)) / 1000);
-
-      document.getElementById('days').textContent = String(days).padStart(2, '0');
-      document.getElementById('hours').textContent = String(hours).padStart(2, '0');
-      document.getElementById('minutes').textContent = String(minutes).padStart(2, '0');
-      document.getElementById('seconds').textContent = String(seconds).padStart(2, '0');
-    }
-
-    // Update countdown immediately and then every second
-    updateCountdown();
-    setInterval(updateCountdown, 1000);
-  </script>
+  <script src="script.js"></script>
 </body>
 </html>

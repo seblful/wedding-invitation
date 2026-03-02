@@ -53,22 +53,12 @@ function cleanupCountdown() {
 }
 
 function initMapFallback() {
-  const isLocalhost = window.location.hostname === 'localhost' || 
-                     window.location.hostname === '127.0.0.1' ||
-                     window.location.hostname === '';
-  
   const iframe = document.querySelector('.yandex-map');
   const fallback = document.getElementById('mapFallback');
   
-  if (isLocalhost && iframe && fallback) {
-    iframe.style.display = 'none';
-    fallback.style.display = 'flex';
-  } else if (iframe && fallback) {
-    setTimeout(() => {
-      if (iframe.style.display === 'none' || iframe.contentDocument === null) {
-        fallback.style.display = 'flex';
-      }
-    }, 5000);
+  if (iframe && fallback) {
+    iframe.style.display = 'block';
+    fallback.style.display = 'none';
   }
 }
 

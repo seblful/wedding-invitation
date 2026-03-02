@@ -2,7 +2,9 @@
 <html lang="be">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+  <meta name="theme-color" content="#fdf4e3">
+  <link rel="icon" type="image/png" href="/favicon.png">
   <title>Wedding Invitation</title>
   <link rel="stylesheet" href="styles.css">
 </head>
@@ -38,7 +40,7 @@
   </div>
 
   <!-- Countdown Timer Section -->
-  <section class="timer-section" data-wedding-date="2026-08-02T00:00:00">
+  <section class="timer-section">
     <h2 class="timer-title">Лічым дні да нашага "шчаслівыя разам"</h2>
     <div class="timer-container">
       <div class="timer-item">
@@ -145,35 +147,35 @@
     <p class="dresscode-subtitle">Калі ласка, выбярыце адзін з гэтых колераў</p>
     <div class="colors-container">
       <div class="color-card">
-        <div class="color-swatch" style="background-color: #fff1f1;"></div>
+        <div class="color-swatch swatch-soft-pink"></div>
         <span class="color-name">Нябесна-ружовы</span>
       </div>
       <div class="color-card">
-        <div class="color-swatch" style="background-color: #e4f7ff;"></div>
+        <div class="color-swatch swatch-soft-blue"></div>
         <span class="color-name">Нябесна-блакітны</span>
       </div>
       <div class="color-card">
-        <div class="color-swatch" style="background-color: #fcdcc0;"></div>
+        <div class="color-swatch swatch-soft-orange"></div>
         <span class="color-name">Пяшчотна-аранжавы</span>
       </div>
       <div class="color-card">
-        <div class="color-swatch" style="background-color: #fff9d2;"></div>
+        <div class="color-swatch swatch-soft-yellow"></div>
         <span class="color-name">Пяшчотна-жоўты</span>
       </div>
       <div class="color-card">
-        <div class="color-swatch" style="background-color: #eed0f5;"></div>
+        <div class="color-swatch swatch-soft-lavender"></div>
         <span class="color-name">Пяшчотна-лавандавы</span>
       </div>
       <div class="color-card">
-        <div class="color-swatch" style="background-color: #d9fdd9;"></div>
+        <div class="color-swatch swatch-soft-green"></div>
         <span class="color-name">Пяшчотна-салатавы</span>
       </div>
       <div class="color-card">
-        <div class="color-swatch" style="background-color: #fdf4e3;"></div>
+        <div class="color-swatch swatch-creamy"></div>
         <span class="color-name">Крэмавы</span>
       </div>
       <div class="color-card">
-        <div class="color-swatch" style="background-color: #fdfff5;"></div>
+        <div class="color-swatch swatch-milky"></div>
         <span class="color-name">Малочны</span>
       </div>
     </div>
@@ -191,17 +193,28 @@
       </div>
     </div>
     <p class="location-address">вул. Падольная, д. 23, г. Гродно</p>
-    <div class="map-container">
+    <div class="map-container" id="mapContainer">
       <iframe
         class="yandex-map"
-        src="https://yandex.ru/map-widget/v1/?ll=23.833062,53.671368&amp;z=15&amp;pt=23.833062,53.671368,pm2rdm"
+        src="https://yandex.ru/map-widget/v1/?ll=23.833062,53.671368&z=15&pt=23.833062,53.671368,pm2rdm"
         width="100%"
         height="400"
         frameborder="0"
         title="Мапа размяшчэння River Hall"
         allowfullscreen="true"
-        loading="lazy">
+        loading="lazy"
+        sandbox="allow-scripts allow-same-origin allow-popups allow-forms"
+        onload="this.style.display='block'; document.getElementById('mapFallback').style.display='none';"
+        onerror="this.style.display='none'; document.getElementById('mapFallback').style.display='flex';">
       </iframe>
+      <div id="mapFallback" class="map-fallback" style="display: none;">
+        <div class="map-fallback-content">
+          <p>Мапа недаступна праз бяспеку браўзера. Адкрыйце мапу ў новым акне.</p>
+          <a href="https://yandex.com/maps/-/CPqGnRmu" target="_blank" rel="noopener noreferrer" class="map-button-small">
+            Адкрыць мапу
+          </a>
+        </div>
+      </div>
     </div>
     <a href="https://yandex.com/maps/-/CPqGnRmu" target="_blank" rel="noopener noreferrer" class="map-button" aria-label="Адкрыць мапу Yandex (адкрываецца ў новым акне)">
       Адкрыць мапу Yandex

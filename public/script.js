@@ -1,6 +1,21 @@
+let weddingDate;
+let countdownInterval;
+
+async function fetchConfig() {
+  try {
+    const response = await fetch('/api/config');
+    const data = await response.json();
+    weddingDate = new Date(data.weddingDate).getTime();
+    return true;
+  } catch (error) {
+    console.error('Failed to fetch config:', error);
+    return false;
+  }
+}
+
 function updateCountdown() {
-  const timerSection = document.querySelector('.timer-section');
-  const weddingDate = new Date(timerSection.dataset.weddingDate).getTime();
+  if (!weddingDate) return;
+  
   const now = new Date().getTime();
   const timeRemaining = weddingDate - now;
 
@@ -23,11 +38,12 @@ function updateCountdown() {
   document.getElementById('seconds').textContent = String(seconds).padStart(2, '0');
 }
 
-let countdownInterval;
-
-function initCountdown() {
-  updateCountdown();
-  countdownInterval = setInterval(updateCountdown, 1000);
+async function initCountdown() {
+  const configLoaded = await fetchConfig();
+  if (configLoaded) {
+    updateCountdown();
+    countdownInterval = setInterval(updateCountdown, 1000);
+  }
 }
 
 function cleanupCountdown() {
@@ -36,5 +52,26 @@ function cleanupCountdown() {
   }
 }
 
+function initMapFallback() {
+  const isLocalhost = window.location.hostname === 'localhost' || 
+                     window.location.hostname === '127.0.0.1' ||
+                     window.location.hostname === '';
+  
+  const iframe = document.querySelector('.yandex-map');
+  const fallback = document.getElementById('mapFallback');
+  
+  if (isLocalhost && iframe && fallback) {
+    iframe.style.display = 'none';
+    fallback.style.display = 'flex';
+  } else if (iframe && fallback) {
+    setTimeout(() => {
+      if (iframe.style.display === 'none' || iframe.contentDocument === null) {
+        fallback.style.display = 'flex';
+      }
+    }, 5000);
+  }
+}
+
 document.addEventListener('DOMContentLoaded', initCountdown);
+document.addEventListener('DOMContentLoaded', initMapFallback);
 window.addEventListener('beforeunload', cleanupCountdown);

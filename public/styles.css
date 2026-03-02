@@ -336,32 +336,124 @@ body {
   font-weight: bold;
 }
 
+/* Dresscode Section */
+.dresscode-section {
+  position: relative;
+  z-index: 2;
+  padding: 60px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  width: 100%;
+  background: #b9dfc6;
+}
+
+.dresscode-title {
+  font-family: 'Skolar PE', serif;
+  font-size: 42px;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.dresscode-subtitle {
+  font-family: 'Skolar PE', serif;
+  font-size: 18px;
+  color: #666;
+  margin-bottom: 50px;
+  text-align: center;
+  font-style: italic;
+}
+
+.colors-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 40px;
+  max-width: 900px;
+}
+
+.color-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+  transition: transform 0.3s ease;
+}
+
+.color-card:hover {
+  transform: translateY(-5px);
+}
+
+.color-swatch {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+  border: 3px solid #fff;
+  transition: all 0.3s ease;
+}
+
+.color-swatch:hover {
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+  transform: scale(1.1);
+}
+
+.color-name {
+  font-family: 'Skolar PE', serif;
+  font-size: 14px;
+  color: #333;
+  font-weight: 600;
+  text-align: center;
+}
+
 /* Responsive Design */
 @media (max-width: 1024px) {
   .corner-decoration img {
     max-width: 450px;
   }
-  
+
   .timer-title {
     font-size: 32px;
   }
-  
+
   .timer-number {
     font-size: 52px;
     min-width: 100px;
     padding: 20px 15px;
   }
-  
+
   .timer-separator {
     font-size: 36px;
   }
-  
+
   .timeline-title {
     font-size: 36px;
   }
-  
+
   .timeline-item {
     min-width: 180px;
+  }
+
+  .dresscode-title {
+    font-size: 36px;
+  }
+
+  .dresscode-subtitle {
+    font-size: 16px;
+  }
+
+  .color-swatch {
+    width: 70px;
+    height: 70px;
+  }
+
+  .color-name {
+    font-size: 13px;
   }
 }
 
@@ -369,45 +461,67 @@ body {
   .corner-decoration img {
     max-width: 300px;
   }
-  
+
   .timer-title {
     font-size: 24px;
     margin-bottom: 40px;
   }
-  
+
   .timer-container {
     gap: 10px;
   }
-  
+
   .timer-number {
     font-size: 36px;
     min-width: 80px;
     padding: 15px 10px;
   }
-  
+
   .timer-separator {
     font-size: 24px;
     margin-bottom: 20px;
   }
-  
+
   .timer-label {
     font-size: 12px;
   }
-  
+
   .timeline-title {
     font-size: 28px;
   }
-  
+
   .timeline-item {
     min-width: 160px;
     gap: 12px;
   }
-  
+
   .timeline-date {
     font-size: 14px;
   }
-  
+
   .timeline-text {
+    font-size: 12px;
+  }
+
+  .dresscode-title {
+    font-size: 28px;
+  }
+
+  .dresscode-subtitle {
+    font-size: 14px;
+    margin-bottom: 40px;
+  }
+
+  .colors-container {
+    gap: 25px;
+  }
+
+  .color-swatch {
+    width: 60px;
+    height: 60px;
+  }
+
+  .color-name {
     font-size: 12px;
   }
 }
@@ -416,58 +530,81 @@ body {
   .corner-decoration img {
     max-width: 150px;
   }
-  
+
   .timer-title {
     font-size: 18px;
     margin-bottom: 30px;
   }
-  
+
   .timer-container {
     gap: 5px;
   }
-  
+
   .timer-number {
     font-size: 28px;
     min-width: 65px;
     padding: 12px 8px;
   }
-  
+
   .timer-separator {
     font-size: 18px;
     margin-bottom: 15px;
   }
-  
+
   .timer-label {
     font-size: 10px;
   }
-  
+
   .timeline-title {
     font-size: 22px;
     margin-bottom: 30px;
   }
-  
+
   .timeline-item {
     min-width: 140px;
     gap: 10px;
   }
-  
+
   .timeline-date {
     font-size: 12px;
   }
-  
+
   .timeline-text {
     font-size: 11px;
   }
-  
+
   .timeline-dot {
     width: 16px;
     height: 16px;
     border-width: 3px;
   }
-  
+
   .timeline-dot.active {
     width: 24px;
     height: 24px;
     border-width: 3px;
+  }
+
+  .dresscode-title {
+    font-size: 22px;
+    margin-bottom: 15px;
+  }
+
+  .dresscode-subtitle {
+    font-size: 12px;
+    margin-bottom: 30px;
+  }
+
+  .colors-container {
+    gap: 20px;
+  }
+
+  .color-swatch {
+    width: 50px;
+    height: 50px;
+  }
+
+  .color-name {
+    font-size: 11px;
   }
 }

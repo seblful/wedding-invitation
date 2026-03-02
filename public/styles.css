@@ -393,11 +393,11 @@ body {
 
 .location-subtitle {
   font-family: 'Skolar PE', serif;
-  font-size: 18px;
-  color: #666;
-  margin-bottom: 10px;
+  font-size: 32px;
+  color: #333;
+  margin-bottom: 40px;
   text-align: center;
-  font-style: italic;
+  font-weight: bold;
 }
 
 .location-address {
@@ -407,6 +407,58 @@ body {
   margin-bottom: 40px;
   text-align: center;
   font-weight: 500;
+}
+
+.gallery-container {
+  width: 100%;
+  max-width: 900px;
+  margin-bottom: 30px;
+}
+
+.gallery-scroll {
+  display: flex;
+  gap: 20px;
+  overflow-x: auto;
+  padding: 20px 10px;
+  scroll-behavior: smooth;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+/* Gallery Scrollbar */
+.gallery-scroll::-webkit-scrollbar {
+  height: 8px;
+}
+
+.gallery-scroll::-webkit-scrollbar-track {
+  background: rgba(51, 51, 51, 0.1);
+  border-radius: 10px;
+}
+
+.gallery-scroll::-webkit-scrollbar-thumb {
+  background: rgba(51, 51, 51, 0.3);
+  border-radius: 10px;
+}
+
+.gallery-scroll::-webkit-scrollbar-thumb:hover {
+  background: rgba(51, 51, 51, 0.5);
+}
+
+.gallery-image {
+  max-width: 280px;
+  height: auto;
+  border-radius: 15px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+  border: 3px solid #fff;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.gallery-image:hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 25px rgba(0, 0, 0, 0.2);
 }
 
 .map-container {
@@ -541,12 +593,20 @@ body {
   }
 
   .location-subtitle {
-    font-size: 16px;
+    font-size: 28px;
   }
 
   .location-address {
     font-size: 15px;
     margin-bottom: 30px;
+  }
+
+  .gallery-container {
+    margin-bottom: 30px;
+  }
+
+  .gallery-image {
+    max-width: 220px;
   }
 
   .yandex-map {
@@ -632,13 +692,27 @@ body {
   }
 
   .location-subtitle {
-    font-size: 14px;
-    margin-bottom: 8px;
+    font-size: 24px;
+    margin-bottom: 30px;
   }
 
   .location-address {
     font-size: 14px;
     margin-bottom: 25px;
+  }
+
+  .gallery-container {
+    margin-bottom: 25px;
+  }
+
+  .gallery-image {
+    max-width: 180px;
+    border-width: 2px;
+  }
+
+  .gallery-scroll {
+    gap: 15px;
+    padding: 15px 10px;
   }
 
   .map-container {
@@ -743,13 +817,31 @@ body {
   }
 
   .location-subtitle {
-    font-size: 12px;
-    margin-bottom: 5px;
+    font-size: 20px;
+    margin-bottom: 25px;
   }
 
   .location-address {
     font-size: 11px;
     margin-bottom: 20px;
+  }
+
+  .gallery-container {
+    margin-bottom: 20px;
+  }
+
+  .gallery-image {
+    max-width: 140px;
+    border-width: 2px;
+  }
+
+  .gallery-scroll {
+    gap: 10px;
+    padding: 10px 5px;
+  }
+
+  .gallery-scroll::-webkit-scrollbar {
+    height: 6px;
   }
 
   .map-container {

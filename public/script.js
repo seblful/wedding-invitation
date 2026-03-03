@@ -52,16 +52,75 @@ function cleanupCountdown() {
   }
 }
 
-function initMapFallback() {
-  const iframe = document.querySelector('.yandex-map');
-  const fallback = document.getElementById('mapFallback');
+function initGuestSurvey() {
+  const form = document.getElementById('guestSurveyForm');
+  const attendanceSelect = document.getElementById('attendance');
+  const partnerNameGroup = document.querySelector('.partner-name-group');
+  const formSuccess = document.getElementById('formSuccess');
+  const formError = document.getElementById('formError');
+  const formDeadline = document.getElementById('formDeadline');
   
-  if (iframe && fallback) {
-    iframe.style.display = 'block';
-    fallback.style.display = 'none';
+  if (attendanceSelect) {
+    attendanceSelect.addEventListener('change', function() {
+      if (this.value === 'yes_alone') {
+        partnerNameGroup.classList.remove('partner-group-hidden');
+        setTimeout(() => {
+          const partnerInput = document.getElementById('partnerName');
+          if (partnerInput) partnerInput.focus();
+        }, 100);
+      } else {
+        partnerNameGroup.classList.add('partner-group-hidden');
+      }
+    });
+  }
+  
+  if (form) {
+    form.addEventListener('submit', async function(e) {
+      e.preventDefault();
+
+      if (formError) formError.classList.add('form-message-hidden');
+      if (formDeadline) formDeadline.classList.add('form-message-hidden');
+      
+      const checkboxes = form.querySelectorAll('input[name="alcohol_preference"]:checked');
+      const selectedAlcohol = Array.from(checkboxes).map(cb => cb.value).join(', ');
+      
+      try {
+        const response = await fetch('/api/submit-form', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            guest_name: form.querySelector('#guestName').value,
+            attendance: form.querySelector('#attendance').value,
+            partner_name: form.querySelector('#partnerName').value || '',
+            alcohol_preference: selectedAlcohol
+          })
+        });
+        
+        const data = await response.json();
+        
+        if (response.ok && data.success) {
+          if (formSuccess) formSuccess.classList.remove('form-message-hidden');
+          if (formError) formError.classList.add('form-message-hidden');
+          if (formDeadline) formDeadline.classList.add('form-message-hidden');
+          form.reset();
+          if (partnerNameGroup) partnerNameGroup.classList.add('partner-group-hidden');
+        } else {
+          throw new Error('Form submission failed');
+        }
+      } catch (error) {
+        console.error('Form submission error:', error);
+        if (formSuccess) formSuccess.classList.add('form-message-hidden');
+        if (formError) formError.classList.remove('form-message-hidden');
+        if (formDeadline) formDeadline.classList.add('form-message-hidden');
+      }
+    });
   }
 }
 
+document.addEventListener('DOMContentLoaded', initGuestSurvey);
+
 document.addEventListener('DOMContentLoaded', initCountdown);
-document.addEventListener('DOMContentLoaded', initMapFallback);
+document.addEventListener('DOMContentLoaded', initGuestSurvey);
 window.addEventListener('beforeunload', cleanupCountdown);

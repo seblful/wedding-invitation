@@ -194,31 +194,114 @@
     </div>
     <p class="location-address">вул. Падольная, д. 23, г. Гродно</p>
     <div class="map-container" id="mapContainer">
-      <iframe
-        class="yandex-map"
-        src="https://yandex.ru/map-widget/v1/?ll=23.833062,53.671368&z=15&pt=23.833062,53.671368,pm2rdm"
-        width="100%"
-        height="400"
-        frameborder="0"
-        title="Мапа размяшчэння River Hall"
-        allowfullscreen="true"
-        loading="lazy"
-        sandbox="allow-scripts allow-same-origin allow-popups allow-forms"
-        onload="this.style.display='block'; document.getElementById('mapFallback').style.display='none';"
-        onerror="this.style.display='none'; document.getElementById('mapFallback').style.display='flex';">
-      </iframe>
-      <div id="mapFallback" class="map-fallback" style="display: none;">
-        <div class="map-fallback-content">
-          <p>Мапа недаступна праз бяспеку браўзера. Адкрыйце мапу ў новым акне.</p>
-          <a href="https://yandex.com/maps/-/CPqGnRmu" target="_blank" rel="noopener noreferrer" class="map-button-small">
-            Адкрыць мапу
-          </a>
+        <script type="text/javascript" charset="utf-8" async src="https://api-maps.yandex.ru/services/constructor/1.0/js/?um=constructor%3A8c4533836a3525a8792c1d686af0cc61f4e6af650fa5ae98cc6261243666508c&amp;width=580&amp;height=346&amp;lang=ru_RU&amp;scroll=true"></script>
+    </div>
+  </section>
+
+  <!-- Guest Survey Form Section -->
+  <section class="survey-section" aria-label="Анкета для госцей">
+    <h2 class="survey-title">Калі ласка, запоўніце анкету</h2>
+    <p class="survey-deadline">Калі ласка, запоўніце анкету да 15 чэрвеня 2025 года</p>
+    
+      <form class="survey-form" 
+            action="/api/submit-form" 
+            method="POST" 
+            id="guestSurveyForm">
+      
+      <!-- Guest Name -->
+      <div class="form-group">
+        <label for="guestName" class="form-label">Ваша імя і прозвішча:</label>
+        <input type="text" 
+               id="guestName" 
+               name="guest_name" 
+               class="form-input" 
+               required 
+               placeholder="Увядзіце імя і прозвішча">
+      </div>
+      
+      <!-- Attendance Status -->
+      <div class="form-group">
+        <label for="attendance" class="form-label">Ці плануеце вы прысутнічаць на вяселлі?</label>
+        <select id="attendance" 
+                name="attendance" 
+                class="form-select" 
+                required>
+          <option value="" disabled selected>Выберыце адзін варыянт</option>
+          <option value="yes_with_partner">Так, з задавальненнем!</option>
+          <option value="yes_alone">Прыду з парай</option>
+          <option value="no">На жаль, не змагу</option>
+        </select>
+      </div>
+      
+      <!-- Partner Name (conditional) -->
+      <div class="form-group partner-name-group partner-group-hidden">
+        <label for="partnerName" class="form-label">Імя і прозвішча вашай пары:</label>
+        <input type="text" 
+               id="partnerName" 
+               name="partner_name" 
+               class="form-input" 
+               placeholder="Увядзіце імя і прозвішча партнёра">
+      </div>
+      
+      <!-- Alcohol Preferences (checkboxes) -->
+      <div class="form-group">
+        <label class="form-label">Які алкаголь вы хочаце ўжываць на банкеце?</label>
+        <div class="checkbox-group">
+          <label class="checkbox-item">
+            <input type="checkbox" name="alcohol_preference" value="іграстае">
+            <span>Вiно iгрыстае</span>
+          </label>
+          <label class="checkbox-item">
+            <input type="checkbox" name="alcohol_preference" value="вино_чырвонае_паўсалодкае">
+            <span>Віно чырвонае (паўсалодкае)</span>
+          </label>
+          <label class="checkbox-item">
+            <input type="checkbox" name="alcohol_preference" value="вино_чырвонае_паўсухое">
+            <span>Віно чырвонае (паўсухое)</span>
+          </label>
+          <label class="checkbox-item">
+            <input type="checkbox" name="alcohol_preference" value="вино_белае_паўсалодкае">
+            <span>Віно белае (паўсалодкае)</span>
+          </label>
+          <label class="checkbox-item">
+            <input type="checkbox" name="alcohol_preference" value="вино_белае_паўсухое">
+            <span>Віно белае (паўсухое)</span>
+          </label>
+          <label class="checkbox-item">
+            <input type="checkbox" name="alcohol_preference" value="гарэлка">
+            <span>Гарэлка</span>
+          </label>
+          <label class="checkbox-item">
+            <input type="checkbox" name="alcohol_preference" value="віскі">
+            <span>Віскі</span>
+          </label>
+          <label class="checkbox-item">
+            <input type="checkbox" name="alcohol_preference" value="каньяк">
+            <span>Каньяк</span>
+          </label>
+          <label class="checkbox-item">
+            <input type="checkbox" name="alcohol_preference" value="безалкагольныя_напоі">
+            <span>Безалкагольныя напоі</span>
+          </label>
         </div>
       </div>
-    </div>
-    <a href="https://yandex.com/maps/-/CPqGnRmu" target="_blank" rel="noopener noreferrer" class="map-button" aria-label="Адкрыць мапу Yandex (адкрываецца ў новым акне)">
-      Адкрыць мапу Yandex
-    </a>
+      
+      <!-- Submit Button -->
+      <button type="submit" class="form-submit-btn">Адправіць анкету</button>
+      
+      <!-- Form Messages -->
+      <div id="formSuccess" class="form-message form-message-success form-message-hidden">
+        <p>Дзякуй за вашу адказ! Ваша анкета прынята.</p>
+      </div>
+      
+      <div id="formError" class="form-message form-message-error form-message-hidden">
+        <p>Адбылася памылка. Калі ласка, паспрабуйце яшчы раз.</p>
+      </div>
+      
+      <div id="formDeadline" class="form-message form-message-deadline form-message-hidden">
+        <p>Прабачце, пазнейшыя анкеты не будуць разглядацца.</p>
+      </div>
+    </form>
   </section>
 
   <script src="script.js"></script>

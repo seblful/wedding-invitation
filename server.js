@@ -14,16 +14,7 @@ const ALLOWED_ORIGINS = process.env.ALLOWED_ORIGINS
 app.use(compression());
 
 app.use(helmet({
-  contentSecurityPolicy: {
-    directives: {
-      defaultSrc: ["'self'"],
-      styleSrc: ["'self'"],
-      scriptSrc: ["'self'"],
-      imgSrc: ["'self'", "data:", "https://*.yandex.ru", "https://*.yandex.com"],
-      frameSrc: ["https://*.yandex.ru", "https://*.yandex.com"],
-      connectSrc: ["'self'", "https://*.yandex.ru", "https://*.yandex.com"]
-    }
-  }
+  contentSecurityPolicy: false
 }));
 
 app.use(express.json());
@@ -61,6 +52,30 @@ app.get('/api/config', (req, res) => {
     });
   } catch (error) {
     res.status(500).json({ error: 'Failed to fetch config' });
+  }
+});
+
+app.post('/api/submit-form', async (req, res) => {
+  try {
+    const formData = req.body;
+    const formspreeEndpoint = 'https://formspree.io/f/xykdrgnb';
+    
+    const response = await fetch(formspreeEndpoint, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(formData)
+    });
+    
+    if (response.ok) {
+      res.json({ success: true });
+    } else {
+      res.status(response.status).json({ error: 'Form submission failed' });
+    }
+  } catch (error) {
+    console.error('Form submission error:', error);
+    res.status(500).json({ error: 'Internal server error' });
   }
 });
 

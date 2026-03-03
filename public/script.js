@@ -62,7 +62,7 @@ function initGuestSurvey() {
   
   if (attendanceSelect) {
     attendanceSelect.addEventListener('change', function() {
-      if (this.value === 'yes_alone') {
+      if (this.value === 'yes_with_partner') {
         partnerNameGroup.classList.remove('partner-group-hidden');
         setTimeout(() => {
           const partnerInput = document.getElementById('partnerName');

@@ -58,9 +58,7 @@ app.get('/api/config', (req, res) => {
 app.post('/api/submit-form', async (req, res) => {
   try {
     const formData = req.body;
-    const formspreeEndpoint = 'https://formspree.io/f/xykdrgnb';
-    
-    const response = await fetch(formspreeEndpoint, {
+    const response = await fetch(config.form.formspreeEndpoint, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'

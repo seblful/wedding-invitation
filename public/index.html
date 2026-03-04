@@ -1,309 +1,494 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="be">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
-  <meta name="theme-color" content="#fdf4e3">
-  <link rel="icon" type="image/png" href="/favicon.png">
-  <title>Wedding Invitation</title>
-  <link rel="stylesheet" href="styles.css">
-</head>
-<body>
-  <!-- Corner Decorations -->
-  <div class="corner-decoration top-left" aria-hidden="true">
-    <img src="images/background/flowers_TopLeft.png" alt="Вяршнік дэкаратыўных кветак">
-  </div>
-  <div class="corner-decoration top-right" aria-hidden="true">
-    <img src="images/background/flowers_TopRight.png" alt="Вяршнік дэкаратыўных кветак">
-  </div>
-  <div class="corner-decoration bottom-left" aria-hidden="true">
-    <img src="images/background/flowers_BottomLeft.png" alt="Ніжні левы кут з кветкамі">
-  </div>
-  <div class="corner-decoration bottom-right" aria-hidden="true">
-    <img src="images/background/flowers_BottomRight.png" alt="Ніжні правы кут з кветкамі">
-  </div>
-
-  <!-- Center Content -->
-  <div class="center-content">
-    <div class="faces-container" role="img" aria-label="Партрэты маладых">
-      <div class="face-card">
-        <img src="images/faces/Aliaksei.png" alt="Партрэт жаніха Аляксея" class="face-image">
-      </div>
-      <div class="face-card">
-        <img src="images/faces/Daria.png" alt="Партрэт нявесты Дар'і" class="face-image">
-      </div>
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes"
+    />
+    <meta name="theme-color" content="#fdf4e3" />
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <title>Wedding Invitation</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <!-- Corner Decorations -->
+    <div class="corner-decoration top-left" aria-hidden="true">
+      <img
+        src="images/background/flowers_TopLeft.png"
+        alt="Вяршнік дэкаратыўных кветак"
+      />
     </div>
-    <div class="names-board" role="img" aria-label="Назвы: Аляксей і Дар'я">
-      <img src="images/faces/names_board.png" alt="Рамка для імёнаў" class="names-image">
-      <p class="board-names">Аляксей i Дар'я</p>
+    <div class="corner-decoration top-right" aria-hidden="true">
+      <img
+        src="images/background/flowers_TopRight.png"
+        alt="Вяршнік дэкаратыўных кветак"
+      />
     </div>
-  </div>
-
-  <!-- Countdown Timer Section -->
-  <section class="timer-section">
-    <h2 class="timer-title">Лічым дні да нашага "шчаслівыя разам"</h2>
-    <div class="timer-container">
-      <div class="timer-item">
-        <div class="timer-number" id="days">0</div>
-        <div class="timer-label">Дзён</div>
-      </div>
-      <div class="timer-separator">:</div>
-      <div class="timer-item">
-        <div class="timer-number" id="hours">0</div>
-        <div class="timer-label">Гадзін</div>
-      </div>
-      <div class="timer-separator">:</div>
-      <div class="timer-item">
-        <div class="timer-number" id="minutes">0</div>
-        <div class="timer-label">Хвілін</div>
-      </div>
-      <div class="timer-separator">:</div>
-      <div class="timer-item">
-        <div class="timer-number" id="seconds">0</div>
-        <div class="timer-label">Секунд</div>
-      </div>
+    <div class="corner-decoration bottom-left" aria-hidden="true">
+      <img
+        src="images/background/flowers_BottomLeft.png"
+        alt="Ніжні левы кут з кветкамі"
+      />
     </div>
-  </section>
-
-  <!-- Timeline Section -->
-  <section class="timeline-section" aria-label="Гадзінасць пара">
-    <h2 class="timeline-title">Наш шлях</h2>
-    <div class="timeline-container">
-      <div class="timeline-scroll" role="region" aria-label="Гарызантальная пракрутка гадзінасці">
-        <div class="timeline-track" role="list" aria-label="Асноўныя моманты адносін">
-          <div class="timeline-item" role="listitem">
-            <div class="timeline-dot" tabindex="0" role="button" aria-label="Першая зустрэча - лета 2022"></div>
-            <div class="timeline-content">
-              <h3 class="timeline-date">Лета 2022</h3>
-              <p class="timeline-text">Першая зустрэча</p>
-            </div>
-          </div>
-
-          <div class="timeline-item" role="listitem">
-            <div class="timeline-dot" tabindex="0" role="button" aria-label="Першае спатканне - лета 2023"></div>
-            <div class="timeline-content">
-              <h3 class="timeline-date">Лета 2023</h3>
-              <p class="timeline-text">Першае спатканне</p>
-            </div>
-          </div>
-
-          <div class="timeline-item" role="listitem">
-            <div class="timeline-dot" tabindex="0" role="button" aria-label="Першы пацалунак - лета 2023"></div>
-            <div class="timeline-content">
-              <h3 class="timeline-date">Лета 2023</h3>
-              <p class="timeline-text">Першы пацалунак</p>
-            </div>
-          </div>
-
-          <div class="timeline-item" role="listitem">
-            <div class="timeline-dot" tabindex="0" role="button" aria-label="Першае падарожжа - лета 2024"></div>
-            <div class="timeline-content">
-              <h3 class="timeline-date">Лета 2024</h3>
-              <p class="timeline-text">Першае падарожжа</p>
-            </div>
-          </div>
-
-          <div class="timeline-item" role="listitem">
-            <div class="timeline-dot" tabindex="0" role="button" aria-label="Першае 'кахаю' - лета 2024"></div>
-            <div class="timeline-content">
-              <h3 class="timeline-date">Лета 2024</h3>
-              <p class="timeline-text">Першае "кахаю"</p>
-            </div>
-          </div>
-
-          <div class="timeline-item" role="listitem">
-            <div class="timeline-dot" tabindex="0" role="button" aria-label="Першы агульны дом - восень 2024"></div>
-            <div class="timeline-content">
-              <h3 class="timeline-date">Восень 2024</h3>
-              <p class="timeline-text">Першы агульны дом</p>
-            </div>
-          </div>
-
-          <div class="timeline-item" role="listitem">
-            <div class="timeline-dot" tabindex="0" role="button" aria-label="Запаветнае 'Так' - лета 2025"></div>
-            <div class="timeline-content">
-              <h3 class="timeline-date">Лета 2025</h3>
-              <p class="timeline-text">Запаветнае "Так"</p>
-            </div>
-          </div>
-
-          <div class="timeline-item active final-milestone" role="listitem">
-            <div class="timeline-dot active" tabindex="0" role="button" aria-current="true" aria-label="Стварэнне сям'і - лета 2026"></div>
-            <div class="timeline-content">
-              <h3 class="timeline-date">Лета 2026</h3>
-              <p class="timeline-text">Стварэнне нашай сям'і.</p>
-            </div>
-          </div>
-
-
-         </div>
-      </div>
+    <div class="corner-decoration bottom-right" aria-hidden="true">
+      <img
+        src="images/background/flowers_BottomRight.png"
+        alt="Ніжні правы кут з кветкамі"
+      />
     </div>
-  </section>
 
-  <!-- Dresscode Section -->
-  <section class="dresscode-section" aria-label="Рэкамендацыі па дрэс-коду">
-    <h2 class="dresscode-title">Дрэс-код</h2>
-    <p class="dresscode-subtitle">Калі ласка, выбярыце адзін з гэтых колераў</p>
-    <div class="colors-container">
-      <div class="color-card">
-        <div class="color-swatch swatch-soft-pink"></div>
-        <span class="color-name">Нябесна-ружовы</span>
-      </div>
-      <div class="color-card">
-        <div class="color-swatch swatch-soft-blue"></div>
-        <span class="color-name">Нябесна-блакітны</span>
-      </div>
-      <div class="color-card">
-        <div class="color-swatch swatch-soft-orange"></div>
-        <span class="color-name">Пяшчотна-аранжавы</span>
-      </div>
-      <div class="color-card">
-        <div class="color-swatch swatch-soft-yellow"></div>
-        <span class="color-name">Пяшчотна-жоўты</span>
-      </div>
-      <div class="color-card">
-        <div class="color-swatch swatch-soft-lavender"></div>
-        <span class="color-name">Пяшчотна-лавандавы</span>
-      </div>
-      <div class="color-card">
-        <div class="color-swatch swatch-soft-green"></div>
-        <span class="color-name">Пяшчотна-салатавы</span>
-      </div>
-      <div class="color-card">
-        <div class="color-swatch swatch-creamy"></div>
-        <span class="color-name">Крэмавы</span>
-      </div>
-      <div class="color-card">
-        <div class="color-swatch swatch-milky"></div>
-        <span class="color-name">Малочны</span>
-      </div>
-    </div>
-  </section>
-
-  <!-- Location Section -->
-  <section class="location-section" aria-label="Інфармацыя пра месца правядзення">
-    <h2 class="location-title">Месца правядзення</h2>
-    <p class="location-subtitle">River Hall – госцевы комплекс</p>
-    <div class="gallery-container">
-      <div class="gallery-scroll" role="region" aria-label="Фотагалерэя месца правядзення">
-        <img src="images/riverhall/frame1.jpg" alt="Гасцёўня River Hall - экстэр'ер" class="gallery-image" loading="lazy">
-        <img src="images/riverhall/frame2.jpg" alt="Гасцёўня River Hall - інтэр'ер залі" class="gallery-image" loading="lazy">
-        <img src="images/riverhall/frame3.jpg" alt="Гасцёўня River Hall - тэраса" class="gallery-image" loading="lazy">
-      </div>
-    </div>
-    <p class="location-address">вул. Падольная, д. 23, г. Гродно</p>
-    <div class="map-container" id="mapContainer">
-        <script type="text/javascript" charset="utf-8" async src="https://api-maps.yandex.ru/services/constructor/1.0/js/?um=constructor%3A8c4533836a3525a8792c1d686af0cc61f4e6af650fa5ae98cc6261243666508c&amp;width=580&amp;height=346&amp;lang=ru_RU&amp;scroll=true"></script>
-    </div>
-  </section>
-
-  <!-- Guest Survey Form Section -->
-  <section class="survey-section" aria-label="Анкета для госцей">
-    <h2 class="survey-title">Калі ласка, запоўніце анкету</h2>
-    <p class="survey-deadline">Калі ласка, запоўніце анкету да 15 чэрвеня 2025 года</p>
-    
-      <form class="survey-form" 
-            action="/api/submit-form" 
-            method="POST" 
-            id="guestSurveyForm">
-      
-      <!-- Guest Name -->
-      <div class="form-group">
-        <label for="guestName" class="form-label">Ваша імя і прозвішча:</label>
-        <input type="text" 
-               id="guestName" 
-               name="guest_name" 
-               class="form-input" 
-               required 
-               placeholder="Увядзіце імя і прозвішча">
-      </div>
-      
-      <!-- Attendance Status -->
-      <div class="form-group">
-        <label for="attendance" class="form-label">Ці плануеце вы прысутнічаць на вяселлі?</label>
-        <select id="attendance" 
-                name="attendance" 
-                class="form-select" 
-                required>
-          <option value="" disabled selected>Выберыце адзін варыянт</option>
-          <option value="yes_alone">Так, з задавальненнем!</option>
-          <option value="yes_with_partner">Прыду з парай</option>
-          <option value="no">На жаль, не змагу</option>
-        </select>
-      </div>
-      
-      <!-- Partner Name (conditional) -->
-      <div class="form-group partner-name-group partner-group-hidden">
-        <label for="partnerName" class="form-label">Імя і прозвішча вашай пары:</label>
-        <input type="text" 
-               id="partnerName" 
-               name="partner_name" 
-               class="form-input" 
-               placeholder="Увядзіце імя і прозвішча партнёра">
-      </div>
-      
-      <!-- Alcohol Preferences (checkboxes) -->
-      <div class="form-group">
-        <label class="form-label">Які алкаголь вы хочаце ўжываць на банкеце?</label>
-        <div class="checkbox-group">
-          <label class="checkbox-item">
-            <input type="checkbox" name="alcohol_preference" value="ігрыстае">
-            <span>Вiно iгрыстае</span>
-          </label>
-          <label class="checkbox-item">
-            <input type="checkbox" name="alcohol_preference" value="вiно_чырвонае_паўсалодкае">
-            <span>Віно чырвонае (паўсалодкае)</span>
-          </label>
-          <label class="checkbox-item">
-            <input type="checkbox" name="alcohol_preference" value="вiно_чырвонае_паўсухое">
-            <span>Віно чырвонае (паўсухое)</span>
-          </label>
-          <label class="checkbox-item">
-            <input type="checkbox" name="alcohol_preference" value="вiно_белае_паўсалодкае">
-            <span>Віно белае (паўсалодкае)</span>
-          </label>
-          <label class="checkbox-item">
-            <input type="checkbox" name="alcohol_preference" value="вiно_белае_паўсухое">
-            <span>Віно белае (паўсухое)</span>
-          </label>
-          <label class="checkbox-item">
-            <input type="checkbox" name="alcohol_preference" value="гарэлка">
-            <span>Гарэлка</span>
-          </label>
-          <label class="checkbox-item">
-            <input type="checkbox" name="alcohol_preference" value="віскі">
-            <span>Віскі</span>
-          </label>
-          <label class="checkbox-item">
-            <input type="checkbox" name="alcohol_preference" value="каньяк">
-            <span>Каньяк</span>
-          </label>
-          <label class="checkbox-item">
-            <input type="checkbox" name="alcohol_preference" value="безалкагольныя_напоі">
-            <span>Безалкагольныя напоі</span>
-          </label>
+    <!-- Center Content -->
+    <div class="center-content">
+      <div class="faces-container" role="img" aria-label="Партрэты маладых">
+        <div class="face-card">
+          <img
+            src="images/faces/Aliaksei.png"
+            alt="Партрэт жаніха Аляксея"
+            class="face-image"
+          />
+        </div>
+        <div class="face-card">
+          <img
+            src="images/faces/Daria.png"
+            alt="Партрэт нявесты Дар'і"
+            class="face-image"
+          />
         </div>
       </div>
-      
-      <!-- Submit Button -->
-      <button type="submit" class="form-submit-btn">Адправіць анкету</button>
-      
-      <!-- Form Messages -->
-      <div id="formSuccess" class="form-message form-message-success form-message-hidden">
-        <p>Дзякуй за вашу адказ! Ваша анкета прынята.</p>
+      <div class="names-board" role="img" aria-label="Назвы: Аляксей і Дар'я">
+        <img
+          src="images/faces/names_board.png"
+          alt="Рамка для імёнаў"
+          class="names-image"
+        />
+        <p class="board-names">Аляксей i Дар'я</p>
       </div>
-      
-      <div id="formError" class="form-message form-message-error form-message-hidden">
-        <p>Адбылася памылка. Калі ласка, паспрабуйце яшчы раз.</p>
-      </div>
-      
-      <div id="formDeadline" class="form-message form-message-deadline form-message-hidden">
-        <p>Прабачце, пазнейшыя анкеты не будуць разглядацца.</p>
-      </div>
-    </form>
-  </section>
+    </div>
 
-  <script src="script.js"></script>
-</body>
+    <!-- Countdown Timer Section -->
+    <section class="timer-section">
+      <h2 class="timer-title">Лічым дні да нашага "шчаслівыя разам"</h2>
+      <p class="timer-date">2 жніўня 2026 года</p>
+      <div class="timer-container">
+        <div class="timer-item">
+          <div class="timer-number" id="days">0</div>
+          <div class="timer-label">Дзён</div>
+        </div>
+        <div class="timer-separator">:</div>
+        <div class="timer-item">
+          <div class="timer-number" id="hours">0</div>
+          <div class="timer-label">Гадзін</div>
+        </div>
+        <div class="timer-separator">:</div>
+        <div class="timer-item">
+          <div class="timer-number" id="minutes">0</div>
+          <div class="timer-label">Хвілін</div>
+        </div>
+        <div class="timer-separator">:</div>
+        <div class="timer-item">
+          <div class="timer-number" id="seconds">0</div>
+          <div class="timer-label">Секунд</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Timeline Section -->
+    <section class="timeline-section" aria-label="Гадзінасць пара">
+      <h2 class="timeline-title">Наш шлях</h2>
+      <div class="timeline-container">
+        <div
+          class="timeline-scroll"
+          role="region"
+          aria-label="Гарызантальная пракрутка гадзінасці"
+        >
+          <div
+            class="timeline-track"
+            role="list"
+            aria-label="Асноўныя моманты адносін"
+          >
+            <div class="timeline-item" role="listitem">
+              <div
+                class="timeline-dot"
+                tabindex="0"
+                role="button"
+                aria-label="Першая зустрэча - лета 2022"
+              ></div>
+              <div class="timeline-content">
+                <h3 class="timeline-date">Лета 2022</h3>
+                <p class="timeline-text">Першая зустрэча</p>
+              </div>
+            </div>
+
+            <div class="timeline-item" role="listitem">
+              <div
+                class="timeline-dot"
+                tabindex="0"
+                role="button"
+                aria-label="Першае спатканне - лета 2023"
+              ></div>
+              <div class="timeline-content">
+                <h3 class="timeline-date">Лета 2023</h3>
+                <p class="timeline-text">Першае спатканне</p>
+              </div>
+            </div>
+
+            <div class="timeline-item" role="listitem">
+              <div
+                class="timeline-dot"
+                tabindex="0"
+                role="button"
+                aria-label="Першы пацалунак - лета 2023"
+              ></div>
+              <div class="timeline-content">
+                <h3 class="timeline-date">Лета 2023</h3>
+                <p class="timeline-text">Першы пацалунак</p>
+              </div>
+            </div>
+
+            <div class="timeline-item" role="listitem">
+              <div
+                class="timeline-dot"
+                tabindex="0"
+                role="button"
+                aria-label="Першае падарожжа - лета 2024"
+              ></div>
+              <div class="timeline-content">
+                <h3 class="timeline-date">Лета 2024</h3>
+                <p class="timeline-text">Першае падарожжа</p>
+              </div>
+            </div>
+
+            <div class="timeline-item" role="listitem">
+              <div
+                class="timeline-dot"
+                tabindex="0"
+                role="button"
+                aria-label="Першае 'кахаю' - лета 2024"
+              ></div>
+              <div class="timeline-content">
+                <h3 class="timeline-date">Лета 2024</h3>
+                <p class="timeline-text">Першае "кахаю"</p>
+              </div>
+            </div>
+
+            <div class="timeline-item" role="listitem">
+              <div
+                class="timeline-dot"
+                tabindex="0"
+                role="button"
+                aria-label="Першы агульны дом - восень 2024"
+              ></div>
+              <div class="timeline-content">
+                <h3 class="timeline-date">Восень 2024</h3>
+                <p class="timeline-text">Першы агульны дом</p>
+              </div>
+            </div>
+
+            <div class="timeline-item" role="listitem">
+              <div
+                class="timeline-dot"
+                tabindex="0"
+                role="button"
+                aria-label="Запаветнае 'Так' - лета 2025"
+              ></div>
+              <div class="timeline-content">
+                <h3 class="timeline-date">Лета 2025</h3>
+                <p class="timeline-text">Запаветнае "Так"</p>
+              </div>
+            </div>
+
+            <div class="timeline-item active final-milestone" role="listitem">
+              <div
+                class="timeline-dot active"
+                tabindex="0"
+                role="button"
+                aria-current="true"
+                aria-label="Стварэнне сям'і - лета 2026"
+              ></div>
+              <div class="timeline-content">
+                <h3 class="timeline-date">Лета 2026</h3>
+                <p class="timeline-text">Стварэнне нашай сям'і.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Dresscode Section -->
+    <section class="dresscode-section" aria-label="Рэкамендацыі па дрэс-коду">
+      <h2 class="dresscode-title">Дрэс-код</h2>
+      <p class="dresscode-subtitle">
+        Калі ласка, выбярыце адзін з гэтых колераў
+      </p>
+      <div class="colors-container">
+        <div class="color-card">
+          <div class="color-swatch swatch-soft-pink"></div>
+          <span class="color-name">Нябесна-ружовы</span>
+        </div>
+        <div class="color-card">
+          <div class="color-swatch swatch-soft-blue"></div>
+          <span class="color-name">Нябесна-блакітны</span>
+        </div>
+        <div class="color-card">
+          <div class="color-swatch swatch-soft-orange"></div>
+          <span class="color-name">Пяшчотна-аранжавы</span>
+        </div>
+        <div class="color-card">
+          <div class="color-swatch swatch-soft-yellow"></div>
+          <span class="color-name">Пяшчотна-жоўты</span>
+        </div>
+        <div class="color-card">
+          <div class="color-swatch swatch-soft-lavender"></div>
+          <span class="color-name">Пяшчотна-лавандавы</span>
+        </div>
+        <div class="color-card">
+          <div class="color-swatch swatch-soft-green"></div>
+          <span class="color-name">Пяшчотна-салатавы</span>
+        </div>
+        <div class="color-card">
+          <div class="color-swatch swatch-creamy"></div>
+          <span class="color-name">Крэмавы</span>
+        </div>
+        <div class="color-card">
+          <div class="color-swatch swatch-milky"></div>
+          <span class="color-name">Малочны</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Location Section -->
+    <section
+      class="location-section"
+      aria-label="Інфармацыя пра месца правядзення"
+    >
+      <h2 class="location-title">Месца правядзення</h2>
+      <p class="location-subtitle">River Hall – госцевы комплекс</p>
+      <div class="gallery-container">
+        <div
+          class="gallery-scroll"
+          role="region"
+          aria-label="Фотагалерэя месца правядзення"
+        >
+          <img
+            src="images/riverhall/frame1.jpg"
+            alt="Гасцёўня River Hall - экстэр'ер"
+            class="gallery-image"
+            loading="lazy"
+          />
+          <img
+            src="images/riverhall/frame2.jpg"
+            alt="Гасцёўня River Hall - інтэр'ер залі"
+            class="gallery-image"
+            loading="lazy"
+          />
+          <img
+            src="images/riverhall/frame3.jpg"
+            alt="Гасцёўня River Hall - тэраса"
+            class="gallery-image"
+            loading="lazy"
+          />
+        </div>
+      </div>
+      <p class="location-address">вул. Падольная, д. 23, г. Гродно</p>
+      <div class="map-container" id="mapContainer">
+        <script
+          type="text/javascript"
+          charset="utf-8"
+          async
+          src="https://api-maps.yandex.ru/services/constructor/1.0/js/?um=constructor%3A8c4533836a3525a8792c1d686af0cc61f4e6af650fa5ae98cc6261243666508c&amp;width=580&amp;height=346&amp;lang=ru_RU&amp;scroll=true"
+        ></script>
+      </div>
+    </section>
+
+    <!-- Celebration Plan Section -->
+    <section class="celebration-section" aria-label="Праграма святкавання">
+      <h2 class="celebration-title">Праграма святкавання</h2>
+      <p class="celebration-subtitle">2 жніўня 2026 года</p>
+      <div class="schedule-container">
+        <div class="schedule-item">
+          <div class="schedule-time">15:30</div>
+          <div class="schedule-activity">Збор гасцей</div>
+        </div>
+
+        <div class="schedule-item">
+          <div class="schedule-time">16:00</div>
+          <div class="schedule-activity">Выязная цырымонія</div>
+        </div>
+
+        <div class="schedule-item">
+          <div class="schedule-time">17:00</div>
+          <div class="schedule-activity">Банкет</div>
+        </div>
+
+        <div class="schedule-item">
+          <div class="schedule-time">23:00</div>
+          <div class="schedule-activity">Фінал урачыстасці</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Guest Survey Form Section -->
+    <section class="survey-section" aria-label="Анкета для госцей">
+      <h2 class="survey-title">Калі ласка, запоўніце анкету</h2>
+      <p class="survey-deadline">
+        Калі ласка, запоўніце анкету да 15 чэрвеня 2025 года
+      </p>
+
+      <form
+        class="survey-form"
+        action="/api/submit-form"
+        method="POST"
+        id="guestSurveyForm"
+      >
+        <!-- Guest Name -->
+        <div class="form-group">
+          <label for="guestName" class="form-label"
+            >Ваша імя і прозвішча:</label
+          >
+          <input
+            type="text"
+            id="guestName"
+            name="guest_name"
+            class="form-input"
+            required
+            placeholder="Увядзіце імя і прозвішча"
+          />
+        </div>
+
+        <!-- Attendance Status -->
+        <div class="form-group">
+          <label for="attendance" class="form-label"
+            >Ці плануеце вы прысутнічаць на вяселлі?</label
+          >
+          <select
+            id="attendance"
+            name="attendance"
+            class="form-select"
+            required
+          >
+            <option value="" disabled selected>Выберыце адзін варыянт</option>
+            <option value="yes_alone">Так, з задавальненнем!</option>
+            <option value="yes_with_partner">Прыду з парай</option>
+            <option value="no">На жаль, не змагу</option>
+          </select>
+        </div>
+
+        <!-- Partner Name (conditional) -->
+        <div class="form-group partner-name-group partner-group-hidden">
+          <label for="partnerName" class="form-label"
+            >Імя і прозвішча вашай пары:</label
+          >
+          <input
+            type="text"
+            id="partnerName"
+            name="partner_name"
+            class="form-input"
+            placeholder="Увядзіце імя і прозвішча партнёра"
+          />
+        </div>
+
+        <!-- Alcohol Preferences (checkboxes) -->
+        <div class="form-group">
+          <label class="form-label"
+            >Які алкаголь вы хочаце ўжываць на банкеце?</label
+          >
+          <div class="checkbox-group">
+            <label class="checkbox-item">
+              <input
+                type="checkbox"
+                name="alcohol_preference"
+                value="ігрыстае"
+              />
+              <span>Вiно iгрыстае</span>
+            </label>
+            <label class="checkbox-item">
+              <input
+                type="checkbox"
+                name="alcohol_preference"
+                value="вiно_чырвонае_паўсалодкае"
+              />
+              <span>Віно чырвонае (паўсалодкае)</span>
+            </label>
+            <label class="checkbox-item">
+              <input
+                type="checkbox"
+                name="alcohol_preference"
+                value="вiно_чырвонае_паўсухое"
+              />
+              <span>Віно чырвонае (паўсухое)</span>
+            </label>
+            <label class="checkbox-item">
+              <input
+                type="checkbox"
+                name="alcohol_preference"
+                value="вiно_белае_паўсалодкае"
+              />
+              <span>Віно белае (паўсалодкае)</span>
+            </label>
+            <label class="checkbox-item">
+              <input
+                type="checkbox"
+                name="alcohol_preference"
+                value="вiно_белае_паўсухое"
+              />
+              <span>Віно белае (паўсухое)</span>
+            </label>
+            <label class="checkbox-item">
+              <input
+                type="checkbox"
+                name="alcohol_preference"
+                value="гарэлка"
+              />
+              <span>Гарэлка</span>
+            </label>
+            <label class="checkbox-item">
+              <input type="checkbox" name="alcohol_preference" value="віскі" />
+              <span>Віскі</span>
+            </label>
+            <label class="checkbox-item">
+              <input type="checkbox" name="alcohol_preference" value="каньяк" />
+              <span>Каньяк</span>
+            </label>
+            <label class="checkbox-item">
+              <input
+                type="checkbox"
+                name="alcohol_preference"
+                value="безалкагольныя_напоі"
+              />
+              <span>Безалкагольныя напоі</span>
+            </label>
+          </div>
+        </div>
+
+        <!-- Submit Button -->
+        <button type="submit" class="form-submit-btn">Адправіць анкету</button>
+
+        <!-- Form Messages -->
+        <div
+          id="formSuccess"
+          class="form-message form-message-success form-message-hidden"
+        >
+          <p>Дзякуй за вашу адказ! Ваша анкета прынята.</p>
+        </div>
+
+        <div
+          id="formError"
+          class="form-message form-message-error form-message-hidden"
+        >
+          <p>Адбылася памылка. Калі ласка, паспрабуйце яшчэ раз.</p>
+        </div>
+
+        <div
+          id="formDeadline"
+          class="form-message form-message-deadline form-message-hidden"
+        >
+          <p>Прабачце, пазнейшыя анкеты не будуць разглядацца.</p>
+        </div>
+      </form>
+    </section>
+
+    <script src="script.js"></script>
+  </body>
 </html>

@@ -391,9 +391,19 @@ body {
   font-family: 'Skolar PE', serif;
   font-size: 18px;
   color: var(--color-text-secondary);
-  margin-bottom: 50px;
+  margin-bottom: 20px;
   text-align: center;
   font-style: italic;
+}
+
+.dresscode-description {
+  font-family: 'Skolar PE', serif;
+  font-size: 16px;
+  color: var(--color-text-primary);
+  margin-bottom: 40px;
+  text-align: center;
+  line-height: 1.5;
+  max-width: 700px;
 }
 
 /* Location Section */
@@ -706,6 +716,11 @@ body {
     font-size: 16px;
   }
 
+  .dresscode-description {
+    font-size: 15px;
+    margin-bottom: 35px;
+  }
+
   .color-swatch {
     width: 70px;
     height: 70px;
@@ -828,6 +843,11 @@ body {
   .dresscode-subtitle {
     font-size: 14px;
     margin-bottom: 40px;
+  }
+
+  .dresscode-description {
+    font-size: 14px;
+    margin-bottom: 30px;
   }
 
   .colors-container {
@@ -977,6 +997,11 @@ body {
   .dresscode-subtitle {
     font-size: 12px;
     margin-bottom: 30px;
+  }
+
+  .dresscode-description {
+    font-size: 12px;
+    margin-bottom: 25px;
   }
 
   .colors-container {
@@ -1237,36 +1262,86 @@ body {
   display: none !important;
 }
 
-@media (max-width: 768px) {
-  .survey-title {
+/* Wishes Section */
+.wishes-section {
+  position: relative;
+  z-index: 2;
+  padding: 80px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  width: 100%;
+  background: var(--color-section-bg);
+}
+
+.wishes-container {
+  max-width: 800px;
+  width: 100%;
+  text-align: center;
+}
+
+.wishes-intro {
+  font-family: 'Skolar PE', serif;
+  font-size: 24px;
+  color: var(--color-text-primary);
+  margin-bottom: 40px;
+  line-height: 1.6;
+  font-weight: 600;
+}
+
+.wishes-subtitle {
+  font-family: 'Skolar PE', serif;
+  font-size: 28px;
+  color: var(--color-text-primary);
+  margin-bottom: 30px;
+  font-weight: bold;
+}
+
+.wishes-item {
+  background: var(--color-milky);
+  border: 3px solid #333;
+  border-radius: 15px;
+  padding: 25px 30px;
+  margin-bottom: 25px;
+  text-align: left;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+.wishes-item:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 25px rgba(0, 0, 0, 0.15);
+}
+
+.wishes-item-title {
+  font-family: 'Skolar PE', serif;
+  font-size: 20px;
+  color: var(--color-text-primary);
+  margin-bottom: 15px;
+  font-weight: bold;
+}
+
+.wishes-item-text {
+  font-family: 'Skolar PE', serif;
+  font-size: 16px;
+  color: var(--color-text-primary);
+  line-height: 1.6;
+  font-style: italic;
+}
+
+  .wishes-item-text {
+    font-size: 15px;
+  }
+
+  .wishes-closing {
     font-size: 28px;
-  }
-
-  .survey-deadline {
-    font-size: 14px;
-  }
-
-  .checkbox-group {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 10px;
-    padding: 10px;
-  }
-
-  .checkbox-item {
-    padding: 8px;
-  }
-
-  .checkbox-item span {
-    font-size: 12px;
-  }
-
-  .form-submit-btn {
-    font-size: 16px;
-    padding: 15px 30px;
+    margin-top: 35px;
   }
 }
 
-@media (max-width: 480px) {
+@media (max-width: 768px) {
   .survey-section {
     padding: 60px 15px;
   }
@@ -1291,5 +1366,33 @@ body {
   .form-select {
     font-size: 14px;
     padding: 12px 15px;
+  }
+
+  .wishes-section {
+    padding: 60px 15px;
+  }
+
+  .wishes-intro {
+    font-size: 18px;
+    margin-bottom: 25px;
+  }
+
+  .wishes-subtitle {
+    font-size: 22px;
+    margin-bottom: 20px;
+  }
+
+  .wishes-item {
+    padding: 18px 20px;
+    margin-bottom: 18px;
+  }
+
+  .wishes-item-title {
+    font-size: 17px;
+    margin-bottom: 10px;
+  }
+
+  .wishes-item-text {
+    font-size: 14px;
   }
 }

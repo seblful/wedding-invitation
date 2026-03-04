@@ -431,11 +431,22 @@ body {
 
 .location-subtitle {
   font-family: 'Skolar PE', serif;
-  font-size: 32px;
+  font-size: 24px;
+  color: var(--color-text-primary);
+  margin-bottom: 20px;
+  text-align: center;
+  font-weight: 500;
+}
+
+.location-description {
+  font-family: 'Skolar PE', serif;
+  font-size: 16px;
   color: var(--color-text-primary);
   margin-bottom: 40px;
   text-align: center;
-  font-weight: bold;
+  font-style: italic;
+  line-height: 1.6;
+  max-width: 700px;
 }
 
 .location-address {
@@ -735,7 +746,7 @@ body {
   }
 
   .location-subtitle {
-    font-size: 28px;
+    font-size: 20px;
   }
 
   .location-address {
@@ -868,7 +879,7 @@ body {
   }
 
   .location-subtitle {
-    font-size: 24px;
+    font-size: 18px;
     margin-bottom: 30px;
   }
 
@@ -1023,7 +1034,7 @@ body {
   }
 
   .location-subtitle {
-    font-size: 20px;
+    font-size: 16px;
     margin-bottom: 25px;
   }
 
@@ -1282,15 +1293,6 @@ body {
   text-align: center;
 }
 
-.wishes-intro {
-  font-family: 'Skolar PE', serif;
-  font-size: 24px;
-  color: var(--color-text-primary);
-  margin-bottom: 40px;
-  line-height: 1.6;
-  font-weight: 600;
-}
-
 .wishes-subtitle {
   font-family: 'Skolar PE', serif;
   font-size: 28px;
@@ -1334,65 +1336,25 @@ body {
   .wishes-item-text {
     font-size: 15px;
   }
+}
 
-  .wishes-closing {
-    font-size: 28px;
-    margin-top: 35px;
-  }
+/* Closing Section - uses inline styles in HTML */
+.closing-section .wishes-closing {
+  font-family: 'InkVerse', 'Georgia', 'Garamond', serif;
+  font-size: 28px;
+  color: var(--color-text-primary);
+  text-align: center;
+  margin: 0;
 }
 
 @media (max-width: 768px) {
-  .survey-section {
-    padding: 60px 15px;
+  .closing-section .wishes-closing {
+    font-size: 24px;
   }
+}
 
-  .survey-title {
+@media (max-width: 480px) {
+  .closing-section .wishes-closing {
     font-size: 22px;
-  }
-
-  .survey-deadline {
-    font-size: 13px;
-  }
-
-  .form-group {
-    margin-bottom: 20px;
-  }
-
-  .form-label {
-    font-size: 14px;
-  }
-
-  .form-input,
-  .form-select {
-    font-size: 14px;
-    padding: 12px 15px;
-  }
-
-  .wishes-section {
-    padding: 60px 15px;
-  }
-
-  .wishes-intro {
-    font-size: 18px;
-    margin-bottom: 25px;
-  }
-
-  .wishes-subtitle {
-    font-size: 22px;
-    margin-bottom: 20px;
-  }
-
-  .wishes-item {
-    padding: 18px 20px;
-    margin-bottom: 18px;
-  }
-
-  .wishes-item-title {
-    font-size: 17px;
-    margin-bottom: 10px;
-  }
-
-  .wishes-item-text {
-    font-size: 14px;
   }
 }

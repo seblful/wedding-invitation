@@ -5,17 +5,17 @@ const compression = require('compression');
 const config = require('./config');
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = 3000;
 
-const ALLOWED_ORIGINS = process.env.ALLOWED_ORIGINS 
-  ? process.env.ALLOWED_ORIGINS.split(',') 
-  : ['http://localhost:3000', 'http://127.0.0.1:3000'];
+const ALLOWED_ORIGINS = ['http://localhost:3000', 'http://127.0.0.1:3000'];
 
 app.use(compression());
 
-app.use(helmet({
-  contentSecurityPolicy: false
-}));
+app.use(
+  helmet({
+    contentSecurityPolicy: false,
+  })
+);
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -24,18 +24,18 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use((req, res, next) => {
   const origin = req.headers.origin;
-  
+
   if (ALLOWED_ORIGINS.includes(origin)) {
     res.setHeader('Access-Control-Allow-Origin', origin);
   }
-  
+
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-  
+
   if (req.method === 'OPTIONS') {
     return res.sendStatus(204);
   }
-  
+
   next();
 });
 
@@ -48,7 +48,7 @@ app.get('/api/config', (req, res) => {
     res.json({
       weddingDate: config.weddingDate,
       timezone: config.timezone,
-      location: config.location
+      location: config.location,
     });
   } catch (error) {
     res.status(500).json({ error: 'Failed to fetch config' });
@@ -61,11 +61,11 @@ app.post('/api/submit-form', async (req, res) => {
     const response = await fetch(config.form.formspreeEndpoint, {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
       },
-      body: JSON.stringify(formData)
+      body: JSON.stringify(formData),
     });
-    
+
     if (response.ok) {
       res.json({ success: true });
     } else {
@@ -80,10 +80,9 @@ app.post('/api/submit-form', async (req, res) => {
 app.use((err, req, res, next) => {
   console.error('Error:', err);
   res.status(err.status || 500).json({
-    error: process.env.NODE_ENV === 'production' 
-      ? 'Internal server error' 
-      : err.message
+    error: err.message
   });
+});
 });
 
 app.use((req, res) => {

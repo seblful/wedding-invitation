@@ -39,7 +39,6 @@
   --text-lg: 1.563rem;
   --text-xl: 1.953rem;
   --text-2xl: 2.441rem;
-  --text-3xl: 3.052rem;
 }
 
 * {
@@ -1345,22 +1344,22 @@ body {
 }
 
 /* Closing Section - uses inline styles in HTML */
-.closing-section .wishes-closing {
+.wishes-closing {
   font-family: 'InkVerse', 'Georgia', 'Garamond', serif;
-  font-size: var(--text-3xl);
+  font-size: var(--text-2xl);
   color: var(--color-text-primary);
   text-align: center;
   margin: 0;
 }
 
 @media (max-width: 768px) {
-  .closing-section .wishes-closing {
+  .wishes-closing {
     font-size: var(--text-lg);
   }
 }
 
 @media (max-width: 480px) {
-  .closing-section .wishes-closing {
+  .wishes-closing {
     font-size: var(--text-md);
   }
 }

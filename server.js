@@ -80,9 +80,8 @@ app.post('/api/submit-form', async (req, res) => {
 app.use((err, req, res, next) => {
   console.error('Error:', err);
   res.status(err.status || 500).json({
-    error: err.message
+    error: err.message,
   });
-});
 });
 
 app.use((req, res) => {

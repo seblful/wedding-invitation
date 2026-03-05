@@ -3,7 +3,7 @@ module.exports = {
   timezone: 'Europe/Minsk',
   location: {
     name: 'River Hall',
-    address: 'вул. Падольная, д. 23, г. Гродно',
+    address: 'вул. Падольная, д. 23, г. Гродна',
     yandexMapUrl:
       'https://yandex.ru/map-widget/v1/?ll=23.833062,53.671368&z=15&pt=23.833062,53.671368,pm2rdm',
     yandexDirectUrl: 'https://yandex.com/maps/-/CPqGnRmu',

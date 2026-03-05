@@ -58,6 +58,12 @@ app.get('/api/config', (req, res) => {
 app.post('/api/submit-form', async (req, res) => {
   try {
     const formData = req.body;
+
+    if (!config.form || !config.form.formspreeEndpoint) {
+      console.error('Formspree endpoint not configured');
+      return res.status(500).json({ error: 'Form service not configured' });
+    }
+
     const response = await fetch(config.form.formspreeEndpoint, {
       method: 'POST',
       headers: {
@@ -66,10 +72,15 @@ app.post('/api/submit-form', async (req, res) => {
       body: JSON.stringify(formData),
     });
 
+    const result = await response.json();
+
     if (response.ok) {
       res.json({ success: true });
     } else {
-      res.status(response.status).json({ error: 'Form submission failed' });
+      console.error('Formspree error:', result);
+      res
+        .status(response.status)
+        .json({ error: result.error || 'Form submission failed' });
     }
   } catch (error) {
     console.error('Form submission error:', error);
@@ -77,7 +88,7 @@ app.post('/api/submit-form', async (req, res) => {
   }
 });
 
-app.use((err, req, res, next) => {
+app.use((err, req, res) => {
   console.error('Error:', err);
   res.status(err.status || 500).json({
     error: err.message,

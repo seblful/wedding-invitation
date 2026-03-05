@@ -88,15 +88,8 @@ app.post('/api/submit-form', async (req, res) => {
   }
 });
 
-app.use((err, req, res) => {
-  console.error('Error:', err);
-  res.status(err.status || 500).json({
-    error: err.message,
-  });
-});
-
-app.use((req, res) => {
-  res.status(404).json({ error: 'Route not found' });
+app.use((req, res, next) => {
+  res.status(404).sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
 // Start server

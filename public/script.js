@@ -1,10 +1,12 @@
 let weddingDate;
 let countdownInterval;
+let configData;
 
 async function fetchConfig() {
   try {
     const response = await fetch('/api/config');
     const data = await response.json();
+    configData = data;
     weddingDate = new Date(data.weddingDate).getTime();
     return true;
   } catch (error) {
@@ -49,6 +51,7 @@ function updateCountdown() {
 async function initCountdown() {
   const configLoaded = await fetchConfig();
   if (configLoaded) {
+    loadMap();
     updateCountdown();
     countdownInterval = setInterval(updateCountdown, 1000);
   }
@@ -57,6 +60,22 @@ async function initCountdown() {
 function cleanupCountdown() {
   if (countdownInterval) {
     clearInterval(countdownInterval);
+  }
+}
+
+function loadMap() {
+  const mapContainer = document.getElementById('mapContainer');
+  if (mapContainer && configData?.location?.yandexMapUrl) {
+    mapContainer.innerHTML = `
+      <iframe
+        src="${configData.location.yandexMapUrl}"
+        width="580"
+        height="346"
+        frameborder="0"
+        allowfullscreen="true"
+        style="position: relative"
+      ></iframe>
+    `;
   }
 }
 
@@ -150,5 +169,4 @@ function initGuestSurvey() {
 document.addEventListener('DOMContentLoaded', initGuestSurvey);
 
 document.addEventListener('DOMContentLoaded', initCountdown);
-document.addEventListener('DOMContentLoaded', initGuestSurvey);
 window.addEventListener('beforeunload', cleanupCountdown);

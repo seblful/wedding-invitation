@@ -1,12 +1,12 @@
 module.exports = {
   port: 3000,
-  baseUrl: 'https://yourwebsite.com',
+  baseUrl: 'https://attach-filename-clips-bag.trycloudflare.com',
   themeColor: '#fdf4e3',
   openGraph: {
     title: "Вяселле Аляксея і Дар'і",
     description:
-      'Запрашаем вас падзяліць з намі наш асаблівы дзень! 2 жніўня 2026 года.',
-    image: '/images/faces/names_board.png',
+      'Запрашаем вас падзяліць з намі наш асаблівы дзень! 2 жніўня 2026 года будзем рады бачыць вас на нашым вяселлі ў River Hall, Гродна.',
+    image: 'images/preview.png',
   },
   weddingDate: new Date('2026-08-02T00:00:00'),
   timezone: 'Europe/Minsk',
@@ -14,7 +14,7 @@ module.exports = {
     name: 'River Hall',
     address: 'вул. Падольная, д. 23, г. Гродна',
     yandexMapUrl:
-      'https://yandex.ru/map-widget/v1/?ll=23.833062,53.671368&z=15&pt=23.833062,53.671368,pm2rdm',
+      'https://yandex.ru/map-widget/v1/?ll=23.833062,53.671368&z=16&pt=23.833062,53.671368,pm2rdm',
     yandexDirectUrl: 'https://yandex.com/maps/-/CPqGnRmu',
     mapDimensions: {
       width: 580,

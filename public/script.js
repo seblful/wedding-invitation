@@ -178,7 +178,7 @@ window.addEventListener('beforeunload', cleanupCountdown);
 
 function initScrollAnimations() {
   const sections = document.querySelectorAll(
-    'section, .faces-container, .names-board'
+    '.faces-container, .names-board, .timeline-section'
   );
 
   sections.forEach((section) => section.classList.add('fade-in-section'));

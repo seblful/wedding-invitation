@@ -22,14 +22,14 @@
 
 /* Color Variables */
 :root {
-  --color-soft-pink: #fff1f1;
-  --color-soft-blue: #e4f7ff;
-  --color-soft-orange: #fcdcc0;
-  --color-soft-yellow: #fff9d2;
-  --color-soft-lavender: #eed0f5;
-  --color-soft-green: #d9fdd9;
-  --color-milky: #fdfff5;
-  --color-creamy: #fdf4e3;
+  --Бледна-ружовы: #fff1f1;
+  --Светла-блакітны: #e4f7ff;
+  --Светла-персікавы: #fcdcc0;
+  --Бледна-жоўты: #fff9d2;
+  --Светла-бэзавы: #eed0f5;
+  --Бледна-зялёны: #d9fdd9;
+  --Малочна-белы: #fdfff5;
+  --Крэмавы: #fdf4e3;
   --color-text-primary: #333;
   --color-text-secondary: #666;
   --color-section-bg: #b9dfc6;
@@ -49,7 +49,7 @@
 
 body {
   font-family: 'InkVerse', 'Georgia', 'Garamond', serif;
-  background: var(--color-creamy);
+  background: var(--Крэмавы);
   color: var(--color-text-primary);
   position: relative;
   overflow-x: hidden;
@@ -204,7 +204,7 @@ body {
   min-width: 120px;
   text-align: center;
   line-height: 1;
-  background: var(--color-milky);
+  background: var(--Малочна-белы);
   padding: 30px 20px;
   border-radius: 15px;
   border: 3px solid #333;
@@ -324,7 +324,7 @@ body {
   width: 20px;
   height: 20px;
   border-radius: 50%;
-  background: var(--color-creamy);
+  background: var(--Крэмавы);
   border: 4px solid #333;
   flex-shrink: 0;
   transition: all 0.3s ease;
@@ -332,12 +332,12 @@ body {
 }
 
 .timeline-dot:hover {
-  background: var(--color-soft-pink);
+  background: var(--Бледна-ружовы);
   transform: scale(1.2);
 }
 
 .timeline-dot.active {
-  background: var(--color-soft-orange);
+  background: var(--Светла-персікавы);
   width: 28px;
   height: 28px;
   border-width: 4px;
@@ -437,7 +437,7 @@ body {
 
 .location-subtitle-frame {
   display: inline-block;
-  background: var(--color-creamy);
+  background: var(--Крэмавы);
   border: 3px solid #333;
   border-radius: 15px;
   padding: 20px 35px;
@@ -449,7 +449,7 @@ body {
 .location-subtitle-frame:hover {
   transform: translateY(-2px);
   box-shadow: 0 6px 25px rgba(0, 0, 0, 0.15);
-  background: var(--color-soft-orange);
+  background: var(--Светла-персікавы);
 }
 
 .location-subtitle {
@@ -528,7 +528,7 @@ body {
   height: auto;
   border-radius: 15px;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
-  border: 3px solid var(--color-creamy);
+  border: 3px solid var(--Крэмавы);
   transition: all 0.3s ease;
   cursor: pointer;
   flex-shrink: 0;
@@ -603,7 +603,7 @@ body {
   align-items: center;
   gap: 25px;
   padding: 20px 30px;
-  background: var(--color-creamy);
+  background: var(--Крэмавы);
   border: 3px solid #333;
   border-radius: 15px;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
@@ -613,7 +613,7 @@ body {
 .schedule-item:hover {
   transform: translateY(-3px);
   box-shadow: 0 6px 25px rgba(0, 0, 0, 0.2);
-  background: var(--color-milky);
+  background: var(--Малочна-белы);
 }
 
 .schedule-time {
@@ -648,6 +648,8 @@ body {
   gap: 15px;
   width: 130px;
   transition: transform 0.3s ease;
+  text-decoration: none;
+  color: inherit;
 }
 
 .color-card:hover {
@@ -664,35 +666,35 @@ body {
 }
 
 .swatch-soft-pink {
-  background-color: var(--color-soft-pink);
+  background-color: var(--Бледна-ружовы);
 }
 
 .swatch-soft-blue {
-  background-color: var(--color-soft-blue);
+  background-color: var(--Светла-блакітны);
 }
 
 .swatch-soft-orange {
-  background-color: var(--color-soft-orange);
+  background-color: var(--Светла-персікавы);
 }
 
 .swatch-soft-yellow {
-  background-color: var(--color-soft-yellow);
+  background-color: var(--Бледна-жоўты);
 }
 
 .swatch-soft-lavender {
-  background-color: var(--color-soft-lavender);
+  background-color: var(--Светла-бэзавы);
 }
 
 .swatch-soft-green {
-  background-color: var(--color-soft-green);
+  background-color: var(--Бледна-зялёны);
 }
 
 .swatch-creamy {
-  background-color: var(--color-creamy);
+  background-color: var(--Крэмавы);
 }
 
 .swatch-milky {
-  background-color: var(--color-milky);
+  background-color: var(--Малочна-белы);
 }
 
 .color-swatch:hover {
@@ -795,7 +797,7 @@ body {
   font-family: 'Skolar PE', serif;
   font-size: var(--text-base);
   color: var(--color-text-primary);
-  background: var(--color-creamy);
+  background: var(--Крэмавы);
   border: 3px solid #333;
   border-radius: 15px;
   transition: all 0.3s ease;
@@ -805,7 +807,7 @@ body {
 .form-input:focus,
 .form-select:focus {
   outline: none;
-  background: var(--color-milky);
+  background: var(--Малочна-белы);
   transform: translateY(-2px);
   box-shadow: 0 6px 25px rgba(0, 0, 0, 0.2);
 }
@@ -819,7 +821,7 @@ body {
   grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
   gap: 15px;
   padding: 15px;
-  background: var(--color-creamy);
+  background: var(--Крэмавы);
   border-radius: 15px;
   border: 3px solid #333;
 }
@@ -835,7 +837,7 @@ body {
 }
 
 .checkbox-item:hover {
-  background: var(--color-milky);
+  background: var(--Малочна-белы);
 }
 
 .checkbox-item input[type='checkbox'] {
@@ -860,7 +862,7 @@ body {
   font-size: var(--text-md);
   font-weight: 600;
   color: var(--color-text-primary);
-  background: var(--color-creamy);
+  background: var(--Крэмавы);
   border: 3px solid #333;
   border-radius: 15px;
   cursor: pointer;
@@ -870,7 +872,7 @@ body {
 }
 
 .form-submit-btn:hover {
-  background: var(--color-soft-orange);
+  background: var(--Светла-персікавы);
   transform: translateY(-3px);
   box-shadow: 0 6px 25px rgba(252, 220, 192, 0.4);
 }
@@ -888,17 +890,17 @@ body {
 }
 
 .form-message-success {
-  background: var(--color-soft-green);
+  background: var(--Бледна-зялёны);
   border: 3px solid #333;
 }
 
 .form-message-error {
-  background: var(--color-soft-orange);
+  background: var(--Светла-персікавы);
   border: 3px solid #333;
 }
 
 .form-message-deadline {
-  background: var(--color-soft-yellow);
+  background: var(--Бледна-жоўты);
   border: 3px solid #333;
 }
 
@@ -946,7 +948,7 @@ body {
 }
 
 .wishes-item {
-  background: var(--color-milky);
+  background: var(--Малочна-белы);
   border: 3px solid #333;
   border-radius: 15px;
   padding: 25px 30px;

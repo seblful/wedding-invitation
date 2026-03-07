@@ -38,6 +38,7 @@
   --text-lg: 1.563rem;
   --text-xl: 1.953rem;
   --text-2xl: 2.441rem;
+  --text-3xl: 3.052rem;
 }
 
 /* First Section */
@@ -169,7 +170,7 @@ body {
 }
 
 .face-image {
-  max-width: 200px;
+  max-width: 160px;
   height: auto;
 }
 
@@ -182,12 +183,12 @@ body {
 /* Names Board */
 .names-board {
   text-align: center;
-  margin-top: 10px;
+  margin-top: -5px;
   position: relative;
 }
 
 .names-image {
-  max-width: 400px;
+  max-width: 480px;
   height: auto;
   display: block;
 }
@@ -197,7 +198,7 @@ body {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  font-size: var(--text-2xl);
+  font-size: var(--text-3xl);
   color: var(--color-text-primary);
   font-weight: bold;
   white-space: nowrap;

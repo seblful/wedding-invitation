@@ -2,12 +2,17 @@ const express = require('express');
 const path = require('path');
 const helmet = require('helmet');
 const compression = require('compression');
+const fs = require('fs');
 const config = require('./config');
 
 const app = express();
-const PORT = 3000;
+const PORT = config.port;
 
-const ALLOWED_ORIGINS = ['http://localhost:3000', 'http://127.0.0.1:3000'];
+const ALLOWED_ORIGINS = [
+  'http://localhost:3000',
+  'http://127.0.0.1:3000',
+  config.baseUrl,
+];
 
 app.use(compression());
 
@@ -19,8 +24,6 @@ app.use(
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
-app.use(express.static(path.join(__dirname, 'public')));
 
 app.use((req, res, next) => {
   const origin = req.headers.origin;
@@ -40,7 +43,22 @@ app.use((req, res, next) => {
 });
 
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+  const indexPath = path.join(__dirname, 'public', 'index.html');
+  let html = fs.readFileSync(indexPath, 'utf8');
+
+  const ogTags = `
+    <meta property="og:title" content="${config.openGraph.title}" />
+    <meta property="og:description" content="${config.openGraph.description}" />
+    <meta property="og:image" content="${config.baseUrl}${config.openGraph.image}" />
+    <meta property="og:url" content="${config.baseUrl}" />
+  `;
+
+  html = html.replace('<!-- OPENGRAPH_PLACEHOLDER -->', ogTags);
+  html = html.replace('THEME_COLOR_PLACEHOLDER', config.themeColor);
+  html = html.replace('PAGE_TITLE_PLACEHOLDER', config.openGraph.title);
+  html = html.replace('FORM_DEADLINE_PLACEHOLDER', config.form.deadline);
+  html = html.replace('FORM_ACTION_PLACEHOLDER', config.api.submitFormEndpoint);
+  res.send(html);
 });
 
 app.get('/api/config', (req, res) => {
@@ -48,7 +66,13 @@ app.get('/api/config', (req, res) => {
     res.json({
       weddingDate: config.weddingDate,
       timezone: config.timezone,
-      location: config.location,
+      location: {
+        name: config.location.name,
+        address: config.location.address,
+        yandexMapUrl: config.location.yandexMapUrl,
+        yandexDirectUrl: config.location.yandexDirectUrl,
+        mapDimensions: config.location.mapDimensions,
+      },
     });
   } catch (error) {
     res.status(500).json({ error: 'Failed to fetch config' });
@@ -88,8 +112,25 @@ app.post('/api/submit-form', async (req, res) => {
   }
 });
 
-app.use((req, res, next) => {
-  res.status(404).sendFile(path.join(__dirname, 'public', 'index.html'));
+app.use(express.static(path.join(__dirname, 'public')));
+
+app.use((req, res) => {
+  const indexPath = path.join(__dirname, 'public', 'index.html');
+  let html = fs.readFileSync(indexPath, 'utf8');
+
+  const ogTags = `
+    <meta property="og:title" content="${config.openGraph.title}" />
+    <meta property="og:description" content="${config.openGraph.description}" />
+    <meta property="og:image" content="${config.baseUrl}${config.openGraph.image}" />
+    <meta property="og:url" content="${config.baseUrl}" />
+  `;
+
+  html = html.replace('<!-- OPENGRAPH_PLACEHOLDER -->', ogTags);
+  html = html.replace('THEME_COLOR_PLACEHOLDER', config.themeColor);
+  html = html.replace('PAGE_TITLE_PLACEHOLDER', config.openGraph.title);
+  html = html.replace('FORM_DEADLINE_PLACEHOLDER', config.form.deadline);
+  html = html.replace('FORM_ACTION_PLACEHOLDER', config.api.submitFormEndpoint);
+  res.status(404).send(html);
 });
 
 // Start server

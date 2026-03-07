@@ -1,10 +1,12 @@
 let weddingDate;
 let countdownInterval;
 let configData;
+const CONFIG_API_ENDPOINT = '/api/config';
+const SUBMIT_FORM_ENDPOINT = '/api/submit-form';
 
 async function fetchConfig() {
   try {
-    const response = await fetch('/api/config');
+    const response = await fetch(CONFIG_API_ENDPOINT);
     const data = await response.json();
     configData = data;
     weddingDate = new Date(data.weddingDate).getTime();
@@ -66,11 +68,13 @@ function cleanupCountdown() {
 function loadMap() {
   const mapContainer = document.getElementById('mapContainer');
   if (mapContainer && configData?.location?.yandexMapUrl) {
+    const width = configData.location.mapDimensions?.width || 580;
+    const height = configData.location.mapDimensions?.height || 346;
     mapContainer.innerHTML = `
       <iframe
         src="${configData.location.yandexMapUrl}"
-        width="580"
-        height="346"
+        width="${width}"
+        height="${height}"
         frameborder="0"
         allowfullscreen="true"
         style="position: relative"
@@ -133,7 +137,7 @@ function initGuestSurvey() {
         .join(', ');
 
       try {
-        const response = await fetch('/api/submit-form', {
+        const response = await fetch(SUBMIT_FORM_ENDPOINT, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

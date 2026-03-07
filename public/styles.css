@@ -22,7 +22,6 @@
 
 /* Color Variables */
 :root {
-  --Бледна-ружовы: #fff1f1;
   --Светла-блакітны: #e4f7ff;
   --Светла-персікавы: #fcdcc0;
   --Бледна-жоўты: #fff9d2;
@@ -387,7 +386,7 @@ body {
 }
 
 .timeline-dot:hover {
-  background: var(--Бледна-ружовы);
+  background: var(--Светла-блакітны);
   transform: translateX(-50%) scale(1.2);
 }
 
@@ -721,10 +720,6 @@ body {
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
   border: 3px solid #fff;
   transition: all 0.3s ease;
-}
-
-.swatch-soft-pink {
-  background-color: var(--Бледна-ружовы);
 }
 
 .swatch-soft-blue {

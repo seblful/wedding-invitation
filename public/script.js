@@ -175,22 +175,23 @@ document.addEventListener('DOMContentLoaded', initGuestSurvey);
 document.addEventListener('DOMContentLoaded', initCountdown);
 document.addEventListener('DOMContentLoaded', initScrollAnimations);
 document.addEventListener('DOMContentLoaded', createFallingPetals);
+document.addEventListener('DOMContentLoaded', initFlowerAnimation);
 window.addEventListener('beforeunload', cleanupCountdown);
 
 function initScrollAnimations() {
   const facesContainer = document.querySelector('.faces-container');
   const namesBoard = document.querySelector('.names-board');
-  
-  [facesContainer, namesBoard].forEach(el => {
+
+  [facesContainer, namesBoard].forEach((el) => {
     if (el) {
       el.style.opacity = '0';
       el.style.transform = 'translateY(30px)';
       el.style.transition = 'opacity 1s ease-out, transform 1s ease-out';
     }
   });
-  
+
   setTimeout(() => {
-    [facesContainer, namesBoard].forEach(el => {
+    [facesContainer, namesBoard].forEach((el) => {
       if (el) {
         el.style.opacity = '1';
         el.style.transform = 'translateY(0)';
@@ -198,7 +199,6 @@ function initScrollAnimations() {
     });
   }, 300);
 }
-
 
 function createFallingPetals() {
   const petalColors = ['#ffb7c5', '#ffc0cb', '#ffd1dc', '#ffe4e1', '#fff0f5'];
@@ -237,4 +237,29 @@ function createFallingPetals() {
   }
 
   setInterval(createPetal, 400);
+}
+
+function initFlowerAnimation() {
+  const firstSection = document.querySelector('.first-section');
+  const cornerImages = document.querySelectorAll('.corner-decoration img');
+
+  if (!firstSection || cornerImages.length === 0) return;
+
+  const maxSize = 630;
+  const minSize = 350;
+
+  function updateFlowerSize() {
+    const scrollY = window.scrollY;
+    const sectionHeight = firstSection.offsetHeight;
+    const scrollProgress = Math.min(scrollY / sectionHeight, 1);
+
+    const currentSize = maxSize - (maxSize - minSize) * scrollProgress;
+
+    cornerImages.forEach((img) => {
+      img.style.maxWidth = `${currentSize}px`;
+    });
+  }
+
+  window.addEventListener('scroll', updateFlowerSize, { passive: true });
+  updateFlowerSize();
 }

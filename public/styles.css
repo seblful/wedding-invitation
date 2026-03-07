@@ -41,6 +41,59 @@
   --text-2xl: 2.441rem;
 }
 
+/* First Section */
+.first-section {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  width: 100%;
+  background: var(--color-section-bg);
+  padding: 20px;
+}
+
+.first-section > * {
+  position: relative;
+  z-index: 2;
+}
+
+.timer-section > * {
+  position: relative;
+  z-index: 2;
+}
+
+.timeline-section > * {
+  position: relative;
+  z-index: 2;
+}
+
+.dresscode-section > * {
+  position: relative;
+  z-index: 2;
+}
+
+.location-section > * {
+  position: relative;
+  z-index: 2;
+}
+
+.celebration-section > * {
+  position: relative;
+  z-index: 2;
+}
+
+.survey-section > * {
+  position: relative;
+  z-index: 2;
+}
+
+.wishes-section > * {
+  position: relative;
+  z-index: 2;
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -66,6 +119,7 @@ body {
   max-width: 630px;
   height: auto;
   display: block;
+  transition: max-width 0.1s ease-out;
 }
 
 .top-left {
@@ -153,7 +207,6 @@ body {
 /* Timer Section */
 .timer-section {
   position: relative;
-  z-index: 2;
   padding: 60px 20px;
   display: flex;
   flex-direction: column;
@@ -232,7 +285,6 @@ body {
 /* Timeline Section */
 .timeline-section {
   position: relative;
-  z-index: 2;
   padding: 60px 20px;
   display: flex;
   flex-direction: column;
@@ -382,7 +434,6 @@ body {
 /* Dresscode Section */
 .dresscode-section {
   position: relative;
-  z-index: 2;
   padding: 60px 20px;
   display: flex;
   flex-direction: column;
@@ -424,7 +475,6 @@ body {
 /* Location Section */
 .location-section {
   position: relative;
-  z-index: 2;
   padding: 60px 20px;
   display: flex;
   flex-direction: column;
@@ -570,7 +620,6 @@ body {
 /* Celebration Section */
 .celebration-section {
   position: relative;
-  z-index: 2;
   padding: 60px 20px;
   display: flex;
   flex-direction: column;
@@ -755,7 +804,6 @@ body {
 /* Survey Section */
 .survey-section {
   position: relative;
-  z-index: 2;
   padding: 80px 20px;
   display: flex;
   flex-direction: column;
@@ -931,7 +979,6 @@ body {
 /* Wishes Section */
 .wishes-section {
   position: relative;
-  z-index: 2;
   padding: 80px 20px;
   display: flex;
   flex-direction: column;
@@ -1032,18 +1079,7 @@ body {
     opacity: 0.8;
   }
   100% {
-    transform: translateY(var(--fall-distance, 100vh)) rotate(360deg) translateX(100px);
-    opacity: 0;
-  }
-}
-  5% {
-    opacity: 0.8;
-  }
-  95% {
-    opacity: 0.8;
-  }
-  100% {
-    transform: translateY(var(--fall-distance, 100vh)) rotate(720deg)
+    transform: translateY(var(--fall-distance, 100vh)) rotate(360deg)
       translateX(100px);
     opacity: 0;
   }

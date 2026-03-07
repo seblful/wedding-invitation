@@ -174,26 +174,67 @@ document.addEventListener('DOMContentLoaded', initGuestSurvey);
 
 document.addEventListener('DOMContentLoaded', initCountdown);
 document.addEventListener('DOMContentLoaded', initScrollAnimations);
+document.addEventListener('DOMContentLoaded', createFallingPetals);
 window.addEventListener('beforeunload', cleanupCountdown);
 
 function initScrollAnimations() {
-  const sections = document.querySelectorAll(
-    '.faces-container, .names-board, .timeline-section'
-  );
+  const facesContainer = document.querySelector('.faces-container');
+  const namesBoard = document.querySelector('.names-board');
+  
+  [facesContainer, namesBoard].forEach(el => {
+    if (el) {
+      el.style.opacity = '0';
+      el.style.transform = 'translateY(30px)';
+      el.style.transition = 'opacity 1s ease-out, transform 1s ease-out';
+    }
+  });
+  
+  setTimeout(() => {
+    [facesContainer, namesBoard].forEach(el => {
+      if (el) {
+        el.style.opacity = '1';
+        el.style.transform = 'translateY(0)';
+      }
+    });
+  }, 300);
+}
 
-  sections.forEach((section) => section.classList.add('fade-in-section'));
 
-  const observer = new IntersectionObserver(
-    (entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('is-visible');
-          observer.unobserve(entry.target);
-        }
-      });
-    },
-    { threshold: 0.15 }
-  );
+function createFallingPetals() {
+  const petalColors = ['#ffb7c5', '#ffc0cb', '#ffd1dc', '#ffe4e1', '#fff0f5'];
 
-  sections.forEach((section) => observer.observe(section));
+  function createPetal() {
+    const petal = document.createElement('div');
+    petal.classList.add('petal');
+
+    const size = Math.random() * 13 + 12;
+    const left = Math.random() * 100;
+    const delay = Math.random() * 2;
+    const duration = Math.random() * 6 + 6;
+    const rotation = Math.random() * 360;
+    const color = petalColors[Math.floor(Math.random() * petalColors.length)];
+    const fallDistance = window.innerHeight + 50;
+
+    petal.style.cssText = `
+      left: ${left}vw;
+      width: ${size}px;
+      height: ${size}px;
+      animation: fall ${duration}s linear ${delay}s forwards;
+      background: ${color};
+      border-radius: 100% 0% 100% 0%;
+      transform: rotate(${rotation}deg);
+      --fall-distance: ${fallDistance}px;
+    `;
+
+    document.body.appendChild(petal);
+
+    setTimeout(
+      () => {
+        petal.remove();
+      },
+      (duration + delay) * 1000
+    );
+  }
+
+  setInterval(createPetal, 400);
 }

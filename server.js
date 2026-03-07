@@ -8,6 +8,27 @@ const config = require('./config');
 const app = express();
 const PORT = config.port;
 
+function getOgTags() {
+  const cleanBaseUrl = config.baseUrl.replace(/\/$/, '');
+  const cleanImagePath = config.openGraph.image.startsWith('/')
+    ? config.openGraph.image
+    : `/${config.openGraph.image}`;
+  const fullImageUrl = `${cleanBaseUrl}${cleanImagePath}`;
+
+  return `
+    <meta property="og:title" content="${config.openGraph.title}" />
+    <meta property="og:description" content="${config.openGraph.description}" />
+    <meta property="og:image" content="${fullImageUrl}" />
+    <meta property="og:url" content="${cleanBaseUrl}/" />
+    <meta property="og:type" content="website" />
+    
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="${config.openGraph.title}" />
+    <meta name="twitter:description" content="${config.openGraph.description}" />
+    <meta name="twitter:image" content="${fullImageUrl}" />
+  `;
+}
+
 const ALLOWED_ORIGINS = [
   'http://localhost:3000',
   'http://127.0.0.1:3000',
@@ -46,12 +67,7 @@ app.get('/', (req, res) => {
   const indexPath = path.join(__dirname, 'public', 'index.html');
   let html = fs.readFileSync(indexPath, 'utf8');
 
-  const ogTags = `
-    <meta property="og:title" content="${config.openGraph.title}" />
-    <meta property="og:description" content="${config.openGraph.description}" />
-    <meta property="og:image" content="${config.baseUrl}${config.openGraph.image}" />
-    <meta property="og:url" content="${config.baseUrl}" />
-  `;
+  const ogTags = getOgTags();
 
   html = html.replace('<!-- OPENGRAPH_PLACEHOLDER -->', ogTags);
   html = html.replace('THEME_COLOR_PLACEHOLDER', config.themeColor);
@@ -118,12 +134,7 @@ app.use((req, res) => {
   const indexPath = path.join(__dirname, 'public', 'index.html');
   let html = fs.readFileSync(indexPath, 'utf8');
 
-  const ogTags = `
-    <meta property="og:title" content="${config.openGraph.title}" />
-    <meta property="og:description" content="${config.openGraph.description}" />
-    <meta property="og:image" content="${config.baseUrl}${config.openGraph.image}" />
-    <meta property="og:url" content="${config.baseUrl}" />
-  `;
+  const ogTags = getOgTags();
 
   html = html.replace('<!-- OPENGRAPH_PLACEHOLDER -->', ogTags);
   html = html.replace('THEME_COLOR_PLACEHOLDER', config.themeColor);

@@ -241,25 +241,44 @@ function createFallingPetals() {
 
 function initFlowerAnimation() {
   const firstSection = document.querySelector('.first-section');
-  const cornerImages = document.querySelectorAll('.corner-decoration img');
+  const cornerGroups = document.querySelectorAll('.corner-group');
+  const croppedFlowers = document.querySelectorAll('.cropped-flower');
 
-  if (!firstSection || cornerImages.length === 0) return;
+  if (!firstSection || cornerGroups.length === 0) return;
 
-  const maxSize = 630;
-  const minSize = 350;
+  // 0.55 means it will shrink to 55% of its original size
+  const minScale = 0.55;
 
-  function updateFlowerSize() {
+  function updateAnimations() {
     const scrollY = window.scrollY;
     const sectionHeight = firstSection.offsetHeight;
+
+    // Calculates a number between 0 (top of page) and 1 (scrolled past first section)
     const scrollProgress = Math.min(scrollY / sectionHeight, 1);
 
-    const currentSize = maxSize - (maxSize - minSize) * scrollProgress;
+    // 1. Calculate Group Scale (Smooth transform)
+    const currentScale = 1 - (1 - minScale) * scrollProgress;
 
-    cornerImages.forEach((img) => {
-      img.style.maxWidth = `${currentSize}px`;
+    // Apply the scale to the quadrants. Because of transform-origin in CSS,
+    // they will pull elegantly into the corners.
+    cornerGroups.forEach((group) => {
+      group.style.transform = `scale(${currentScale})`;
+    });
+
+    // 2. Hide Cropped Flowers
+    // We want the cut-off flowers to fade out slightly faster so they
+    // disappear before looking weird. The / 0.7 makes them reach 0 opacity at 70% scroll.
+    const fadeProgress = Math.min(scrollProgress / 0.7, 1);
+    const currentOpacity = 1 - fadeProgress;
+
+    croppedFlowers.forEach((img) => {
+      img.style.opacity = currentOpacity.toFixed(3);
     });
   }
 
-  window.addEventListener('scroll', updateFlowerSize, { passive: true });
-  updateFlowerSize();
+  // Use passive listener for better scroll performance
+  window.addEventListener('scroll', updateAnimations, { passive: true });
+
+  // Initialize positions on load
+  updateAnimations();
 }

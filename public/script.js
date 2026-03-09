@@ -4,6 +4,34 @@ let configData;
 const CONFIG_API_ENDPOINT = '/api/config';
 const SUBMIT_FORM_ENDPOINT = '/api/submit-form';
 
+/**
+ * Flower image animation – final positions (after full scroll).
+ * Edit only this object to change where each flower ends up.
+ * - Left-side flowers: left = distance from left edge in %. top or bottom = vertical in %.
+ * - Right-side flowers: left = position (100 - left = % from right edge). Use 85–92 to keep inside; lower = more margin from right.
+ */
+const FLOWER_FINAL_POSITIONS = {
+  /* Top-left (use top) */
+  '.p-tl-c1': { left: 3, top: 2 },
+  '.p-tl-1': { left: 0, top: 20 },
+  '.p-tl-2': { left: 8, top: 3 },
+  '.p-tl-3': { left: 12, top: 40 },
+  /* Bottom-left (use bottom) */
+  '.p-bl-c1': { left: 3, bottom: 2 },
+  '.p-bl-c2': { left: 15, bottom: 12 },
+  '.p-bl-1': { left: 0, bottom: 17 },
+  '.p-bl-2': { left: 11, bottom: 0 },
+  /* Top-right (use top) – use lower "left" value to keep flowers inside (right edge = (100-left)%) */
+  '.p-tr-c2': { left: 80, top: 2 },
+  '.p-tr-2': { left: 82, top: 3 },
+  '.p-tr-c1': { left: 80, top: 22 },
+  '.p-tr-1': { left: 75, top: 27 },
+  /* Bottom-right (use bottom) */
+  '.p-br-c1': { left: 80, bottom: 2 },
+  '.p-br-2': { left: 85, bottom: 26 },
+  '.p-br-1': { left: 75, bottom: 0 },
+};
+
 async function fetchConfig() {
   try {
     const response = await fetch(CONFIG_API_ENDPOINT);
@@ -241,33 +269,156 @@ function createFallingPetals() {
 
 function initFlowerAnimation() {
   const firstSection = document.querySelector('.first-section');
-  const cornerGroups = document.querySelectorAll('.corner-group');
   const croppedFlowers = document.querySelectorAll('.cropped-flower');
 
-  if (!firstSection || cornerGroups.length === 0) return;
+  if (!firstSection) return;
 
-  // 0.55 means it will shrink to 55% of its original size
-  const minScale = 0.55;
+  function cssPositionToPercent(value, size) {
+    if (value === 'auto' || !value) return 0;
+    if (value.endsWith('%')) return parseFloat(value);
+    if (value.endsWith('px')) return (parseFloat(value) / size) * 100;
+    return 0;
+  }
+
+  /* Only selector and useTop. Start positions are read from CSS (styles.css). */
+  const flowerConfigs = [
+    { selector: '.p-tl-c1', useTop: true },
+    { selector: '.p-tl-1', useTop: true },
+    { selector: '.p-tl-2', useTop: true },
+    { selector: '.p-tl-3', useTop: true },
+    { selector: '.p-bl-c1', useTop: false },
+    { selector: '.p-bl-c2', useTop: false },
+    { selector: '.p-bl-1', useTop: false },
+    { selector: '.p-bl-2', useTop: false },
+    { selector: '.p-tr-c2', useTop: true },
+    { selector: '.p-tr-2', useTop: true },
+    { selector: '.p-tr-c1', useTop: true },
+    { selector: '.p-tr-1', useTop: true },
+    { selector: '.p-br-c1', useTop: false },
+    { selector: '.p-br-2', useTop: false },
+    { selector: '.p-br-1', useTop: false },
+  ];
+
+  const leftFlowers = [];
+  const rightFlowers = [];
+  const allFlowerData = [];
+
+  flowerConfigs.forEach((config) => {
+    const flower = document.querySelector(config.selector);
+    if (!flower) return;
+
+    const parent =
+      flower.closest('.corner-group') || flower.offsetParent || document.body;
+    const parentWidth = parent.offsetWidth || window.innerWidth;
+    const parentHeight = parent.offsetHeight || window.innerHeight;
+    const cs = getComputedStyle(flower);
+
+    const leftPercent = cssPositionToPercent(cs.left, parentWidth);
+    const rightPercent = cssPositionToPercent(cs.right, parentWidth);
+    const topPercent = cssPositionToPercent(cs.top, parentHeight);
+    const bottomPercent = cssPositionToPercent(cs.bottom, parentHeight);
+
+    const usesLeft = cs.left !== 'auto';
+    const startX = usesLeft ? leftPercent : 100 - rightPercent;
+    const startY = config.useTop ? topPercent : bottomPercent;
+
+    const isCropped = flower.classList.contains('cropped-flower');
+
+    const flowerData = {
+      element: flower,
+      selector: config.selector,
+      usesLeft,
+      usesRight: !usesLeft,
+      useTop: config.useTop,
+      isCropped,
+      startX,
+      startY,
+    };
+
+    allFlowerData.push(flowerData);
+
+    if (usesLeft) {
+      leftFlowers.push(flowerData);
+    } else if (usesRight) {
+      rightFlowers.push(flowerData);
+    }
+  });
+
+  const defaultEdgePosition = 3;
+  const defaultRightEdgePosition = 97;
+  const defaultScale = 0.75;
+
+  allFlowerData.forEach((flower) => {
+    const targetPos = FLOWER_FINAL_POSITIONS[flower.selector] || null;
+
+    if (targetPos) {
+      flower.targetX = targetPos.left;
+      if (flower.useTop && targetPos.top !== undefined) {
+        flower.targetY = targetPos.top;
+      } else if (!flower.useTop && targetPos.bottom !== undefined) {
+        flower.targetY = targetPos.bottom;
+      } else {
+        flower.targetY =
+          targetPos.top !== undefined ? targetPos.top : flower.startY;
+      }
+    } else if (!flower.isCropped) {
+      flower.targetX = flower.usesLeft
+        ? defaultEdgePosition
+        : defaultRightEdgePosition;
+      flower.targetY = flower.startY;
+    } else {
+      flower.targetX = flower.startX;
+      flower.targetY = flower.startY;
+    }
+  });
 
   function updateAnimations() {
     const scrollY = window.scrollY;
     const sectionHeight = firstSection.offsetHeight;
 
-    // Calculates a number between 0 (top of page) and 1 (scrolled past first section)
     const scrollProgress = Math.min(scrollY / sectionHeight, 1);
 
-    // 1. Calculate Group Scale (Smooth transform)
-    const currentScale = 1 - (1 - minScale) * scrollProgress;
+    allFlowerData.forEach((flower) => {
+      if (flower.isCropped) {
+        flower.element.style.setProperty('transform', 'scale(1)', 'important');
+        return;
+      }
 
-    // Apply the scale to the quadrants. Because of transform-origin in CSS,
-    // they will pull elegantly into the corners.
-    cornerGroups.forEach((group) => {
-      group.style.transform = `scale(${currentScale})`;
+      const currentX =
+        flower.startX + (flower.targetX - flower.startX) * scrollProgress;
+      const currentY =
+        flower.startY + (flower.targetY - flower.startY) * scrollProgress;
+
+      const currentScale = 1 - (1 - defaultScale) * scrollProgress;
+
+      flower.element.style.removeProperty('left');
+      flower.element.style.removeProperty('right');
+      flower.element.style.removeProperty('top');
+      flower.element.style.removeProperty('bottom');
+
+      if (flower.usesLeft) {
+        flower.element.style.setProperty('left', `${currentX}%`, 'important');
+      } else if (flower.usesRight) {
+        flower.element.style.setProperty(
+          'right',
+          `${100 - currentX}%`,
+          'important'
+        );
+      }
+
+      if (flower.useTop) {
+        flower.element.style.setProperty('top', `${currentY}%`, 'important');
+      } else {
+        flower.element.style.setProperty('bottom', `${currentY}%`, 'important');
+      }
+
+      flower.element.style.setProperty(
+        'transform',
+        `scale(${currentScale})`,
+        'important'
+      );
     });
 
-    // 2. Hide Cropped Flowers
-    // We want the cut-off flowers to fade out slightly faster so they
-    // disappear before looking weird. The / 0.7 makes them reach 0 opacity at 70% scroll.
     const fadeProgress = Math.min(scrollProgress / 0.7, 1);
     const currentOpacity = 1 - fadeProgress;
 
@@ -276,9 +427,7 @@ function initFlowerAnimation() {
     });
   }
 
-  // Use passive listener for better scroll performance
   window.addEventListener('scroll', updateAnimations, { passive: true });
 
-  // Initialize positions on load
   updateAnimations();
 }

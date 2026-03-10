@@ -4,13 +4,32 @@ let configData;
 const CONFIG_API_ENDPOINT = '/api/config';
 const SUBMIT_FORM_ENDPOINT = '/api/submit-form';
 
+/* Performance optimization utilities */
+const isMobile = () => window.innerWidth <= 767;
+
+const requestAnimationFrameThrottle = (callback) => {
+  let ticking = false;
+  return function (...args) {
+    if (!ticking) {
+      requestAnimationFrame(() => {
+        callback.apply(this, args);
+        ticking = false;
+      });
+      ticking = true;
+    }
+  };
+};
+
+/* Reduce animation frequency on mobile */
+const getAnimationInterval = () => (isMobile() ? 800 : 400);
+
 /**
  * Flower image animation – final positions (after full scroll).
  * Edit only this object to change where each flower ends up.
  * - Left-side flowers: left = distance from left edge in %. top or bottom = vertical in %.
  * - Right-side flowers: left = position (100 - left = % from right edge). Use 85–92 to keep inside; lower = more margin from right.
  */
-const FLOWER_FINAL_POSITIONS = {
+const DESKTOP_FINAL_POSITIONS = {
   /* Top-left (use top) */
   '.p-tl-c1': { left: 3, top: 2 },
   '.p-tl-1': { left: 0, top: 20 },
@@ -30,6 +49,29 @@ const FLOWER_FINAL_POSITIONS = {
   '.p-br-c1': { left: 80, bottom: 2 },
   '.p-br-2': { left: 85, bottom: 26 },
   '.p-br-1': { left: 75, bottom: 0 },
+};
+
+/* Mobile final positions - adjusted to keep flowers within screen bounds */
+const MOBILE_FINAL_POSITIONS = {
+  /* Top-left (use top) - stay near original positions */
+  '.p-tl-c1': { left: 4, top: 3 },
+  '.p-tl-1': { left: 1, top: 20 },
+  '.p-tl-2': { left: 9, top: 4 },
+  '.p-tl-3': { left: 13, top: 40 },
+  /* Bottom-left (use bottom) */
+  '.p-bl-c1': { left: 4, bottom: 3 },
+  '.p-bl-c2': { left: 16, bottom: 12 },
+  '.p-bl-1': { left: 1, bottom: 17 },
+  '.p-bl-2': { left: 12, bottom: 2 },
+  /* Top-right (use top) - much closer to right edge to stay within bounds */
+  '.p-tr-c2': { left: 95, top: 3 },
+  '.p-tr-2': { left: 97, top: 4 },
+  '.p-tr-c1': { left: 95, top: 22 },
+  '.p-tr-1': { left: 90, top: 28 },
+  /* Bottom-right (use bottom) */
+  '.p-br-c1': { left: 95, bottom: 3 },
+  '.p-br-2': { left: 97, bottom: 27 },
+  '.p-br-1': { left: 90, bottom: 2 },
 };
 
 async function fetchConfig() {
@@ -234,13 +276,19 @@ function createFallingPetals() {
   const petalColors = ['#ffb7c5', '#ffc0cb', '#ffd1dc', '#ffe4e1', '#fff0f5'];
 
   function createPetal() {
+    const mobileOptimize = isMobile();
+
     const petal = document.createElement('div');
     petal.classList.add('petal');
 
-    const size = Math.random() * 13 + 12;
+    const size = mobileOptimize
+      ? Math.random() * 10 + 10
+      : Math.random() * 13 + 12;
     const left = Math.random() * 100;
-    const delay = Math.random() * 2;
-    const duration = Math.random() * 6 + 6;
+    const delay = mobileOptimize ? Math.random() * 3 : Math.random() * 2;
+    const duration = mobileOptimize
+      ? Math.random() * 8 + 8
+      : Math.random() * 6 + 6;
     const rotation = Math.random() * 360;
     const color = petalColors[Math.floor(Math.random() * petalColors.length)];
     const fallDistance = window.innerHeight + 50;
@@ -254,6 +302,7 @@ function createFallingPetals() {
       border-radius: 100% 0% 100% 0%;
       transform: rotate(${rotation}deg);
       --fall-distance: ${fallDistance}px;
+      ${mobileOptimize ? 'will-change: transform, opacity;' : ''}
     `;
 
     document.body.appendChild(petal);
@@ -266,7 +315,7 @@ function createFallingPetals() {
     );
   }
 
-  setInterval(createPetal, 400);
+  setInterval(createPetal, getAnimationInterval());
 }
 
 function initFlowerAnimation() {
@@ -344,17 +393,35 @@ function initFlowerAnimation() {
 
     if (usesLeft) {
       leftFlowers.push(flowerData);
-    } else if (usesRight) {
+    } else {
       rightFlowers.push(flowerData);
     }
   });
 
   const defaultEdgePosition = 3;
   const defaultRightEdgePosition = 97;
-  const defaultScale = 0.75;
+
+  const initialScale = isMobile()
+    ? window.innerWidth <= 375
+      ? 0.7
+      : window.innerWidth <= 428
+        ? 0.75
+        : 0.8
+    : 1;
+
+  const defaultScale = isMobile()
+    ? window.innerWidth <= 375
+      ? 0.7
+      : window.innerWidth <= 428
+        ? 0.75
+        : 0.8
+    : 0.75;
 
   allFlowerData.forEach((flower) => {
-    const targetPos = FLOWER_FINAL_POSITIONS[flower.selector] || null;
+    const finalPositions = isMobile()
+      ? MOBILE_FINAL_POSITIONS
+      : DESKTOP_FINAL_POSITIONS;
+    const targetPos = finalPositions[flower.selector] || null;
 
     if (targetPos) {
       flower.targetX = targetPos.left;
@@ -376,6 +443,10 @@ function initFlowerAnimation() {
       flower.targetY = flower.startY;
     }
   });
+
+  const throttledUpdateAnimations = isMobile()
+    ? requestAnimationFrameThrottle(updateAnimations)
+    : updateAnimations;
 
   function updateAnimations() {
     const scrollY = window.scrollY;
@@ -416,6 +487,8 @@ function initFlowerAnimation() {
       phase3Progress = 0;
     }
 
+    const mobileOptimize = isMobile();
+
     allFlowerData.forEach((flower) => {
       if (flower.isCropped) {
         // Cropped flowers: fade out during phases 1-2, fade in during phase 3
@@ -439,43 +512,59 @@ function initFlowerAnimation() {
           flower.targetX + (flower.startX - flower.targetX) * phase3Progress;
         currentY =
           flower.targetY + (flower.startY - flower.targetY) * phase3Progress;
-        currentScale = defaultScale + (1 - defaultScale) * phase3Progress;
+        currentScale =
+          defaultScale + (initialScale - defaultScale) * phase3Progress;
       } else {
         // Phases 1-2: Normal animation from original to final
         currentX =
           flower.startX + (flower.targetX - flower.startX) * phase1Progress;
         currentY =
           flower.startY + (flower.targetY - flower.startY) * phase1Progress;
-        currentScale = 1 - (1 - defaultScale) * phase1Progress;
+        currentScale =
+          initialScale - (initialScale - defaultScale) * phase1Progress;
       }
 
-      // Apply position
-      flower.element.style.removeProperty('left');
-      flower.element.style.removeProperty('right');
-      flower.element.style.removeProperty('top');
-      flower.element.style.removeProperty('bottom');
+      // Apply position - optimize for mobile
+      if (
+        !mobileOptimize ||
+        !flower.lastValues ||
+        Math.abs(currentX - flower.lastValues.x) > 0.1 ||
+        Math.abs(currentY - flower.lastValues.y) > 0.1 ||
+        Math.abs(currentScale - flower.lastValues.scale) > 0.01
+      ) {
+        flower.element.style.removeProperty('left');
+        flower.element.style.removeProperty('right');
+        flower.element.style.removeProperty('top');
+        flower.element.style.removeProperty('bottom');
 
-      if (flower.usesLeft) {
-        flower.element.style.setProperty('left', `${currentX}%`, 'important');
-      } else if (flower.usesRight) {
+        if (flower.usesLeft) {
+          flower.element.style.setProperty('left', `${currentX}%`, 'important');
+        } else if (flower.usesRight) {
+          flower.element.style.setProperty(
+            'right',
+            `${100 - currentX}%`,
+            'important'
+          );
+        }
+
+        if (flower.useTop) {
+          flower.element.style.setProperty('top', `${currentY}%`, 'important');
+        } else {
+          flower.element.style.setProperty(
+            'bottom',
+            `${currentY}%`,
+            'important'
+          );
+        }
+
         flower.element.style.setProperty(
-          'right',
-          `${100 - currentX}%`,
+          'transform',
+          `scale(${currentScale})`,
           'important'
         );
-      }
 
-      if (flower.useTop) {
-        flower.element.style.setProperty('top', `${currentY}%`, 'important');
-      } else {
-        flower.element.style.setProperty('bottom', `${currentY}%`, 'important');
+        flower.lastValues = { x: currentX, y: currentY, scale: currentScale };
       }
-
-      flower.element.style.setProperty(
-        'transform',
-        `scale(${currentScale})`,
-        'important'
-      );
     });
 
     // Animate closing text when in phase 3
@@ -487,7 +576,22 @@ function initFlowerAnimation() {
     }
   }
 
-  window.addEventListener('scroll', updateAnimations, { passive: true });
+  window.addEventListener(
+    'scroll',
+    isMobile() ? throttledUpdateAnimations : updateAnimations,
+    { passive: true }
+  );
+
+  // Set initial scale for all flowers before animation
+  allFlowerData.forEach((flower) => {
+    if (!flower.isCropped) {
+      flower.element.style.setProperty(
+        'transform',
+        `scale(${initialScale})`,
+        'important'
+      );
+    }
+  });
 
   updateAnimations();
 }

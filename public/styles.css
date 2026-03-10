@@ -247,14 +247,6 @@ body {
   width: 20vw;
 } /* Pink flower, long leaves */
 
-/* Mobile Responsiveness - Keeps them from getting microscopic on phones */
-@media (max-width: 768px) {
-  .flower-piece {
-    width: auto;
-    transform: scale(0.6);
-  }
-}
-
 .center-content {
   position: relative;
   z-index: 2;
@@ -1259,3 +1251,538 @@ body {
 }
 
 /* Scroll Animations - removed */
+
+/* ==========================================
+   MOBILE OPTIMIZATIONS
+   ========================================== */
+
+/* Small Phones (max-width: 375px) - iPhone SE, small Android */
+@media (max-width: 375px) {
+  :root {
+    --text-base: 1rem;
+    --text-md: 1.1rem;
+    --text-lg: 1.25rem;
+    --text-xl: 1.5rem;
+    --text-2xl: 1.75rem;
+    --text-3xl: 2rem;
+  }
+
+  /* Section heights */
+  .first-section,
+  .timer-section,
+  .timeline-section,
+  .dresscode-section,
+  .location-section,
+  .celebration-section,
+  .survey-section,
+  .wishes-section {
+    min-height: auto;
+    padding: 40px 15px;
+  }
+
+  /* Keep closing section as full height */
+  .closing-section {
+    min-height: 100vh;
+    padding: 40px 20px;
+  }
+
+  /* Faces */
+  .faces-container {
+    gap: 15px;
+  }
+
+  .face-image {
+    max-width: 100px;
+  }
+
+  .names-image {
+    max-width: 280px;
+  }
+
+  .board-names {
+    font-size: var(--text-lg);
+  }
+
+  /* Timer */
+  .timer-title {
+    font-size: var(--text-xl);
+    margin-bottom: 10px;
+  }
+
+  .timer-date {
+    font-size: var(--text-md);
+    margin-bottom: 30px;
+  }
+
+  .timer-container {
+    gap: 10px;
+  }
+
+  .timer-number {
+    font-size: var(--text-xl);
+    min-width: 70px;
+    padding: 20px 15px;
+  }
+
+  .timer-separator {
+    font-size: var(--text-xl);
+    margin-bottom: 25px;
+  }
+
+  .timer-label {
+    font-size: 0.85rem;
+  }
+
+  /* Timeline */
+  .timeline-title {
+    font-size: var(--text-xl);
+    margin-bottom: 30px;
+  }
+
+  .timeline-track {
+    padding: 15px 5px;
+  }
+
+  .timeline-item {
+    gap: 15px;
+    padding: 15px 0;
+  }
+
+  .timeline-dot {
+    width: 16px;
+    height: 16px;
+    border-width: 3px;
+  }
+
+  .timeline-date {
+    font-size: var(--text-md);
+  }
+
+  .timeline-text {
+    font-size: var(--text-base);
+  }
+
+  /* Gallery */
+  .gallery-image {
+    max-width: 160px;
+  }
+
+  .gallery-scroll {
+    gap: 15px;
+  }
+
+  /* Map */
+  .map-container {
+    height: 250px;
+  }
+
+  /* Schedule */
+  .schedule-item {
+    padding: 15px 20px;
+    gap: 15px;
+  }
+
+  .schedule-time {
+    font-size: var(--text-lg);
+    min-width: 70px;
+  }
+
+  .schedule-activity {
+    font-size: var(--text-base);
+  }
+
+  /* Colors */
+  .colors-container {
+    gap: 25px;
+  }
+
+  .color-card {
+    width: 100px;
+    gap: 10px;
+  }
+
+  .color-swatch {
+    width: 60px;
+    height: 60px;
+  }
+
+  .color-name {
+    font-size: 0.9rem;
+  }
+
+  /* Form */
+  .form-group {
+    margin-bottom: 20px;
+  }
+
+  .form-input,
+  .form-select {
+    padding: 12px 15px;
+    font-size: var(--text-base);
+  }
+
+  .checkbox-group {
+    grid-template-columns: 1fr;
+    gap: 10px;
+    padding: 12px;
+  }
+
+  .checkbox-item {
+    padding: 8px;
+  }
+
+  .form-submit-btn {
+    padding: 15px 30px;
+    font-size: var(--text-base);
+  }
+
+  /* Wishes */
+  .wishes-item {
+    padding: 20px;
+    margin-bottom: 20px;
+  }
+
+  .wishes-item-title {
+    font-size: var(--text-base);
+  }
+
+  .wishes-item-text {
+    font-size: var(--text-base);
+  }
+
+  /* Scroll indicator */
+  .scroll-indicator {
+    width: 40px;
+    height: 27px;
+    bottom: 30px;
+  }
+}
+
+/* Medium Phones (376px - 428px) - iPhone, standard Android */
+@media (min-width: 376px) and (max-width: 428px) {
+  :root {
+    --text-base: 1.05rem;
+    --text-md: 1.2rem;
+    --text-lg: 1.35rem;
+    --text-xl: 1.7rem;
+    --text-2xl: 2.1rem;
+    --text-3xl: 2.5rem;
+  }
+
+  /* Section heights */
+  .first-section,
+  .timer-section,
+  .timeline-section,
+  .dresscode-section,
+  .location-section,
+  .celebration-section,
+  .survey-section,
+  .wishes-section {
+    min-height: auto;
+    padding: 50px 20px;
+  }
+
+  /* Keep closing section as full height */
+  .closing-section {
+    min-height: 100vh;
+    padding: 50px 20px;
+  }
+
+  /* Faces */
+  .faces-container {
+    gap: 20px;
+  }
+
+  .face-image {
+    max-width: 110px;
+  }
+
+  .names-image {
+    max-width: 320px;
+  }
+
+  /* Timer */
+  .timer-number {
+    font-size: var(--text-xl);
+    min-width: 90px;
+    padding: 25px 18px;
+  }
+
+  .timer-label {
+    font-size: 0.95rem;
+  }
+
+  /* Gallery */
+  .gallery-image {
+    max-width: 190px;
+  }
+
+  /* Map */
+  .map-container {
+    height: 300px;
+  }
+
+  /* Colors */
+  .color-card {
+    width: 110px;
+  }
+
+  .color-swatch {
+    width: 70px;
+    height: 70px;
+  }
+
+  /* Form */
+  .checkbox-group {
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  }
+
+  /* Scroll indicator */
+  .scroll-indicator {
+    width: 50px;
+    height: 33px;
+    bottom: 35px;
+  }
+}
+
+/* Large Phones (429px - 767px) - iPhone Pro Max, large Android */
+@media (min-width: 429px) and (max-width: 767px) {
+  :root {
+    --text-base: 1.1rem;
+    --text-md: 1.3rem;
+    --text-lg: 1.45rem;
+    --text-xl: 1.85rem;
+    --text-2xl: 2.3rem;
+    --text-3xl: 2.8rem;
+  }
+
+  /* Section heights */
+  .first-section,
+  .timer-section,
+  .timeline-section,
+  .dresscode-section,
+  .location-section,
+  .celebration-section,
+  .survey-section,
+  .wishes-section {
+    min-height: auto;
+    padding: 60px 25px;
+  }
+
+  /* Keep closing section as full height */
+  .closing-section {
+    min-height: 100vh;
+    padding: 60px 25px;
+  }
+
+  /* Timer */
+  .timer-number {
+    min-width: 100px;
+    padding: 28px 20px;
+  }
+
+  /* Gallery */
+  .gallery-image {
+    max-width: 220px;
+  }
+
+  /* Map */
+  .map-container {
+    height: 350px;
+  }
+
+  /* Form */
+  .checkbox-group {
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  }
+}
+
+/* Tablets (768px - 1024px) - iPad, Android tablets */
+@media (min-width: 768px) and (max-width: 1024px) {
+  :root {
+    --text-base: 1.15rem;
+    --text-md: 1.3rem;
+    --text-lg: 1.5rem;
+    --text-xl: 1.9rem;
+    --text-2xl: 2.4rem;
+    --text-3xl: 3rem;
+  }
+
+  /* Section heights */
+  .first-section,
+  .timer-section,
+  .timeline-section,
+  .dresscode-section,
+  .location-section,
+  .celebration-section,
+  .survey-section,
+  .wishes-section {
+    min-height: auto;
+    padding: 70px 30px;
+  }
+
+  /* Keep closing section as full height */
+  .closing-section {
+    min-height: 100vh;
+    padding: 70px 30px;
+  }
+
+  /* Timer */
+  .timer-number {
+    min-width: 110px;
+    padding: 30px 22px;
+  }
+
+  /* Gallery */
+  .gallery-image {
+    max-width: 240px;
+  }
+
+  /* Map */
+  .map-container {
+    height: 400px;
+  }
+
+  /* Form */
+  .checkbox-group {
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  }
+}
+
+/* Mobile-specific improvements */
+@media (max-width: 767px) {
+  /* Ensure all images are responsive and don't overflow */
+  img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+  }
+  /* Improve touch targets */
+  .form-input,
+  .form-select {
+    min-height: 48px;
+    font-size: 16px;
+  }
+
+  .form-submit-btn {
+    min-height: 52px;
+    font-size: 1.1rem;
+  }
+
+  .checkbox-item {
+    min-height: 44px;
+  }
+
+  /* Better focus states for mobile keyboards */
+  .form-input:focus,
+  .form-select:focus {
+    transform: none;
+    box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.1);
+  }
+
+  /* Reduce animations on mobile for better performance */
+  .schedule-item:hover,
+  .wishes-item:hover,
+  .color-card:hover,
+  .location-subtitle-frame:hover,
+  .gallery-image:hover {
+    transform: none;
+  }
+
+  /* Timeline - simplify alternating layout */
+  .timeline-track::before {
+    left: 20px;
+  }
+
+  .timeline-item {
+    flex-direction: row;
+    align-items: flex-start;
+  }
+
+  .timeline-dot {
+    position: absolute;
+    left: 20px;
+    transform: translateX(-50%);
+  }
+
+  .timeline-dot:hover {
+    transform: translateX(-50%) scale(1.15);
+  }
+
+  .timeline-content {
+    margin-left: 50px;
+    text-align: left;
+  }
+
+  .timeline-item:nth-child(even) .timeline-content {
+    text-align: left;
+    order: 0;
+    margin-left: 50px;
+  }
+
+  /* Location subtitle frame - make responsive */
+  .location-subtitle-frame {
+    padding: 15px 25px;
+    margin-bottom: 15px;
+  }
+
+  /* Names board */
+  .names-board {
+    margin-top: -35px;
+  }
+
+  /* Reduce padding on smaller screens */
+  section {
+    padding: 40px 20px;
+  }
+
+  /* Scrollbar - hide on mobile for cleaner look */
+  .timeline-scroll::-webkit-scrollbar,
+  .gallery-scroll::-webkit-scrollbar {
+    display: none;
+  }
+
+  .timeline-scroll,
+  .gallery-scroll {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+}
+
+/* Landscape mobile optimizations */
+@media (max-width: 767px) and (orientation: landscape) {
+  .first-section,
+  .timer-section,
+  .timeline-section,
+  .dresscode-section,
+  .location-section,
+  .celebration-section,
+  .survey-section,
+  .wishes-section,
+  .closing-section {
+    min-height: 100vh;
+    padding: 30px 40px;
+  }
+
+  .timer-container {
+    flex-wrap: nowrap;
+  }
+
+  .gallery-scroll {
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+  }
+
+  .colors-container {
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+  }
+}
+
+/* High DPI devices */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  .flower-piece {
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: crisp-edges;
+  }
+}

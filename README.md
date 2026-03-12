@@ -1,6 +1,6 @@
 # Wedding Invitation Website
 
-A simple wedding invitation website built with Node.js and Express.
+A simple wedding invitation website built with Node.js, Express, and Tailwind CSS.
 
 ## Setup
 
@@ -10,18 +10,29 @@ Install dependencies:
 npm install
 ```
 
-## Running the Server
+## Development (Watch Mode)
 
-Production:
+Run Tailwind CSS in watch mode and the server in separate terminals:
+
+**Terminal 1 - Tailwind CSS watch:**
 
 ```bash
-npm start
+npx tailwindcss -i ./public/input.css -o ./public/styles.css --watch
 ```
 
-Development (with auto-reload):
+**Terminal 2 - Server:**
 
 ```bash
-npm run dev
+node server.js
+```
+
+## Production
+
+Build minified CSS and start server:
+
+```bash
+npx tailwindcss -i ./public/input.css -o ./public/styles.css --minify
+npm start
 ```
 
 ## Testing with Cloudflare Tunnel

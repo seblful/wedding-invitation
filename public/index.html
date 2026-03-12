@@ -12,7 +12,7 @@
     <!-- OPENGRAPH_PLACEHOLDER -->
     <link rel="stylesheet" href="styles.css" />
   </head>
-  <body>
+  <body class="antialiased">
     <!-- Corner Decorations -->
     <div class="floral-background" aria-hidden="true">
       <!-- Top Left -->
@@ -108,157 +108,269 @@
     </div>
 
     <!-- Center Content -->
-    <section class="first-section" aria-label="Партрэты маладых">
-      <div class="center-content">
-        <div class="faces-container" role="img" aria-label="Партрэты маладых">
-          <div class="face-card">
+    <section
+      class="first-section relative flex flex-col justify-center items-center min-h-screen w-full bg-section-bg p-5"
+      aria-label="Партрэты маладых"
+    >
+      <div
+        class="center-content relative flex flex-col justify-center items-center h-screen w-full flex-shrink-0"
+      >
+        <div
+          class="faces-container flex gap-6 justify-center items-start min-h-[200px]"
+          role="img"
+          aria-label="Партрэты маладых"
+        >
+          <div class="face-card flex flex-col items-center">
             <img
               src="images/faces/Aliaksei.png"
               alt="Партрэт жаніха Аляксея"
-              class="face-image"
+              class="face-image max-w-[160px] h-auto"
             />
           </div>
-          <div class="face-card">
+          <div class="face-card flex flex-col items-center">
             <img
               src="images/faces/Daria.png"
               alt="Партрэт нявесты Дар'і"
-              class="face-image"
+              class="face-image max-w-[160px] h-auto"
             />
           </div>
         </div>
-        <div class="names-board" role="img" aria-label="Назвы: Аляксей і Дар'я">
+        <div
+          class="names-board text-center -mt-1 relative"
+          role="img"
+          aria-label="Назвы: Аляксей і Дар'я"
+        >
           <img
             src="images/faces/names_board.png"
             alt="Рамка для імёнаў"
-            class="names-image"
+            class="names-image max-w-[480px] h-auto block"
           />
-          <p class="board-names">Аляксей i Дар'я</p>
+          <p
+            class="board-names absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-3xl font-bold whitespace-nowrap"
+          >
+            Аляксей i Дар'я
+          </p>
         </div>
         <img
           src="images/arrow.png"
           alt=""
-          class="scroll-indicator"
+          class="scroll-indicator absolute bottom-10 left-1/2 z-[3] w-15 h-10 opacity-60 filter brightness-0 invert"
           aria-hidden="true"
         />
       </div>
     </section>
 
     <!-- Timeline Section -->
-    <section class="timeline-section" aria-label="Гадзінасць пара">
-      <h2 class="timeline-title">Наш шлях</h2>
-      <div class="timeline-container">
+    <section
+      class="timeline-section relative py-15 px-5 flex flex-col items-center justify-center min-h-screen w-full bg-section-bg"
+      aria-label="Гадзінасць пара"
+    >
+      <h2
+        class="timeline-title font-skolar text-2xl font-bold mb-12 text-center text-primary"
+      >
+        Наш шлях
+      </h2>
+      <div class="timeline-container w-full max-w-[600px]">
         <div
-          class="timeline-scroll"
+          class="timeline-scroll w-full overflow-x-visible py-5"
           role="region"
           aria-label="Гарызантальная пракрутка гадзінасці"
         >
           <div
-            class="timeline-track"
+            class="timeline-track flex flex-col gap-0 py-5 relative items-start"
             role="list"
             aria-label="Асноўныя моманты адносін"
           >
-            <div class="timeline-item" role="listitem">
+            <div
+              class="timeline-item flex flex-row items-center gap-8 w-full py-5 relative z-[1]"
+              role="listitem"
+            >
               <div
-                class="timeline-dot"
+                class="timeline-dot w-5 h-5 rounded-full bg-cream border-4 border-[#333] flex-shrink-0 transition-all cursor-pointer absolute left-1/2 -translate-x-1/2 hover:bg-soft-blue hover:scale-125"
                 tabindex="0"
                 role="button"
                 aria-label="Першая зустрэча - лета 2022"
               ></div>
-              <div class="timeline-content">
-                <h3 class="timeline-date">Лета 2022</h3>
-                <p class="timeline-text">Першая зустрэча</p>
+              <div class="timeline-content text-left flex-1">
+                <h3
+                  class="timeline-date font-skolar text-lg font-bold text-primary mb-1.25"
+                >
+                  Лета 2022
+                </h3>
+                <p
+                  class="timeline-text font-skolar italic text-md text-secondary leading-relaxed"
+                >
+                  Першая зустрэча
+                </p>
               </div>
             </div>
 
-            <div class="timeline-item" role="listitem">
+            <div
+              class="timeline-item flex flex-row items-center gap-8 w-full py-5 relative z-[1]"
+              role="listitem"
+            >
               <div
-                class="timeline-dot"
+                class="timeline-dot w-5 h-5 rounded-full bg-cream border-4 border-[#333] flex-shrink-0 transition-all cursor-pointer absolute left-1/2 -translate-x-1/2 hover:bg-soft-blue hover:scale-125"
                 tabindex="0"
                 role="button"
                 aria-label="Першае спатканне - лета 2023"
               ></div>
-              <div class="timeline-content">
-                <h3 class="timeline-date">Лета 2023</h3>
-                <p class="timeline-text">Першае спатканне</p>
+              <div class="timeline-content text-right flex-1 order-[-1]">
+                <h3
+                  class="timeline-date font-skolar text-lg font-bold text-primary mb-1.25"
+                >
+                  Лета 2023
+                </h3>
+                <p
+                  class="timeline-text font-skolar italic text-md text-secondary leading-relaxed"
+                >
+                  Першае спатканне
+                </p>
               </div>
             </div>
 
-            <div class="timeline-item" role="listitem">
+            <div
+              class="timeline-item flex flex-row items-center gap-8 w-full py-5 relative z-[1]"
+              role="listitem"
+            >
               <div
-                class="timeline-dot"
+                class="timeline-dot w-5 h-5 rounded-full bg-cream border-4 border-[#333] flex-shrink-0 transition-all cursor-pointer absolute left-1/2 -translate-x-1/2 hover:bg-soft-blue hover:scale-125"
                 tabindex="0"
                 role="button"
                 aria-label="Першы пацалунак - лета 2023"
               ></div>
-              <div class="timeline-content">
-                <h3 class="timeline-date">Лета 2023</h3>
-                <p class="timeline-text">Першы пацалунак</p>
+              <div class="timeline-content text-left flex-1">
+                <h3
+                  class="timeline-date font-skolar text-lg font-bold text-primary mb-1.25"
+                >
+                  Лета 2023
+                </h3>
+                <p
+                  class="timeline-text font-skolar italic text-md text-secondary leading-relaxed"
+                >
+                  Першы пацалунак
+                </p>
               </div>
             </div>
 
-            <div class="timeline-item" role="listitem">
+            <div
+              class="timeline-item flex flex-row items-center gap-8 w-full py-5 relative z-[1]"
+              role="listitem"
+            >
               <div
-                class="timeline-dot"
+                class="timeline-dot w-5 h-5 rounded-full bg-cream border-4 border-[#333] flex-shrink-0 transition-all cursor-pointer absolute left-1/2 -translate-x-1/2 hover:bg-soft-blue hover:scale-125"
                 tabindex="0"
                 role="button"
                 aria-label="Першае падарожжа - лета 2024"
               ></div>
-              <div class="timeline-content">
-                <h3 class="timeline-date">Лета 2024</h3>
-                <p class="timeline-text">Першае падарожжа</p>
+              <div class="timeline-content text-right flex-1 order-[-1]">
+                <h3
+                  class="timeline-date font-skolar text-lg font-bold text-primary mb-1.25"
+                >
+                  Лета 2024
+                </h3>
+                <p
+                  class="timeline-text font-skolar italic text-md text-secondary leading-relaxed"
+                >
+                  Першае падарожжа
+                </p>
               </div>
             </div>
 
-            <div class="timeline-item" role="listitem">
+            <div
+              class="timeline-item flex flex-row items-center gap-8 w-full py-5 relative z-[1]"
+              role="listitem"
+            >
               <div
-                class="timeline-dot"
+                class="timeline-dot w-5 h-5 rounded-full bg-cream border-4 border-[#333] flex-shrink-0 transition-all cursor-pointer absolute left-1/2 -translate-x-1/2 hover:bg-soft-blue hover:scale-125"
                 tabindex="0"
                 role="button"
                 aria-label="Першае 'кахаю' - лета 2024"
               ></div>
-              <div class="timeline-content">
-                <h3 class="timeline-date">Лета 2024</h3>
-                <p class="timeline-text">Першае "кахаю"</p>
+              <div class="timeline-content text-left flex-1">
+                <h3
+                  class="timeline-date font-skolar text-lg font-bold text-primary mb-1.25"
+                >
+                  Лета 2024
+                </h3>
+                <p
+                  class="timeline-text font-skolar italic text-md text-secondary leading-relaxed"
+                >
+                  Першае "кахаю"
+                </p>
               </div>
             </div>
 
-            <div class="timeline-item" role="listitem">
+            <div
+              class="timeline-item flex flex-row items-center gap-8 w-full py-5 relative z-[1]"
+              role="listitem"
+            >
               <div
-                class="timeline-dot"
+                class="timeline-dot w-5 h-5 rounded-full bg-cream border-4 border-[#333] flex-shrink-0 transition-all cursor-pointer absolute left-1/2 -translate-x-1/2 hover:bg-soft-blue hover:scale-125"
                 tabindex="0"
                 role="button"
                 aria-label="Першы агульны дом - восень 2024"
               ></div>
-              <div class="timeline-content">
-                <h3 class="timeline-date">Восень 2024</h3>
-                <p class="timeline-text">Першы агульны дом</p>
+              <div class="timeline-content text-right flex-1 order-[-1]">
+                <h3
+                  class="timeline-date font-skolar text-lg font-bold text-primary mb-1.25"
+                >
+                  Восень 2024
+                </h3>
+                <p
+                  class="timeline-text font-skolar italic text-md text-secondary leading-relaxed"
+                >
+                  Першы агульны дом
+                </p>
               </div>
             </div>
 
-            <div class="timeline-item" role="listitem">
+            <div
+              class="timeline-item flex flex-row items-center gap-8 w-full py-5 relative z-[1]"
+              role="listitem"
+            >
               <div
-                class="timeline-dot"
+                class="timeline-dot w-5 h-5 rounded-full bg-cream border-4 border-[#333] flex-shrink-0 transition-all cursor-pointer absolute left-1/2 -translate-x-1/2 hover:bg-soft-blue hover:scale-125"
                 tabindex="0"
                 role="button"
                 aria-label="Запаветнае 'Так' - лета 2025"
               ></div>
-              <div class="timeline-content">
-                <h3 class="timeline-date">Лета 2025</h3>
-                <p class="timeline-text">Запаветнае "Так"</p>
+              <div class="timeline-content text-left flex-1">
+                <h3
+                  class="timeline-date font-skolar text-lg font-bold text-primary mb-1.25"
+                >
+                  Лета 2025
+                </h3>
+                <p
+                  class="timeline-text font-skolar italic text-md text-secondary leading-relaxed"
+                >
+                  Запаветнае "Так"
+                </p>
               </div>
             </div>
 
-            <div class="timeline-item active final-milestone" role="listitem">
+            <div
+              class="timeline-item active final-milestone flex flex-row items-center gap-8 w-full py-5 relative z-[1]"
+              role="listitem"
+            >
               <div
-                class="timeline-dot active"
+                class="timeline-dot active w-7 h-7 rounded-full bg-soft-peach border-4 border-[#333] flex-shrink-0 transition-all cursor-pointer absolute left-1/2 -translate-x-1/2 shadow-lg"
                 tabindex="0"
                 role="button"
                 aria-current="true"
                 aria-label="Стварэнне сям'і - лета 2026"
               ></div>
-              <div class="timeline-content">
-                <h3 class="timeline-date">Лета 2026</h3>
-                <p class="timeline-text">Стварэнне нашай сям'і.</p>
+              <div class="timeline-content text-right flex-1 order-[-1]">
+                <h3
+                  class="timeline-date font-skolar text-lg font-bold text-primary mb-1.25"
+                >
+                  Лета 2026
+                </h3>
+                <p
+                  class="timeline-text font-skolar italic text-md text-primary font-bold leading-relaxed"
+                >
+                  Стварэнне нашай сям'і.
+                </p>
               </div>
             </div>
           </div>
@@ -267,203 +379,410 @@
     </section>
 
     <!-- Countdown Timer Section -->
-    <section class="timer-section">
-      <h2 class="timer-title">Лічым дні да нашага "шчаслівыя разам"</h2>
-      <p class="timer-date">2 жніўня 2026 года, нядзеля</p>
-      <div class="timer-container">
-        <div class="timer-item">
-          <div class="timer-number" id="days">0</div>
-          <div class="timer-label">Дзён</div>
+    <section
+      class="timer-section relative py-15 px-5 flex flex-col items-center justify-center min-h-screen w-full bg-section-bg"
+    >
+      <h2
+        class="timer-title font-skolar text-2xl font-bold mb-4 text-center text-primary"
+      >
+        Лічым дні да нашага "шчаслівыя разам"
+      </h2>
+      <p
+        class="timer-date font-skolar text-xl text-secondary mb-11 text-center italic"
+      >
+        2 жніўня 2026 года, нядзеля
+      </p>
+      <div
+        class="timer-container flex justify-center items-center gap-5 flex-wrap"
+      >
+        <div class="timer-item flex flex-col items-center gap-4">
+          <div
+            class="timer-number font-skolar text-2xl font-bold text-primary min-w-[120px] text-center leading-none bg-milky py-8 px-5 rounded-[15px] border-[3px] border-[#333] shadow-custom"
+            id="days"
+          >
+            0
+          </div>
+          <div
+            class="timer-label font-skolar text-base text-primary font-semibold uppercase tracking-wider"
+          >
+            Дзён
+          </div>
         </div>
-        <div class="timer-separator">:</div>
-        <div class="timer-item">
-          <div class="timer-number" id="hours">0</div>
-          <div class="timer-label">Гадзін</div>
+        <div
+          class="timer-separator font-skolar text-2xl font-bold text-primary mb-10"
+        >
+          :
         </div>
-        <div class="timer-separator">:</div>
-        <div class="timer-item">
-          <div class="timer-number" id="minutes">0</div>
-          <div class="timer-label">Хвілін</div>
+        <div class="timer-item flex flex-col items-center gap-4">
+          <div
+            class="timer-number font-skolar text-2xl font-bold text-primary min-w-[120px] text-center leading-none bg-milky py-8 px-5 rounded-[15px] border-[3px] border-[#333] shadow-custom"
+            id="hours"
+          >
+            0
+          </div>
+          <div
+            class="timer-label font-skolar text-base text-primary font-semibold uppercase tracking-wider"
+          >
+            Гадзін
+          </div>
         </div>
-        <div class="timer-separator">:</div>
-        <div class="timer-item">
-          <div class="timer-number" id="seconds">0</div>
-          <div class="timer-label">Секунд</div>
+        <div
+          class="timer-separator font-skolar text-2xl font-bold text-primary mb-10"
+        >
+          :
+        </div>
+        <div class="timer-item flex flex-col items-center gap-4">
+          <div
+            class="timer-number font-skolar text-2xl font-bold text-primary min-w-[120px] text-center leading-none bg-milky py-8 px-5 rounded-[15px] border-[3px] border-[#333] shadow-custom"
+            id="minutes"
+          >
+            0
+          </div>
+          <div
+            class="timer-label font-skolar text-base text-primary font-semibold uppercase tracking-wider"
+          >
+            Хвілін
+          </div>
+        </div>
+        <div
+          class="timer-separator font-skolar text-2xl font-bold text-primary mb-10"
+        >
+          :
+        </div>
+        <div class="timer-item flex flex-col items-center gap-4">
+          <div
+            class="timer-number font-skolar text-2xl font-bold text-primary min-w-[120px] text-center leading-none bg-milky py-8 px-5 rounded-[15px] border-[3px] border-[#333] shadow-custom"
+            id="seconds"
+          >
+            0
+          </div>
+          <div
+            class="timer-label font-skolar text-base text-primary font-semibold uppercase tracking-wider"
+          >
+            Секунд
+          </div>
         </div>
       </div>
     </section>
 
     <!-- Location Section -->
     <section
-      class="location-section"
+      class="location-section relative py-15 px-5 flex flex-col items-center justify-center min-h-screen w-full bg-section-bg"
       aria-label="Інфармацыя пра месца правядзення"
     >
-      <h2 class="location-title">Месца правядзення</h2>
-      <div class="location-subtitle-frame">
-        <p class="location-subtitle">
+      <h2
+        class="location-title font-skolar text-2xl font-bold mb-5 text-center text-primary"
+      >
+        Месца правядзення
+      </h2>
+      <div
+        class="location-subtitle-frame inline-block bg-cream border-[3px] border-[#333] rounded-[15px] py-5 px-9 mb-5 shadow-custom transition-all hover:-translate-y-0.5 hover:shadow-custom-hover hover:bg-soft-peach"
+      >
+        <p
+          class="location-subtitle font-skolar text-lg text-primary m-0 text-center font-medium"
+        >
           <a
             href="https://www.instagram.com/riverhall.by"
             target="_blank"
             rel="noopener noreferrer"
-            class="location-link"
+            class="location-link text-primary hover:text-primary transition-all text-decoration-none"
             >River Hall – госцевы комплекс</a
           >
         </p>
       </div>
-      <p class="location-description">
+      <p
+        class="location-description font-skolar text-base text-primary mb-10 text-center italic leading-relaxed max-w-[700px]"
+      >
         Менавіта тут, на набярэжнай побач, мы ўпершыню пацалаваліся, таму гэтае
         месца для нас асаблівае.
       </p>
-      <div class="gallery-container">
+      <div class="gallery-container w-full max-w-[900px] mb-7">
         <div
-          class="gallery-scroll"
+          class="gallery-scroll flex gap-5 overflow-x-auto py-5 scroll-smooth justify-center items-center flex-wrap"
           role="region"
           aria-label="Фотагалерэя месца правядзення"
         >
           <img
             src="images/riverhall/frame1.jpg"
             alt="Гасцёўня River Hall - экстэр'ер"
-            class="gallery-image"
+            class="gallery-image max-w-[280px] h-auto rounded-[15px] shadow-custom border-[3px] border-cream transition-all cursor-pointer flex-shrink-0 hover:scale-105 hover:shadow-custom-hover"
             loading="lazy"
           />
           <img
             src="images/riverhall/frame2.jpg"
             alt="Гасцёўня River Hall - інтэр'ер залі"
-            class="gallery-image"
+            class="gallery-image max-w-[280px] h-auto rounded-[15px] shadow-custom border-[3px] border-cream transition-all cursor-pointer flex-shrink-0 hover:scale-105 hover:shadow-custom-hover"
             loading="lazy"
           />
           <img
             src="images/riverhall/frame3.jpg"
             alt="Гасцёўня River Hall - тэраса"
-            class="gallery-image"
+            class="gallery-image max-w-[280px] h-auto rounded-[15px] shadow-custom border-[3px] border-cream transition-all cursor-pointer flex-shrink-0 hover:scale-105 hover:shadow-custom-hover"
             loading="lazy"
           />
         </div>
       </div>
-      <div class="map-container" id="mapContainer"></div>
-      <p class="location-address">вул. Падольная, д. 23, г. Гродна</p>
+      <div
+        class="map-container w-full max-w-[900px] h-[500px] rounded-[20px] overflow-hidden shadow-custom border-[3px] border-[#333] bg-white mx-auto mb-5"
+        id="mapContainer"
+      ></div>
+      <p
+        class="location-address font-skolar text-base text-primary mb-10 text-center font-medium"
+      >
+        вул. Падольная, д. 23, г. Гродно
+      </p>
     </section>
 
     <!-- Celebration Plan Section -->
-    <section class="celebration-section" aria-label="Праграма святкавання">
-      <h2 class="celebration-title">Праграма святкавання</h2>
-      <p class="celebration-subtitle">2 жніўня 2026 года, нядзеля</p>
-      <div class="schedule-container">
-        <div class="schedule-item">
-          <div class="schedule-time">15:00</div>
-          <div class="schedule-activity">Збор гасцей</div>
+    <section
+      class="celebration-section relative py-15 px-5 flex flex-col items-center justify-center min-h-screen w-full bg-section-bg"
+      aria-label="Праграма святкавання"
+    >
+      <h2
+        class="celebration-title font-skolar text-2xl font-bold mb-4 text-center text-primary"
+      >
+        Праграма святкавання
+      </h2>
+      <p
+        class="celebration-subtitle font-skolar text-md text-secondary mb-12 text-center italic"
+      >
+        2 жніўня 2026 года, нядзеля
+      </p>
+      <div class="schedule-container flex flex-col gap-6 max-w-[800px] w-full">
+        <div
+          class="schedule-item flex items-center gap-6 py-5 px-8 bg-cream border-[3px] border-[#333] rounded-[15px] shadow-custom transition-all hover:-translate-y-1 hover:shadow-custom-hover hover:bg-milky"
+        >
+          <div
+            class="schedule-time font-skolar text-xl font-bold text-primary min-w-[100px] text-center"
+          >
+            15:00
+          </div>
+          <div
+            class="schedule-activity font-skolar text-md text-primary font-medium"
+          >
+            Збор гасцей
+          </div>
         </div>
 
-        <div class="schedule-item">
-          <div class="schedule-time">15:30</div>
-          <div class="schedule-activity">Фуршэт</div>
+        <div
+          class="schedule-item flex items-center gap-6 py-5 px-8 bg-cream border-[3px] border-[#333] rounded-[15px] shadow-custom transition-all hover:-translate-y-1 hover:shadow-custom-hover hover:bg-milky"
+        >
+          <div
+            class="schedule-time font-skolar text-xl font-bold text-primary min-w-[100px] text-center"
+          >
+            15:30
+          </div>
+          <div
+            class="schedule-activity font-skolar text-md text-primary font-medium"
+          >
+            Фуршэт
+          </div>
         </div>
 
-        <div class="schedule-item">
-          <div class="schedule-time">16:00</div>
-          <div class="schedule-activity">Выязная цырымонія</div>
+        <div
+          class="schedule-item flex items-center gap-6 py-5 px-8 bg-cream border-[3px] border-[#333] rounded-[15px] shadow-custom transition-all hover:-translate-y-1 hover:shadow-custom-hover hover:bg-milky"
+        >
+          <div
+            class="schedule-time font-skolar text-xl font-bold text-primary min-w-[100px] text-center"
+          >
+            16:00
+          </div>
+          <div
+            class="schedule-activity font-skolar text-md text-primary font-medium"
+          >
+            Выязная цырымонія
+          </div>
         </div>
 
-        <div class="schedule-item">
-          <div class="schedule-time">17:00</div>
-          <div class="schedule-activity">Банкет</div>
+        <div
+          class="schedule-item flex items-center gap-6 py-5 px-8 bg-cream border-[3px] border-[#333] rounded-[15px] shadow-custom transition-all hover:-translate-y-1 hover:shadow-custom-hover hover:bg-milky"
+        >
+          <div
+            class="schedule-time font-skolar text-xl font-bold text-primary min-w-[100px] text-center"
+          >
+            17:00
+          </div>
+          <div
+            class="schedule-activity font-skolar text-md text-primary font-medium"
+          >
+            Банкет
+          </div>
         </div>
 
-        <div class="schedule-item">
-          <div class="schedule-time">23:00</div>
-          <div class="schedule-activity">Фінал урачыстасці</div>
+        <div
+          class="schedule-item flex items-center gap-6 py-5 px-8 bg-cream border-[3px] border-[#333] rounded-[15px] shadow-custom transition-all hover:-translate-y-1 hover:shadow-custom-hover hover:bg-milky"
+        >
+          <div
+            class="schedule-time font-skolar text-xl font-bold text-primary min-w-[100px] text-center"
+          >
+            23:00
+          </div>
+          <div
+            class="schedule-activity font-skolar text-md text-primary font-medium"
+          >
+            Фінал урачыстасці
+          </div>
         </div>
       </div>
     </section>
 
     <!-- Dresscode Section -->
-    <section class="dresscode-section" aria-label="Рэкамендацыі па дрэс-коду">
-      <h2 class="dresscode-title">Дрэс-код</h2>
-      <p class="dresscode-description">
+    <section
+      class="dresscode-section relative py-15 px-5 flex flex-col items-center justify-center min-h-screen w-full bg-section-bg"
+      aria-label="Рэкамендацыі па дрэс-коду"
+    >
+      <h2
+        class="dresscode-title font-skolar text-2xl font-bold mb-5 text-center text-primary"
+      >
+        Дрэс-код
+      </h2>
+      <p
+        class="dresscode-description font-skolar text-base text-primary mb-10 text-center leading-relaxed max-w-[700px]"
+      >
         Нам будзе прыемна, калі вы падтрымаеце атмасферу свята сваімі прыгожымі
         ўборамі ў прапанаваных танах.
       </p>
-      <div class="colors-container">
+      <div
+        class="colors-container flex flex-wrap justify-center items-center gap-10 max-w-[900px]"
+      >
         <a
           href="https://pinterest.com/search/pins/?q=Light%20blue%20matching%20wedding%20guest%20outfits%20for%20man%20and%20woman"
           target="_blank"
           rel="noopener noreferrer"
-          class="color-card"
+          class="color-card flex flex-col items-center gap-4 w-[130px] transition-transform hover:-translate-y-1 cursor-pointer text-decoration-none text-inherit"
         >
-          <div class="color-swatch swatch-soft-blue"></div>
-          <span class="color-name">Светла-блакітны</span>
+          <div
+            class="color-swatch w-20 h-20 rounded-full shadow-custom border-[3px] border-white transition-all hover:shadow-custom-hover hover:scale-110 bg-soft-blue"
+          ></div>
+          <span
+            class="color-name font-skolar text-base text-primary font-semibold text-center"
+            >Светла-блакітны</span
+          >
         </a>
         <a
           href="https://pinterest.com/search/pins/?q=Light%20peach%20matching%20wedding%20guest%20outfits%20for%20man%20and%20woman"
           target="_blank"
           rel="noopener noreferrer"
-          class="color-card"
+          class="color-card flex flex-col items-center gap-4 w-[130px] transition-transform hover:-translate-y-1 cursor-pointer text-decoration-none text-inherit"
         >
-          <div class="color-swatch swatch-soft-orange"></div>
-          <span class="color-name">Светла-персікавы</span>
+          <div
+            class="color-swatch w-20 h-20 rounded-full shadow-custom border-[3px] border-white transition-all hover:shadow-custom-hover hover:scale-110 bg-soft-peach"
+          ></div>
+          <span
+            class="color-name font-skolar text-base text-primary font-semibold text-center"
+            >Светла-персікавы</span
+          >
         </a>
         <a
           href="https://pinterest.com/search/pins/?q=Pale%20yellow%20matching%20wedding%20guest%20outfits%20for%20man%20and%20woman"
           target="_blank"
           rel="noopener noreferrer"
-          class="color-card"
+          class="color-card flex flex-col items-center gap-4 w-[130px] transition-transform hover:-translate-y-1 cursor-pointer text-decoration-none text-inherit"
         >
-          <div class="color-swatch swatch-soft-yellow"></div>
-          <span class="color-name">Бледна-жоўты</span>
+          <div
+            class="color-swatch w-20 h-20 rounded-full shadow-custom border-[3px] border-white transition-all hover:shadow-custom-hover hover:scale-110 bg-soft-yellow"
+          ></div>
+          <span
+            class="color-name font-skolar text-base text-primary font-semibold text-center"
+            >Бледна-жоўты</span
+          >
         </a>
         <a
           href="https://pinterest.com/search/pins/?q=Light%20lilac%20matching%20wedding%20guest%20outfits%20for%20man%20and%20woman"
           target="_blank"
           rel="noopener noreferrer"
-          class="color-card"
+          class="color-card flex flex-col items-center gap-4 w-[130px] transition-transform hover:-translate-y-1 cursor-pointer text-decoration-none text-inherit"
         >
-          <div class="color-swatch swatch-soft-lavender"></div>
-          <span class="color-name">Светла-бэзавы</span>
+          <div
+            class="color-swatch w-20 h-20 rounded-full shadow-custom border-[3px] border-white transition-all hover:shadow-custom-hover hover:scale-110 bg-soft-lavender"
+          ></div>
+          <span
+            class="color-name font-skolar text-base text-primary font-semibold text-center"
+            >Светла-бэзавы</span
+          >
         </a>
         <a
           href="https://pinterest.com/search/pins/?q=Pale%20green%20matching%20wedding%20guest%20outfits%20for%20man%20and%20woman"
           target="_blank"
           rel="noopener noreferrer"
-          class="color-card"
+          class="color-card flex flex-col items-center gap-4 w-[130px] transition-transform hover:-translate-y-1 cursor-pointer text-decoration-none text-inherit"
         >
-          <div class="color-swatch swatch-soft-green"></div>
-          <span class="color-name">Бледна-зялёны</span>
+          <div
+            class="color-swatch w-20 h-20 rounded-full shadow-custom border-[3px] border-white transition-all hover:shadow-custom-hover hover:scale-110 bg-soft-green"
+          ></div>
+          <span
+            class="color-name font-skolar text-base text-primary font-semibold text-center"
+            >Бледна-зялёны</span
+          >
         </a>
         <a
           href="https://pinterest.com/search/pins/?q=Cream%20matching%20wedding%20guest%20outfits%20for%20man%20and%20woman"
           target="_blank"
           rel="noopener noreferrer"
-          class="color-card"
+          class="color-card flex flex-col items-center gap-4 w-[130px] transition-transform hover:-translate-y-1 cursor-pointer text-decoration-none text-inherit"
         >
-          <div class="color-swatch swatch-creamy"></div>
-          <span class="color-name">Крэмавы</span>
+          <div
+            class="color-swatch w-20 h-20 rounded-full shadow-custom border-[3px] border-white transition-all hover:shadow-custom-hover hover:scale-110 bg-cream"
+          ></div>
+          <span
+            class="color-name font-skolar text-base text-primary font-semibold text-center"
+            >Крэмавы</span
+          >
         </a>
         <a
           href="https://pinterest.com/search/pins/?q=Milky%20white%20matching%20wedding%20guest%20outfits%20for%20man%20and%20woman"
           target="_blank"
           rel="noopener noreferrer"
-          class="color-card"
+          class="color-card flex flex-col items-center gap-4 w-[130px] transition-transform hover:-translate-y-1 cursor-pointer text-decoration-none text-inherit"
         >
-          <div class="color-swatch swatch-milky"></div>
-          <span class="color-name">Малочна-белы</span>
+          <div
+            class="color-swatch w-20 h-20 rounded-full shadow-custom border-[3px] border-white transition-all hover:shadow-custom-hover hover:scale-110 bg-milky"
+          ></div>
+          <span
+            class="color-name font-skolar text-base text-primary font-semibold text-center"
+            >Малочна-белы</span
+          >
         </a>
       </div>
     </section>
 
     <!-- Wishes Section -->
-    <section class="wishes-section" aria-label="Пажаданні маладых">
-      <div class="wishes-container">
-        <p class="wishes-subtitle">Маленькія пажаданні:</p>
-        <div class="wishes-item">
-          <h3 class="wishes-item-title">Пра кветкі:</h3>
-          <p class="wishes-item-text">
+    <section
+      class="wishes-section relative py-20 px-5 flex flex-col items-center justify-center min-h-screen w-full bg-section-bg"
+      aria-label="Пажаданні маладых"
+    >
+      <div class="wishes-container max-w-[800px] w-full text-center">
+        <p
+          class="wishes-subtitle font-skolar text-2xl text-primary mb-8 font-bold"
+        >
+          Маленькія пажаданні:
+        </p>
+        <div
+          class="wishes-item bg-milky border-[3px] border-[#333] rounded-[15px] py-6 px-8 mb-6 text-left shadow-custom transition-all hover:-translate-y-1 hover:shadow-custom-hover"
+        >
+          <h3
+            class="wishes-item-title font-skolar text-md text-primary mb-4 font-bold"
+          >
+            Пра кветкі:
+          </h3>
+          <p
+            class="wishes-item-text font-skolar text-md text-primary leading-relaxed italic"
+          >
             Не турбуйцеся пра букеты — яны хутка вянуць. Замест іх мы будзем
             рады атрымаць у падарунак бутэльку добрага напою на ваш густ.
           </p>
         </div>
-        <div class="wishes-item">
-          <h3 class="wishes-item-title">Пра дзеткі:</h3>
-          <p class="wishes-item-text">
+        <div
+          class="wishes-item bg-milky border-[3px] border-[#333] rounded-[15px] py-6 px-8 mb-6 text-left shadow-custom transition-all hover:-translate-y-1 hover:shadow-custom-hover"
+        >
+          <h3
+            class="wishes-item-title font-skolar text-md text-primary mb-4 font-bold"
+          >
+            Пра дзеткі:
+          </h3>
+          <p
+            class="wishes-item-text font-skolar text-md text-primary leading-relaxed italic"
+          >
             Мы плануем вечарыну толькі для дарослых, каб кожны змог максімальна
             адпачыць і адцягнуцца ад клопатаў.
           </p>
@@ -472,42 +791,55 @@
     </section>
 
     <!-- Guest Survey Form Section -->
-    <section class="survey-section" aria-label="Анкета для госцей">
-      <h2 class="survey-title">Чакаем ваш адказ</h2>
-      <p class="survey-deadline">
+    <section
+      class="survey-section relative py-20 px-5 flex flex-col items-center justify-center min-h-screen w-full bg-section-bg"
+      aria-label="Анкета для госцей"
+    >
+      <h2
+        class="survey-title font-skolar text-2xl font-bold mb-4 text-center text-primary"
+      >
+        Чакаем ваш адказ
+      </h2>
+      <p
+        class="survey-deadline font-skolar text-base text-secondary mb-10 text-center italic"
+      >
         Калі ласка, запоўніце анкету да FORM_DEADLINE_PLACEHOLDER
       </p>
 
       <form
-        class="survey-form"
+        class="survey-form w-full max-w-[600px]"
         action="FORM_ACTION_PLACEHOLDER"
         method="POST"
         id="guestSurveyForm"
       >
         <!-- Guest Name -->
-        <div class="form-group">
-          <label for="guestName" class="form-label"
+        <div class="form-group w-full max-w-[600px] mb-6">
+          <label
+            for="guestName"
+            class="form-label block font-skolar text-base font-semibold text-primary mb-2.5"
             >Ваша імя і прозвішча:</label
           >
           <input
             type="text"
             id="guestName"
             name="guest_name"
-            class="form-input"
+            class="form-input w-full py-4 px-5 font-skolar text-base text-primary bg-cream border-[3px] border-[#333] rounded-[15px] transition-all shadow-custom focus:outline-none focus:bg-milky focus:-translate-y-0.5 focus:shadow-custom-hover"
             required
             placeholder="Увядзіце імя і прозвішча"
           />
         </div>
 
         <!-- Attendance Status -->
-        <div class="form-group">
-          <label for="attendance" class="form-label"
+        <div class="form-group w-full max-w-[600px] mb-6">
+          <label
+            for="attendance"
+            class="form-label block font-skolar text-base font-semibold text-primary mb-2.5"
             >Ці плануеце вы прысутнічаць на вяселлі?</label
           >
           <select
             id="attendance"
             name="attendance"
-            class="form-select"
+            class="form-select w-full py-4 px-5 font-skolar text-base text-primary bg-cream border-[3px] border-[#333] rounded-[15px] transition-all shadow-custom focus:outline-none focus:bg-milky focus:-translate-y-0.5 focus:shadow-custom-hover cursor-pointer"
             required
           >
             <option value="" disabled selected>Выберыце адзін варыянт</option>
@@ -518,119 +850,204 @@
         </div>
 
         <!-- Partner Name (conditional) -->
-        <div class="form-group partner-name-group partner-group-hidden">
-          <label for="partnerName" class="form-label"
+        <div
+          class="form-group partner-name-group partner-group-hidden w-full max-w-[600px] mb-6"
+        >
+          <label
+            for="partnerName"
+            class="form-label block font-skolar text-base font-semibold text-primary mb-2.5"
             >Імя і прозвішча вашай пары:</label
           >
           <input
             type="text"
             id="partnerName"
             name="partner_name"
-            class="form-input"
+            class="form-input w-full py-4 px-5 font-skolar text-base text-primary bg-cream border-[3px] border-[#333] rounded-[15px] transition-all shadow-custom focus:outline-none focus:bg-milky focus:-translate-y-0.5 focus:shadow-custom-hover"
             placeholder="Увядзіце імя і прозвішча партнёра"
           />
         </div>
 
         <!-- Alcohol Preferences (checkboxes) -->
-        <div class="form-group">
-          <label class="form-label"
+        <div class="form-group w-full max-w-[600px] mb-6">
+          <label
+            class="form-label block font-skolar text-base font-semibold text-primary mb-2.5"
             >Які алкаголь вы хочаце ўжываць на банкеце?</label
           >
-          <div class="checkbox-group">
-            <label class="checkbox-item">
+          <div
+            class="checkbox-group grid grid-cols-[repeat(auto-fill,minmax(180px,1fr))] gap-4 p-4 bg-cream rounded-[15px] border-[3px] border-[#333]"
+          >
+            <label
+              class="checkbox-item flex items-center gap-2.5 cursor-pointer p-2.5 rounded-[10px] transition-colors hover:bg-milky"
+            >
               <input
                 type="checkbox"
                 name="alcohol_preference"
                 value="ігрыстае"
+                class="w-5 h-5 cursor-pointer accent-[#333]"
               />
-              <span>Вiно iгрыстае</span>
+              <span class="font-skolar text-base text-primary font-medium"
+                >Вiно iгрыстае</span
+              >
             </label>
-            <label class="checkbox-item">
+            <label
+              class="checkbox-item flex items-center gap-2.5 cursor-pointer p-2.5 rounded-[10px] transition-colors hover:bg-milky"
+            >
               <input
                 type="checkbox"
                 name="alcohol_preference"
                 value="вiно_чырвонае_паўсалодкае"
+                class="w-5 h-5 cursor-pointer accent-[#333]"
               />
-              <span>Віно чырвонае (паўсалодкае)</span>
+              <span class="font-skolar text-base text-primary font-medium"
+                >Віно чырвонае (паўсалодкае)</span
+              >
             </label>
-            <label class="checkbox-item">
+            <label
+              class="checkbox-item flex items-center gap-2.5 cursor-pointer p-2.5 rounded-[10px] transition-colors hover:bg-milky"
+            >
               <input
                 type="checkbox"
                 name="alcohol_preference"
                 value="вiно_чырвонае_паўсухое"
+                class="w-5 h-5 cursor-pointer accent-[#333]"
               />
-              <span>Віно чырвонае (паўсухое)</span>
+              <span class="font-skolar text-base text-primary font-medium"
+                >Віно чырвонае (паўсухое)</span
+              >
             </label>
-            <label class="checkbox-item">
+            <label
+              class="checkbox-item flex items-center gap-2.5 cursor-pointer p-2.5 rounded-[10px] transition-colors hover:bg-milky"
+            >
               <input
                 type="checkbox"
                 name="alcohol_preference"
                 value="вiно_белае_паўсалодкае"
+                class="w-5 h-5 cursor-pointer accent-[#333]"
               />
-              <span>Віно белае (паўсалодкае)</span>
+              <span class="font-skolar text-base text-primary font-medium"
+                >Віно белае (паўсалодкае)</span
+              >
             </label>
-            <label class="checkbox-item">
+            <label
+              class="checkbox-item flex items-center gap-2.5 cursor-pointer p-2.5 rounded-[10px] transition-colors hover:bg-milky"
+            >
               <input
                 type="checkbox"
                 name="alcohol_preference"
                 value="вiно_белае_паўсухое"
+                class="w-5 h-5 cursor-pointer accent-[#333]"
               />
-              <span>Віно белае (паўсухое)</span>
+              <span class="font-skolar text-base text-primary font-medium"
+                >Віно белае (паўсухое)</span
+              >
             </label>
-            <label class="checkbox-item">
+            <label
+              class="checkbox-item flex items-center gap-2.5 cursor-pointer p-2.5 rounded-[10px] transition-colors hover:bg-milky"
+            >
               <input
                 type="checkbox"
                 name="alcohol_preference"
                 value="гарэлка"
+                class="w-5 h-5 cursor-pointer accent-[#333]"
               />
-              <span>Гарэлка</span>
+              <span class="font-skolar text-base text-primary font-medium"
+                >Гарэлка</span
+              >
             </label>
-            <label class="checkbox-item">
-              <input type="checkbox" name="alcohol_preference" value="ром" />
-              <span>Ром</span>
+            <label
+              class="checkbox-item flex items-center gap-2.5 cursor-pointer p-2.5 rounded-[10px] transition-colors hover:bg-milky"
+            >
+              <input
+                type="checkbox"
+                name="alcohol_preference"
+                value="ром"
+                class="w-5 h-5 cursor-pointer accent-[#333]"
+              />
+              <span class="font-skolar text-base text-primary font-medium"
+                >Ром</span
+              >
             </label>
-            <label class="checkbox-item">
-              <input type="checkbox" name="alcohol_preference" value="віскі" />
-              <span>Віскі</span>
+            <label
+              class="checkbox-item flex items-center gap-2.5 cursor-pointer p-2.5 rounded-[10px] transition-colors hover:bg-milky"
+            >
+              <input
+                type="checkbox"
+                name="alcohol_preference"
+                value="віскі"
+                class="w-5 h-5 cursor-pointer accent-[#333]"
+              />
+              <span class="font-skolar text-base text-primary font-medium"
+                >Віскі</span
+              >
             </label>
-            <label class="checkbox-item">
-              <input type="checkbox" name="alcohol_preference" value="каньяк" />
-              <span>Каньяк</span>
+            <label
+              class="checkbox-item flex items-center gap-2.5 cursor-pointer p-2.5 rounded-[10px] transition-colors hover:bg-milky"
+            >
+              <input
+                type="checkbox"
+                name="alcohol_preference"
+                value="каньяк"
+                class="w-5 h-5 cursor-pointer accent-[#333]"
+              />
+              <span class="font-skolar text-base text-primary font-medium"
+                >Каньяк</span
+              >
             </label>
-            <label class="checkbox-item">
+            <label
+              class="checkbox-item flex items-center gap-2.5 cursor-pointer p-2.5 rounded-[10px] transition-colors hover:bg-milky"
+            >
               <input
                 type="checkbox"
                 name="alcohol_preference"
                 value="безалкагольныя_напоі"
+                class="w-5 h-5 cursor-pointer accent-[#333]"
               />
-              <span>Безалкагольныя напоі</span>
+              <span class="font-skolar text-base text-primary font-medium"
+                >Безалкагольныя напоі</span
+              >
             </label>
           </div>
         </div>
 
         <!-- Submit Button -->
-        <button type="submit" class="form-submit-btn">Адправіць анкету</button>
+        <button
+          type="submit"
+          class="form-submit-btn w-full max-w-[600px] py-5 px-10 font-skolar text-md font-semibold text-primary bg-cream border-[3px] border-[#333] rounded-[15px] cursor-pointer transition-all shadow-custom mt-2.5 hover:bg-soft-peach hover:-translate-y-1 hover:shadow-custom-hover active:translate-y-0"
+        >
+          Адправіць анкету
+        </button>
 
         <!-- Form Messages -->
         <div
           id="formSuccess"
-          class="form-message form-message-success form-message-hidden"
+          class="form-message form-message-success form-message-hidden py-4 px-6 rounded-[15px] mt-5 max-w-[600px] text-center bg-soft-green border-[3px] border-[#333]"
         >
-          <p>Дзякуй за вашу адказ! Ваша анкета прынята.</p>
+          <p class="font-skolar text-base text-primary font-medium">
+            Дзякуй за вашу адказ! Ваша анкета прынята.
+          </p>
         </div>
 
         <div
           id="formError"
-          class="form-message form-message-error form-message-hidden"
+          class="form-message form-message-error form-message-hidden py-4 px-6 rounded-[15px] mt-5 max-w-[600px] text-center bg-soft-peach border-[3px] border-[#333]"
         >
-          <p>Адбылася памылка. Калі ласка, паспрабуйце яшчэ раз.</p>
+          <p class="font-skolar text-base text-primary font-medium">
+            Адбылася памылка. Калі ласка, паспрабуйце яшчэ раз.
+          </p>
         </div>
       </form>
     </section>
 
     <!-- Closing Section -->
-    <section class="closing-section" aria-label="Заключнае паведамленне">
-      <h1 class="closing-text">Да хуткай сустрэчы на нашым свяце!</h1>
+    <section
+      class="closing-section relative min-h-screen flex flex-col justify-center items-center w-full bg-section-bg"
+      aria-label="Заключнае паведамленне"
+    >
+      <h1
+        class="closing-text font-inkverse text-2xl text-primary text-center m-0 opacity-0 scale-50 transition-all duration-700 ease-out"
+      >
+        Да хуткай сустрэчы на нашым свяце!
+      </h1>
     </section>
 
     <script src="script.js"></script>

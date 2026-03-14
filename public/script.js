@@ -258,6 +258,27 @@ function initScrollIndicator() {
       scrollDown();
     }
   });
+
+  const scrollWrapper = scrollIndicator.closest('.fixed, .absolute');
+  if (!scrollWrapper) return;
+
+  const firstSection = document.querySelector('.first-section');
+  if (!firstSection) return;
+
+  const toggleVisibility = () => {
+    const firstSectionBottom =
+      firstSection.offsetTop + firstSection.offsetHeight;
+    if (window.scrollY > firstSectionBottom * 0.3) {
+      scrollWrapper.style.opacity = '0';
+      scrollWrapper.style.pointerEvents = 'none';
+    } else {
+      scrollWrapper.style.opacity = '';
+      scrollWrapper.style.pointerEvents = '';
+    }
+  };
+
+  window.addEventListener('scroll', toggleVisibility, { passive: true });
+  toggleVisibility();
 }
 
 document.addEventListener('DOMContentLoaded', initGuestSurvey);

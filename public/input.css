@@ -456,6 +456,11 @@ section.section-visible {
     font-size: 1.25rem;
   }
 
+  .scroll-indicator {
+    width: 35px;
+    height: 23px;
+  }
+
   .timer-title {
     font-size: 2.441rem;
     margin-bottom: 10px;

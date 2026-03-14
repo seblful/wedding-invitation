@@ -1373,6 +1373,12 @@ body {
   width: 9vw;
 }
 
+.p-br-c2 {
+  bottom: 8%;
+  right: 15%;
+  width: 10vw;
+}
+
 .p-br-2 {
   bottom: 17%;
   right: 4%;
@@ -1547,6 +1553,27 @@ body {
 
   .timeline-dot:hover {
     transform: translateX(-50%) scale(1.15) !important;
+  }
+
+  /* Mobile flower size adjustments to prevent overflow */
+
+  .p-tl-c1,
+  .p-tl-1,
+  .p-tl-2,
+  .p-tl-3,
+  .p-tr-c1,
+  .p-tr-c2,
+  .p-tr-1,
+  .p-tr-2,
+  .p-bl-c1,
+  .p-bl-c2,
+  .p-bl-1,
+  .p-bl-2,
+  .p-br-c1,
+  .p-br-c2,
+  .p-br-1,
+  .p-br-2 {
+    width: 13vw !important;
   }
 }
 

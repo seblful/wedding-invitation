@@ -47,31 +47,34 @@ const DESKTOP_FINAL_POSITIONS = {
   '.p-tr-1': { left: 75, top: 27 },
   /* Bottom-right (use bottom) */
   '.p-br-c1': { left: 80, bottom: 2 },
+  '.p-br-c2': { left: 72, bottom: 15 },
   '.p-br-2': { left: 85, bottom: 26 },
   '.p-br-1': { left: 75, bottom: 0 },
 };
 
 /* Mobile final positions - adjusted to keep flowers within screen bounds */
+/* Note: left values represent position from left edge, so right edge = 100 - left - flowerWidth% (approx) */
 const MOBILE_FINAL_POSITIONS = {
   /* Top-left (use top) - stay near original positions */
-  '.p-tl-c1': { left: 4, top: 3 },
-  '.p-tl-1': { left: 1, top: 20 },
-  '.p-tl-2': { left: 9, top: 4 },
-  '.p-tl-3': { left: 13, top: 40 },
+  '.p-tl-c1': { left: 5, top: 3 },
+  '.p-tl-1': { left: 3, top: 20 },
+  '.p-tl-2': { left: 8, top: 4 },
+  '.p-tl-3': { left: 10, top: 40 },
   /* Bottom-left (use bottom) */
-  '.p-bl-c1': { left: 4, bottom: 3 },
-  '.p-bl-c2': { left: 16, bottom: 12 },
-  '.p-bl-1': { left: 1, bottom: 17 },
-  '.p-bl-2': { left: 12, bottom: 2 },
-  /* Top-right (use top) - much closer to right edge to stay within bounds */
-  '.p-tr-c2': { left: 95, top: 3 },
-  '.p-tr-2': { left: 97, top: 4 },
-  '.p-tr-c1': { left: 95, top: 22 },
-  '.p-tr-1': { left: 90, top: 28 },
+  '.p-bl-c1': { left: 5, bottom: 3 },
+  '.p-bl-c2': { left: 14, bottom: 12 },
+  '.p-bl-1': { left: 3, bottom: 17 },
+  '.p-bl-2': { left: 10, bottom: 2 },
+  /* Top-right (use top) - positioned closer to right edge */
+  '.p-tr-c2': { left: 87, top: 3 },
+  '.p-tr-2': { left: 89, top: 4 },
+  '.p-tr-c1': { left: 85, top: 22 },
+  '.p-tr-1': { left: 83, top: 28 },
   /* Bottom-right (use bottom) */
-  '.p-br-c1': { left: 95, bottom: 3 },
-  '.p-br-2': { left: 97, bottom: 27 },
-  '.p-br-1': { left: 90, bottom: 2 },
+  '.p-br-c1': { left: 87, bottom: 3 },
+  '.p-br-c2': { left: 84, bottom: 15 },
+  '.p-br-2': { left: 85, bottom: 27 },
+  '.p-br-1': { left: 81, bottom: 2 },
 };
 
 async function fetchConfig() {
@@ -403,6 +406,7 @@ function initFlowerAnimation() {
     { selector: '.p-tr-c1', useTop: true },
     { selector: '.p-tr-1', useTop: true },
     { selector: '.p-br-c1', useTop: false },
+    { selector: '.p-br-c2', useTop: false },
     { selector: '.p-br-2', useTop: false },
     { selector: '.p-br-1', useTop: false },
   ];
@@ -480,9 +484,9 @@ function getScaleConfig() {
   const medium = window.innerWidth <= 428;
 
   if (mobile) {
-    if (small) return { initial: 0.7, default: 0.7 };
-    if (medium) return { initial: 0.75, default: 0.75 };
-    return { initial: 0.8, default: 0.8 };
+    if (small) return { initial: 1.3, default: 1.5 };
+    if (medium) return { initial: 1.4, default: 1.6 };
+    return { initial: 1.5, default: 1.7 };
   }
   return { initial: 1, default: 0.75 };
 }

@@ -243,86 +243,47 @@ function initGuestSurvey() {
   }
 }
 
+function initScrollIndicator() {
+  const scrollIndicator = document.querySelector('.scroll-indicator');
+  if (!scrollIndicator) return;
+
+  const scrollDown = () => {
+    window.scrollBy({ top: window.innerHeight * 0.5, behavior: 'smooth' });
+  };
+
+  scrollIndicator.addEventListener('click', scrollDown);
+  scrollIndicator.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      scrollDown();
+    }
+  });
+}
+
 document.addEventListener('DOMContentLoaded', initGuestSurvey);
 
 document.addEventListener('DOMContentLoaded', initCountdown);
-document.addEventListener('DOMContentLoaded', initScrollAnimations);
 document.addEventListener('DOMContentLoaded', createFallingPetals);
 document.addEventListener('DOMContentLoaded', initFlowerAnimation);
-window.addEventListener('beforeunload', cleanupCountdown);
-
-function initScrollAnimations() {
-  const facesContainer = document.querySelector('.faces-container');
-  const namesBoard = document.querySelector('.names-board');
-
-  [facesContainer, namesBoard].forEach((el) => {
-    if (el) {
-      el.style.opacity = '0';
-      el.style.transform = 'translateY(30px)';
-      el.style.transition = 'opacity 1s ease-out, transform 1s ease-out';
-    }
-  });
-
-  setTimeout(() => {
-    [facesContainer, namesBoard].forEach((el) => {
-      if (el) {
-        el.style.opacity = '1';
-        el.style.transform = 'translateY(0)';
-      }
-    });
-  }, 300);
-
-  setupSectionObserver();
-}
-
-function setupSectionObserver() {
-  const observerOptions = {
-    root: null,
-    rootMargin: '0px',
-    threshold: 0.1,
-  };
-
-  const sectionObserver = new IntersectionObserver((entries) => {
-    entries.forEach((entry) => {
-      if (entry.isIntersecting) {
-        entry.target.classList.add('section-visible');
-      }
-    });
-  }, observerOptions);
-
-  const sections = document.querySelectorAll(
-    'section:not(.first-section):not(.closing-section)'
-  );
-  sections.forEach((section) => {
-    sectionObserver.observe(section);
-  });
-
-  setupClosingTextObserver();
-}
-
-function setupClosingTextObserver() {
+document.addEventListener('DOMContentLoaded', initScrollIndicator);
+document.addEventListener('DOMContentLoaded', () => {
   const closingText = document.querySelector('.closing-text');
   const closingSection = document.querySelector('.closing-section');
 
-  if (!closingText || !closingSection) return;
-
-  const observer = new IntersectionObserver(
-    (entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          closingText.classList.add('visible');
-        }
-      });
-    },
-    {
-      root: null,
-      rootMargin: '-10% 0px',
-      threshold: 0.5,
-    }
-  );
-
-  observer.observe(closingSection);
-}
+  if (closingText && closingSection) {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            closingText.classList.add('visible');
+          }
+        });
+      },
+      { rootMargin: '-10% 0px', threshold: 0.5 }
+    );
+    observer.observe(closingSection);
+  }
+});
 
 document.addEventListener('DOMContentLoaded', () => {
   const sections = document.querySelectorAll(

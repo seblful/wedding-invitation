@@ -245,9 +245,7 @@ document.addEventListener('DOMContentLoaded', initGuestSurvey);
 document.addEventListener('DOMContentLoaded', initCountdown);
 document.addEventListener('DOMContentLoaded', initScrollAnimations);
 document.addEventListener('DOMContentLoaded', createFallingPetals);
-document.addEventListener('DOMContentLoaded', () => {
-  initFlowerAnimation();
-});
+document.addEventListener('DOMContentLoaded', initFlowerAnimation);
 window.addEventListener('beforeunload', cleanupCountdown);
 
 function initScrollAnimations() {
@@ -270,7 +268,67 @@ function initScrollAnimations() {
       }
     });
   }, 300);
+
+  setupSectionObserver();
 }
+
+function setupSectionObserver() {
+  const observerOptions = {
+    root: null,
+    rootMargin: '0px',
+    threshold: 0.1,
+  };
+
+  const sectionObserver = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('section-visible');
+      }
+    });
+  }, observerOptions);
+
+  const sections = document.querySelectorAll(
+    'section:not(.first-section):not(.closing-section)'
+  );
+  sections.forEach((section) => {
+    sectionObserver.observe(section);
+  });
+
+  setupClosingTextObserver();
+}
+
+function setupClosingTextObserver() {
+  const closingText = document.querySelector('.closing-text');
+  const closingSection = document.querySelector('.closing-section');
+
+  if (!closingText || !closingSection) return;
+
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          closingText.classList.add('visible');
+        }
+      });
+    },
+    {
+      root: null,
+      rootMargin: '-10% 0px',
+      threshold: 0.5,
+    }
+  );
+
+  observer.observe(closingSection);
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  const sections = document.querySelectorAll(
+    'section:not(.first-section):not(.closing-section)'
+  );
+  sections.forEach((section) => {
+    section.classList.add('section-visible');
+  });
+});
 
 function createFallingPetals() {
   const petalColors = ['#ffb7c5', '#ffc0cb', '#ffd1dc', '#ffe4e1', '#fff0f5'];
@@ -321,9 +379,6 @@ function createFallingPetals() {
 function initFlowerAnimation() {
   const firstSection = document.querySelector('.first-section');
   const closingSection = document.querySelector('.closing-section');
-  const croppedFlowers = document.querySelectorAll('.cropped-flower');
-  let isClosingPhase = false;
-  let closingProgress = 0;
 
   if (!firstSection) return;
 
@@ -334,7 +389,6 @@ function initFlowerAnimation() {
     return 0;
   }
 
-  /* Only selector and useTop. Start positions are read from CSS (styles.css). */
   const flowerConfigs = [
     { selector: '.p-tl-c1', useTop: true },
     { selector: '.p-tl-1', useTop: true },
@@ -353,8 +407,6 @@ function initFlowerAnimation() {
     { selector: '.p-br-1', useTop: false },
   ];
 
-  const leftFlowers = [];
-  const rightFlowers = [];
   const allFlowerData = [];
 
   flowerConfigs.forEach((config) => {
@@ -390,32 +442,9 @@ function initFlowerAnimation() {
     };
 
     allFlowerData.push(flowerData);
-
-    if (usesLeft) {
-      leftFlowers.push(flowerData);
-    } else {
-      rightFlowers.push(flowerData);
-    }
   });
 
-  const defaultEdgePosition = 3;
-  const defaultRightEdgePosition = 97;
-
-  const initialScale = isMobile()
-    ? window.innerWidth <= 375
-      ? 0.7
-      : window.innerWidth <= 428
-        ? 0.75
-        : 0.8
-    : 1;
-
-  const defaultScale = isMobile()
-    ? window.innerWidth <= 375
-      ? 0.7
-      : window.innerWidth <= 428
-        ? 0.75
-        : 0.8
-    : 0.75;
+  const scaleConfig = getScaleConfig();
 
   allFlowerData.forEach((flower) => {
     const finalPositions = isMobile()
@@ -434,9 +463,7 @@ function initFlowerAnimation() {
           targetPos.top !== undefined ? targetPos.top : flower.startY;
       }
     } else if (!flower.isCropped) {
-      flower.targetX = flower.usesLeft
-        ? defaultEdgePosition
-        : defaultRightEdgePosition;
+      flower.targetX = flower.usesLeft ? 3 : 97;
       flower.targetY = flower.startY;
     } else {
       flower.targetX = flower.startX;
@@ -444,24 +471,37 @@ function initFlowerAnimation() {
     }
   });
 
-  const throttledUpdateAnimations = isMobile()
-    ? requestAnimationFrameThrottle(updateAnimations)
-    : updateAnimations;
+  setupFlowerScroll(allFlowerData, scaleConfig, firstSection, closingSection);
+}
+
+function getScaleConfig() {
+  const mobile = isMobile();
+  const small = window.innerWidth <= 375;
+  const medium = window.innerWidth <= 428;
+
+  if (mobile) {
+    if (small) return { initial: 0.7, default: 0.7 };
+    if (medium) return { initial: 0.75, default: 0.75 };
+    return { initial: 0.8, default: 0.8 };
+  }
+  return { initial: 1, default: 0.75 };
+}
+
+function setupFlowerScroll(
+  allFlowerData,
+  scaleConfig,
+  firstSection,
+  closingSection
+) {
+  const { initial, default: defaultScale } = scaleConfig;
 
   function updateAnimations() {
     const scrollY = window.scrollY;
-    const sectionHeight = firstSection.offsetHeight;
-    const documentHeight = document.body.scrollHeight - window.innerHeight;
+    const sectionHeight = firstSection?.offsetHeight || window.innerHeight;
+    const closingSectionTop = closingSection?.offsetTop || 0;
 
-    // Phase 1: First section (flowers at original positions)
-    // Phase 2: Middle sections (flowers at final positions)
-    // Phase 3: Closing section (flowers return to original positions)
-
-    // Calculate progress for each phase
     const firstSectionProgress = Math.min(scrollY / sectionHeight, 1);
 
-    // Detect when entering closing section (last 100vh of scroll)
-    const closingSectionTop = closingSection?.offsetTop || 0;
     const closingSectionProgress = Math.min(
       Math.max(
         (scrollY + window.innerHeight - closingSectionTop) / window.innerHeight,
@@ -470,61 +510,37 @@ function initFlowerAnimation() {
       1
     );
 
-    // Determine which phase we're in
-    let phase1Progress, phase2Progress, phase3Progress;
-
-    if (closingSectionProgress > 0) {
-      // Phase 3: Closing section - flowers return to original
-      isClosingPhase = true;
-      phase1Progress = 0;
-      phase2Progress = 0;
-      phase3Progress = closingSectionProgress;
-    } else {
-      // Phase 1 & 2: Normal animation
-      isClosingPhase = false;
-      phase1Progress = firstSectionProgress;
-      phase2Progress = 1;
-      phase3Progress = 0;
-    }
+    const isClosingPhase = closingSectionProgress > 0;
+    const phase1Progress = isClosingPhase ? 0 : firstSectionProgress;
+    const phase3Progress = isClosingPhase ? closingSectionProgress : 0;
 
     const mobileOptimize = isMobile();
 
     allFlowerData.forEach((flower) => {
       if (flower.isCropped) {
-        // Cropped flowers: fade out during phases 1-2, fade in during phase 3
-        let currentOpacity;
-        if (isClosingPhase) {
-          currentOpacity = phase3Progress;
-        } else {
-          const fadeProgress = Math.min(phase1Progress / 0.7, 1);
-          currentOpacity = 1 - fadeProgress;
-        }
+        const currentOpacity = isClosingPhase
+          ? phase3Progress
+          : 1 - Math.min(phase1Progress / 0.7, 1);
         flower.element.style.opacity = currentOpacity.toFixed(3);
         return;
       }
 
-      // Calculate position based on current phase
       let currentX, currentY, currentScale;
 
       if (isClosingPhase) {
-        // Phase 3: Interpolate from final position back to original
         currentX =
           flower.targetX + (flower.startX - flower.targetX) * phase3Progress;
         currentY =
           flower.targetY + (flower.startY - flower.targetY) * phase3Progress;
-        currentScale =
-          defaultScale + (initialScale - defaultScale) * phase3Progress;
+        currentScale = defaultScale + (initial - defaultScale) * phase3Progress;
       } else {
-        // Phases 1-2: Normal animation from original to final
         currentX =
           flower.startX + (flower.targetX - flower.startX) * phase1Progress;
         currentY =
           flower.startY + (flower.targetY - flower.startY) * phase1Progress;
-        currentScale =
-          initialScale - (initialScale - defaultScale) * phase1Progress;
+        currentScale = initial - (initial - defaultScale) * phase1Progress;
       }
 
-      // Apply position - optimize for mobile
       if (
         !mobileOptimize ||
         !flower.lastValues ||
@@ -532,62 +548,49 @@ function initFlowerAnimation() {
         Math.abs(currentY - flower.lastValues.y) > 0.1 ||
         Math.abs(currentScale - flower.lastValues.scale) > 0.01
       ) {
-        flower.element.style.removeProperty('left');
-        flower.element.style.removeProperty('right');
-        flower.element.style.removeProperty('top');
-        flower.element.style.removeProperty('bottom');
-
-        if (flower.usesLeft) {
-          flower.element.style.setProperty('left', `${currentX}%`, 'important');
-        } else if (flower.usesRight) {
-          flower.element.style.setProperty(
-            'right',
-            `${100 - currentX}%`,
-            'important'
-          );
-        }
-
-        if (flower.useTop) {
-          flower.element.style.setProperty('top', `${currentY}%`, 'important');
-        } else {
-          flower.element.style.setProperty(
-            'bottom',
-            `${currentY}%`,
-            'important'
-          );
-        }
-
-        flower.element.style.setProperty(
-          'transform',
-          `scale(${currentScale})`,
-          'important'
-        );
-
+        updateFlowerPosition(flower, currentX, currentY, currentScale);
         flower.lastValues = { x: currentX, y: currentY, scale: currentScale };
       }
     });
-
-    // Animate closing text when in phase 3
-    if (closingSection && phase3Progress > 0.2) {
-      const closingText = closingSection.querySelector('.closing-text');
-      if (closingText && !closingText.classList.contains('visible')) {
-        closingText.classList.add('visible');
-      }
-    }
   }
 
-  window.addEventListener(
-    'scroll',
-    isMobile() ? throttledUpdateAnimations : updateAnimations,
-    { passive: true }
-  );
+  function updateFlowerPosition(flower, x, y, scale) {
+    flower.element.style.removeProperty('left');
+    flower.element.style.removeProperty('right');
+    flower.element.style.removeProperty('top');
+    flower.element.style.removeProperty('bottom');
 
-  // Set initial scale for all flowers before animation
+    if (flower.usesLeft) {
+      flower.element.style.setProperty('left', `${x}%`, 'important');
+    } else if (flower.usesRight) {
+      flower.element.style.setProperty('right', `${100 - x}%`, 'important');
+    }
+
+    if (flower.useTop) {
+      flower.element.style.setProperty('top', `${y}%`, 'important');
+    } else {
+      flower.element.style.setProperty('bottom', `${y}%`, 'important');
+    }
+
+    flower.element.style.setProperty(
+      'transform',
+      `scale(${scale})`,
+      'important'
+    );
+  }
+
+  const throttledUpdate = isMobile()
+    ? requestAnimationFrameThrottle(updateAnimations)
+    : updateAnimations;
+
+  window.addEventListener('scroll', throttledUpdate, { passive: true });
+
   allFlowerData.forEach((flower) => {
     if (!flower.isCropped) {
+      flower.element.style.opacity = '1';
       flower.element.style.setProperty(
         'transform',
-        `scale(${initialScale})`,
+        `scale(${initial})`,
         'important'
       );
     }

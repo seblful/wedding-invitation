@@ -82,6 +82,9 @@ module.exports = {
         custom: '0 4px 15px rgba(0, 0, 0, 0.1)',
         'custom-hover': '0 6px 25px rgba(0, 0, 0, 0.15)',
       },
+      transitionTimingFunction: {
+        'ease-out': 'cubic-bezier(0, 0, 0.2, 1)',
+      },
     },
   },
   plugins: [],

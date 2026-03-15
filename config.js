@@ -1,6 +1,6 @@
 module.exports = {
   port: 3000,
-  baseUrl: 'https://attach-filename-clips-bag.trycloudflare.com',
+  baseUrl: 'https://wedding-invitation.alesha-chimba.workers.dev/',
   themeColor: '#fdf4e3',
   backgroundColor: '#b9dfc6',
   openGraph: {

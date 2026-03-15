@@ -55,25 +55,25 @@ const DESKTOP_FINAL_POSITIONS = {
 /* Note: left values represent position from left edge, so right edge = 100 - left - flowerWidth% (approx) */
 const MOBILE_FINAL_POSITIONS = {
   /* Top-left (use top) - stay near original positions */
-  '.p-tl-c1': { left: 5, top: 3 },
-  '.p-tl-1': { left: 3, top: 20 },
-  '.p-tl-2': { left: 8, top: 4 },
-  '.p-tl-3': { left: 10, top: 40 },
+  '.p-tl-c1': { left: 6, top: 3 },
+  '.p-tl-1': { left: 4, top: 20 },
+  '.p-tl-2': { left: 10, top: 4 },
+  '.p-tl-3': { left: 13, top: 40 },
   /* Bottom-left (use bottom) */
-  '.p-bl-c1': { left: 5, bottom: 3 },
-  '.p-bl-c2': { left: 14, bottom: 12 },
-  '.p-bl-1': { left: 3, bottom: 17 },
-  '.p-bl-2': { left: 10, bottom: 2 },
+  '.p-bl-c1': { left: 6, bottom: 3 },
+  '.p-bl-c2': { left: 16, bottom: 12 },
+  '.p-bl-1': { left: 6, bottom: 17 },
+  '.p-bl-2': { left: 13, bottom: 2 },
   /* Top-right (use top) - positioned closer to right edge */
-  '.p-tr-c2': { left: 87, top: 3 },
-  '.p-tr-2': { left: 89, top: 4 },
-  '.p-tr-c1': { left: 85, top: 22 },
-  '.p-tr-1': { left: 83, top: 28 },
+  '.p-tr-c2': { left: 88, top: 3 },
+  '.p-tr-2': { left: 90, top: 4 },
+  '.p-tr-c1': { left: 86, top: 22 },
+  '.p-tr-1': { left: 84, top: 28 },
   /* Bottom-right (use bottom) */
-  '.p-br-c1': { left: 87, bottom: 3 },
-  '.p-br-c2': { left: 84, bottom: 15 },
-  '.p-br-2': { left: 85, bottom: 27 },
-  '.p-br-1': { left: 81, bottom: 2 },
+  '.p-br-c1': { left: 88, bottom: 3 },
+  '.p-br-c2': { left: 85, bottom: 15 },
+  '.p-br-2': { left: 86, bottom: 27 },
+  '.p-br-1': { left: 82, bottom: 2 },
 };
 
 async function fetchConfig() {
@@ -457,9 +457,9 @@ function getScaleConfig() {
   const medium = window.innerWidth <= 428;
 
   if (mobile) {
-    if (small) return { initial: 1.3, default: 1.5 };
-    if (medium) return { initial: 1.4, default: 1.6 };
-    return { initial: 1.5, default: 1.7 };
+    if (small) return { initial: 1.3, default: 1.4 };
+    if (medium) return { initial: 1.4, default: 1.5 };
+    return { initial: 1.4, default: 1.6 };
   }
   return { initial: 1, default: 0.75 };
 }

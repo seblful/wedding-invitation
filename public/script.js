@@ -223,7 +223,7 @@ function initGuestSurvey() {
 
         const data = await response.json();
 
-        if (response.ok && data.success) {
+        if (response.ok) {
           if (formSuccess) formSuccess.classList.remove('form-message-hidden');
           if (formError) formError.classList.add('form-message-hidden');
           form.reset();

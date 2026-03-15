@@ -1,0 +1,15 @@
+{
+  "weddingDate": "2026-08-01T21:00:00.000Z",
+  "timezone": "Europe/Minsk",
+  "location": {
+    "name": "River Hall",
+    "address": "вул. Падольная, д. 23, г. Гродна",
+    "yandexMapUrl": "https://yandex.ru/map-widget/v1/?ll=23.833062,53.671368&z=16&pt=23.833062,53.671368,pm2rdm",
+    "yandexDirectUrl": "https://yandex.com/maps/-/CPqGnRmu",
+    "mapDimensions": {
+      "width": 580,
+      "height": 346
+    }
+  },
+  "formspreeEndpoint": "https://formspree.io/f/xykdrgnb"
+}

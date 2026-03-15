@@ -82,7 +82,7 @@ const MOBILE_FINAL_POSITIONS = {
 
 async function fetchConfig() {
   try {
-    const response = await fetch(CONFIG_API_ENDPOINT);
+    const response = await fetch('/config.json');
     const data = await response.json();
     configData = data;
     weddingDate = new Date(data.weddingDate).getTime();
@@ -207,7 +207,8 @@ function initGuestSurvey() {
         .join(', ');
 
       try {
-        const response = await fetch(SUBMIT_FORM_ENDPOINT, {
+        const formspreeEndpoint = configData?.formspreeEndpoint || form.action;
+        const response = await fetch(formspreeEndpoint, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

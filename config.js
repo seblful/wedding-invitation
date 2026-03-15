@@ -2,8 +2,9 @@ module.exports = {
   port: 3000,
   baseUrl: 'https://attach-filename-clips-bag.trycloudflare.com',
   themeColor: '#fdf4e3',
+  backgroundColor: '#b9dfc6',
   openGraph: {
-    title: 'Вяселле Аляксея і Дар\'і',
+    title: "Вяселле Аляксея і Дар'і",
     description:
       'Запрашаем вас падзяліць з намі наш асаблівы дзень! 2 жніўня 2026 года будзем рады бачыць вас на нашым вяселлі ў River Hall, Гродна.',
     image: 'images/preview.png',

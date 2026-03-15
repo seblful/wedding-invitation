@@ -36,7 +36,8 @@ function processHtml(html) {
     .replace('THEME_COLOR_PLACEHOLDER', config.themeColor)
     .replace('PAGE_TITLE_PLACEHOLDER', config.openGraph.title)
     .replace('FORM_DEADLINE_PLACEHOLDER', config.form.deadline)
-    .replace('FORM_ACTION_PLACEHOLDER', config.api.submitFormEndpoint);
+    .replace('FORM_ACTION_PLACEHOLDER', config.api.submitFormEndpoint)
+    .replace('BACKGROUND_COLOR_PLACEHOLDER', config.backgroundColor);
 }
 
 const ALLOWED_ORIGINS = [

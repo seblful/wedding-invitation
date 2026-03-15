@@ -342,7 +342,7 @@ body {
 /* Mobile Timeline Layout */
 @media (max-width: 767px) {
   .timeline-track::before {
-    left: 20px;
+    left: 24px;
   }
 
   .timeline-item {
@@ -352,19 +352,19 @@ body {
 
   .timeline-dot {
     position: absolute;
-    left: 20px;
+    left: 24px;
     transform: translateX(-50%) !important;
   }
 
   .timeline-content {
-    margin-left: 50px;
+    margin-left: 54px;
     text-align: left !important;
   }
 
   .timeline-item:nth-child(even) .timeline-content {
     text-align: left !important;
     order: 0;
-    margin-left: 50px;
+    margin-left: 54px;
   }
 
   .timeline-dot:hover {

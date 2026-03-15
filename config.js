@@ -1,6 +1,6 @@
 module.exports = {
   port: 3000,
-  baseUrl: 'вяселле.бел',
+  baseUrl: 'https://вяселле.бел',
   themeColor: '#fdf4e3',
   backgroundColor: '#b9dfc6',
   openGraph: {

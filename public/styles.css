@@ -1524,7 +1524,7 @@ body {
 
 @media (max-width: 767px) {
   .timeline-track::before {
-    left: 28px;
+    left: 30px;
   }
 
   .timeline-item {
@@ -1535,19 +1535,19 @@ body {
 
   .timeline-dot {
     position: absolute;
-    left: 28px;
+    left: 30px !important;
     transform: translateX(-50%) !important;
   }
 
   .timeline-content {
-    margin-left: 58px;
+    margin-left: 60px;
     text-align: left !important;
   }
 
   .timeline-item:nth-child(even) .timeline-content {
     text-align: left !important;
     order: 0;
-    margin-left: 58px;
+    margin-left: 60px;
   }
 
   .timeline-dot:hover {

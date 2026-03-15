@@ -342,29 +342,30 @@ body {
 /* Mobile Timeline Layout */
 @media (max-width: 767px) {
   .timeline-track::before {
-    left: 24px;
+    left: 28px;
   }
 
   .timeline-item {
     flex-direction: row;
-    align-items: flex-start;
+    align-items: center;
+    padding-left: 0;
   }
 
   .timeline-dot {
     position: absolute;
-    left: 24px;
+    left: 28px;
     transform: translateX(-50%) !important;
   }
 
   .timeline-content {
-    margin-left: 54px;
+    margin-left: 58px;
     text-align: left !important;
   }
 
   .timeline-item:nth-child(even) .timeline-content {
     text-align: left !important;
     order: 0;
-    margin-left: 54px;
+    margin-left: 58px;
   }
 
   .timeline-dot:hover {

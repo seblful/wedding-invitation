@@ -574,16 +574,8 @@ video {
   bottom: 2.5rem;
 }
 
-.left-0 {
-  left: 0px;
-}
-
 .left-1\/2 {
   left: 50%;
-}
-
-.right-0 {
-  right: 0px;
 }
 
 .top-1\/2 {
@@ -2027,26 +2019,5 @@ section.section-visible {
 
   .md\:bottom-10 {
     bottom: 2.5rem;
-  }
-
-  .md\:left-1\/2 {
-    left: 50%;
-  }
-
-  .md\:right-auto {
-    right: auto;
-  }
-
-  .md\:left-0 {
-    left: 0px;
-  }
-
-  .md\:right-0 {
-    right: 0px;
-  }
-
-  .md\:-translate-x-1\/2 {
-    --tw-translate-x: -50%;
-    transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
   }
 }

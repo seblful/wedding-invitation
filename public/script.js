@@ -1,5 +1,4 @@
 let weddingDate;
-let countdownInterval;
 let configData;
 const CONFIG_API_ENDPOINT = '/api/config';
 const SUBMIT_FORM_ENDPOINT = '/api/submit-form';
@@ -128,13 +127,7 @@ async function initCountdown() {
   if (configLoaded) {
     loadMap();
     updateCountdown();
-    countdownInterval = setInterval(updateCountdown, 1000);
-  }
-}
-
-function cleanupCountdown() {
-  if (countdownInterval) {
-    clearInterval(countdownInterval);
+    setInterval(updateCountdown, 1000);
   }
 }
 
@@ -281,13 +274,13 @@ function initScrollIndicator() {
   toggleVisibility();
 }
 
-document.addEventListener('DOMContentLoaded', initGuestSurvey);
-
-document.addEventListener('DOMContentLoaded', initCountdown);
-document.addEventListener('DOMContentLoaded', createFallingPetals);
-document.addEventListener('DOMContentLoaded', initFlowerAnimation);
-document.addEventListener('DOMContentLoaded', initScrollIndicator);
 document.addEventListener('DOMContentLoaded', () => {
+  initGuestSurvey();
+  initCountdown();
+  createFallingPetals();
+  initFlowerAnimation();
+  initScrollIndicator();
+
   const closingText = document.querySelector('.closing-text');
   const closingSection = document.querySelector('.closing-section');
 
@@ -304,9 +297,7 @@ document.addEventListener('DOMContentLoaded', () => {
     );
     observer.observe(closingSection);
   }
-});
 
-document.addEventListener('DOMContentLoaded', () => {
   const sections = document.querySelectorAll(
     'section:not(.first-section):not(.closing-section)'
   );

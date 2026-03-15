@@ -21,12 +21,22 @@ function getOgTags() {
     <meta property="og:image" content="${fullImageUrl}" />
     <meta property="og:url" content="${cleanBaseUrl}/" />
     <meta property="og:type" content="website" />
-    
+
     <meta name="twitter:card" content="summary" />
     <meta name="twitter:title" content="${config.openGraph.title}" />
     <meta name="twitter:description" content="${config.openGraph.description}" />
     <meta name="twitter:image" content="${fullImageUrl}" />
   `;
+}
+
+function processHtml(html) {
+  const ogTags = getOgTags();
+  return html
+    .replace('<!-- OPENGRAPH_PLACEHOLDER -->', ogTags)
+    .replace('THEME_COLOR_PLACEHOLDER', config.themeColor)
+    .replace('PAGE_TITLE_PLACEHOLDER', config.openGraph.title)
+    .replace('FORM_DEADLINE_PLACEHOLDER', config.form.deadline)
+    .replace('FORM_ACTION_PLACEHOLDER', config.api.submitFormEndpoint);
 }
 
 const ALLOWED_ORIGINS = [
@@ -66,15 +76,7 @@ app.use((req, res, next) => {
 app.get('/', (req, res) => {
   const indexPath = path.join(__dirname, 'public', 'index.html');
   let html = fs.readFileSync(indexPath, 'utf8');
-
-  const ogTags = getOgTags();
-
-  html = html.replace('<!-- OPENGRAPH_PLACEHOLDER -->', ogTags);
-  html = html.replace('THEME_COLOR_PLACEHOLDER', config.themeColor);
-  html = html.replace('PAGE_TITLE_PLACEHOLDER', config.openGraph.title);
-  html = html.replace('FORM_DEADLINE_PLACEHOLDER', config.form.deadline);
-  html = html.replace('FORM_ACTION_PLACEHOLDER', config.api.submitFormEndpoint);
-  res.send(html);
+  res.send(processHtml(html));
 });
 
 app.get('/api/config', (req, res) => {
@@ -133,15 +135,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use((req, res) => {
   const indexPath = path.join(__dirname, 'public', 'index.html');
   let html = fs.readFileSync(indexPath, 'utf8');
-
-  const ogTags = getOgTags();
-
-  html = html.replace('<!-- OPENGRAPH_PLACEHOLDER -->', ogTags);
-  html = html.replace('THEME_COLOR_PLACEHOLDER', config.themeColor);
-  html = html.replace('PAGE_TITLE_PLACEHOLDER', config.openGraph.title);
-  html = html.replace('FORM_DEADLINE_PLACEHOLDER', config.form.deadline);
-  html = html.replace('FORM_ACTION_PLACEHOLDER', config.api.submitFormEndpoint);
-  res.status(404).send(html);
+  res.status(404).send(processHtml(html));
 });
 
 // Start server

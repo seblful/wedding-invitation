@@ -606,10 +606,6 @@ video {
   --tw-bg-opacity: 1;
   background-color: rgb(253 244 227 / var(--tw-bg-opacity, 1));
 }
-.bg-milky {
-  --tw-bg-opacity: 1;
-  background-color: rgb(253 255 245 / var(--tw-bg-opacity, 1));
-}
 .bg-soft-blue {
   --tw-bg-opacity: 1;
   background-color: rgb(228 247 255 / var(--tw-bg-opacity, 1));
@@ -1440,9 +1436,9 @@ section.section-visible {
     rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y))
     scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
 }
-.hover\:bg-milky:hover {
+.hover\:bg-cream:hover {
   --tw-bg-opacity: 1;
-  background-color: rgb(253 255 245 / var(--tw-bg-opacity, 1));
+  background-color: rgb(253 244 227 / var(--tw-bg-opacity, 1));
 }
 .hover\:bg-soft-blue:hover {
   --tw-bg-opacity: 1;
@@ -1465,9 +1461,9 @@ section.section-visible {
     rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y))
     scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
 }
-.focus\:bg-milky:focus {
+.focus\:bg-cream:focus {
   --tw-bg-opacity: 1;
-  background-color: rgb(253 255 245 / var(--tw-bg-opacity, 1));
+  background-color: rgb(253 244 227 / var(--tw-bg-opacity, 1));
 }
 .focus\:shadow-custom-hover:focus {
   --tw-shadow: 0 6px 25px rgba(0, 0, 0, 0.15);

@@ -12,7 +12,7 @@
     <!-- OPENGRAPH_PLACEHOLDER -->
     <link rel="stylesheet" href="styles.css" />
   </head>
-  <body class="antialiased">
+  <body class="antialiased touch-manipulation">
     <!-- Corner Decorations -->
     <div class="floral-background" aria-hidden="true">
       <!-- Top Left -->
@@ -125,6 +125,9 @@
               src="images/faces/Aliaksei.png"
               alt="Партрэт жаніха Аляксея"
               class="face-image max-w-[160px] h-auto"
+              loading="eager"
+              fetchpriority="high"
+              decoding="async"
             />
           </div>
           <div class="face-card flex flex-col items-center">
@@ -132,6 +135,9 @@
               src="images/faces/Daria.png"
               alt="Партрэт нявесты Дар'і"
               class="face-image max-w-[160px] h-auto"
+              loading="eager"
+              fetchpriority="high"
+              decoding="async"
             />
           </div>
         </div>
@@ -144,6 +150,9 @@
             src="images/faces/names_board.png"
             alt="Рамка для імёнаў"
             class="names-image max-w-[480px] h-auto block"
+            loading="eager"
+            fetchpriority="high"
+            decoding="async"
           />
           <p
             class="board-names absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-3xl font-bold whitespace-nowrap"
@@ -192,6 +201,7 @@
                 tabindex="0"
                 role="button"
                 aria-label="Першая зустрэча - лета 2022"
+                data-event="Першая зустрэча - лета 2022"
               ></div>
               <div class="timeline-content text-left flex-1">
                 <h3

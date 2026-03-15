@@ -20,12 +20,12 @@ module.exports = {
         skolar: ['"Skolar PE"', 'serif'],
       },
       fontSize: {
-        base: '1.2rem',
-        md: '1.35rem',
-        lg: '1.563rem',
-        xl: '1.953rem',
-        '2xl': '2.441rem',
-        '3xl': '3.052rem',
+        base: 'clamp(1rem, 2.5vw, 1.2rem)',
+        md: 'clamp(1.1rem, 2.8vw, 1.35rem)',
+        lg: 'clamp(1.3rem, 3vw, 1.563rem)',
+        xl: 'clamp(1.6rem, 3.5vw, 1.953rem)',
+        '2xl': 'clamp(1.8rem, 4vw, 2.441rem)',
+        '3xl': 'clamp(2.2rem, 5vw, 3.052rem)',
       },
       spacing: {
         15: '60px',
@@ -43,6 +43,9 @@ module.exports = {
       },
       transitionTimingFunction: {
         'ease-out': 'cubic-bezier(0, 0, 0.2, 1)',
+      },
+      touchAction: {
+        manipulation: 'manipulation',
       },
     },
   },

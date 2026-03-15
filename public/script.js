@@ -5,6 +5,7 @@ const SUBMIT_FORM_ENDPOINT = '/api/submit-form';
 
 /* Performance optimization utilities */
 const isMobile = () => window.innerWidth <= 767;
+const isSmallMobile = () => window.innerWidth <= 375;
 
 const requestAnimationFrameThrottle = (callback) => {
   let ticking = false;
@@ -20,7 +21,10 @@ const requestAnimationFrameThrottle = (callback) => {
 };
 
 /* Reduce animation frequency on mobile */
-const getAnimationInterval = () => (isMobile() ? 800 : 400);
+const getAnimationInterval = () => (isMobile() ? 1000 : 400);
+const getFlowerScale = () => (isSmallMobile() ? 1.3 : isMobile() ? 1.4 : 1);
+const getFlowerFinalScale = () =>
+  isSmallMobile() ? 1.4 : isMobile() ? 1.5 : 0.75;
 
 /**
  * Flower image animation – final positions (after full scroll).
@@ -316,12 +320,12 @@ function createFallingPetals() {
     petal.classList.add('petal');
 
     const size = mobileOptimize
-      ? Math.random() * 10 + 10
+      ? Math.random() * 8 + 8
       : Math.random() * 13 + 12;
     const left = Math.random() * 100;
-    const delay = mobileOptimize ? Math.random() * 3 : Math.random() * 2;
+    const delay = mobileOptimize ? Math.random() * 4 : Math.random() * 2;
     const duration = mobileOptimize
-      ? Math.random() * 8 + 8
+      ? Math.random() * 10 + 10
       : Math.random() * 6 + 6;
     const rotation = Math.random() * 360;
     const color = petalColors[Math.floor(Math.random() * petalColors.length)];
@@ -336,7 +340,8 @@ function createFallingPetals() {
       border-radius: 100% 0% 100% 0%;
       transform: rotate(${rotation}deg);
       --fall-distance: ${fallDistance}px;
-      ${mobileOptimize ? 'will-change: transform, opacity;' : ''}
+      will-change: transform, opacity;
+      ${mobileOptimize ? 'contain: layout style paint;' : ''}
     `;
 
     document.body.appendChild(petal);
@@ -452,16 +457,10 @@ function initFlowerAnimation() {
 }
 
 function getScaleConfig() {
-  const mobile = isMobile();
-  const small = window.innerWidth <= 375;
-  const medium = window.innerWidth <= 428;
-
-  if (mobile) {
-    if (small) return { initial: 1.3, default: 1.4 };
-    if (medium) return { initial: 1.4, default: 1.5 };
-    return { initial: 1.4, default: 1.6 };
-  }
-  return { initial: 1, default: 0.75 };
+  return {
+    initial: getFlowerScale(),
+    default: getFlowerFinalScale(),
+  };
 }
 
 function setupFlowerScroll(
@@ -471,6 +470,7 @@ function setupFlowerScroll(
   closingSection
 ) {
   const { initial, default: defaultScale } = scaleConfig;
+  const mobileOptimize = isMobile();
 
   function updateAnimations() {
     const scrollY = window.scrollY;
@@ -490,8 +490,6 @@ function setupFlowerScroll(
     const isClosingPhase = closingSectionProgress > 0;
     const phase1Progress = isClosingPhase ? 0 : firstSectionProgress;
     const phase3Progress = isClosingPhase ? closingSectionProgress : 0;
-
-    const mobileOptimize = isMobile();
 
     allFlowerData.forEach((flower) => {
       if (flower.isCropped) {
@@ -556,9 +554,7 @@ function setupFlowerScroll(
     );
   }
 
-  const throttledUpdate = isMobile()
-    ? requestAnimationFrameThrottle(updateAnimations)
-    : updateAnimations;
+  const throttledUpdate = requestAnimationFrameThrottle(updateAnimations);
 
   window.addEventListener('scroll', throttledUpdate, { passive: true });
 

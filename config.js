@@ -1,6 +1,6 @@
 module.exports = {
   port: 3000,
-  baseUrl: 'https://wedding-invitation.alesha-chimba.workers.dev/',
+  baseUrl: 'вяселле.бел',
   themeColor: '#fdf4e3',
   backgroundColor: '#b9dfc6',
   openGraph: {

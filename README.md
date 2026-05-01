@@ -1,46 +1,62 @@
 # Wedding Invitation Website
 
-A simple wedding invitation website built with Node.js, Express, and Tailwind CSS.
+Belarusian wedding invitation website built with Node.js, Express, and Tailwind CSS.
 
 ## Setup
-
-Install dependencies:
 
 ```bash
 npm install
 ```
 
-## Development (Watch Mode)
+## Configuration
 
-Run Tailwind CSS in watch mode and the server in separate terminals:
+All wedding-specific content (names, dates, locations, Open Graph, form endpoint) is in `config.js`. Edit this file to personalize the invitation — no HTML changes needed.
 
-**Terminal 1 - Tailwind CSS watch:**
+## Development
 
-```bash
-npx tailwindcss -i ./public/input.css -o ./public/styles.css --watch
-```
-
-**Terminal 2 - Server:**
+Start the dev server with CSS watch and auto-reload:
 
 ```bash
-node server.js
+npm run dev
 ```
 
-## Production
+## Build
 
-Build minified CSS and start server:
+Build minified CSS and generate a static `build/` directory for deployment:
 
 ```bash
-npx tailwindcss -i ./public/input.css -o ./public/styles.css --minify
-npm start
+npm run build
 ```
 
-## Testing with Cloudflare Tunnel
+## Lint & Format
 
-To test your OpenGraph and social media previews, create a temporary public URL:
+```bash
+npm run lint       # Check code style
+npm run lint:fix   # Fix auto-fixable issues
+npm run format     # Format with Prettier
+```
+
+## Deployment
+
+The project can be deployed as a static site to Cloudflare Workers/Pages:
+
+```bash
+npm run deploy     # Deploy with Wrangler
+```
+
+Requires `wrangler.jsonc` configuration — the static `build/` directory is served as assets.
+
+## Testing Social Previews
+
+Create a temporary public URL to test Open Graph previews:
 
 ```bash
 npx --yes cloudflared tunnel --url http://localhost:3000
 ```
 
-This will generate a trycloudflare.com URL that you can share to test link previews in Telegram, WhatsApp, Viber, and other platforms.
+## Tech Stack
+
+- **Express** — server with Helmet (security) and compression
+- **Tailwind CSS** + **PostCSS** — utility-first styling
+- **Formspree** — form submission backend
+- **Cloudflare Workers** — static/hybrid hosting via Wrangler

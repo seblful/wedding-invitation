@@ -80,24 +80,6 @@ app.get('/', (req, res) => {
   res.send(processHtml(html));
 });
 
-app.get('/api/config', (req, res) => {
-  try {
-    res.json({
-      weddingDate: config.weddingDate,
-      timezone: config.timezone,
-      location: {
-        name: config.location.name,
-        address: config.location.address,
-        yandexMapUrl: config.location.yandexMapUrl,
-        yandexDirectUrl: config.location.yandexDirectUrl,
-        mapDimensions: config.location.mapDimensions,
-      },
-    });
-  } catch (error) {
-    res.status(500).json({ error: 'Failed to fetch config' });
-  }
-});
-
 app.post('/api/submit-form', async (req, res) => {
   try {
     const formData = req.body;
@@ -129,6 +111,10 @@ app.post('/api/submit-form', async (req, res) => {
     console.error('Form submission error:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
+});
+
+app.get('/health', (_req, res) => {
+  res.status(200).json({ status: 'ok' });
 });
 
 app.use(express.static(path.join(__dirname, 'public')));

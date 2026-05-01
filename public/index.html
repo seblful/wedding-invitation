@@ -10,6 +10,7 @@
     <!-- OPENGRAPH_PLACEHOLDER -->
 
     <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="custom.css" />
   </head>
   <body class="antialiased touch-manipulation">
     <!-- Corner Decorations -->
@@ -199,8 +200,6 @@
             >
               <div
                 class="timeline-dot w-5 h-5 rounded-full bg-cream border-4 border-[#333] flex-shrink-0 transition-all cursor-pointer absolute left-1/2 -translate-x-1/2 hover:bg-soft-blue hover:scale-125"
-                tabindex="0"
-                role="button"
                 aria-label="Першая зустрэча - лета 2022"
                 data-event="Першая зустрэча - лета 2022"
               ></div>
@@ -224,8 +223,6 @@
             >
               <div
                 class="timeline-dot w-5 h-5 rounded-full bg-cream border-4 border-[#333] flex-shrink-0 transition-all cursor-pointer absolute left-1/2 -translate-x-1/2 hover:bg-soft-blue hover:scale-125"
-                tabindex="0"
-                role="button"
                 aria-label="Першае спатканне - лета 2023"
               ></div>
               <div class="timeline-content text-right flex-1 order-[-1]">
@@ -248,8 +245,6 @@
             >
               <div
                 class="timeline-dot w-5 h-5 rounded-full bg-cream border-4 border-[#333] flex-shrink-0 transition-all cursor-pointer absolute left-1/2 -translate-x-1/2 hover:bg-soft-blue hover:scale-125"
-                tabindex="0"
-                role="button"
                 aria-label="Першы пацалунак - лета 2023"
               ></div>
               <div class="timeline-content text-left flex-1">
@@ -272,8 +267,6 @@
             >
               <div
                 class="timeline-dot w-5 h-5 rounded-full bg-cream border-4 border-[#333] flex-shrink-0 transition-all cursor-pointer absolute left-1/2 -translate-x-1/2 hover:bg-soft-blue hover:scale-125"
-                tabindex="0"
-                role="button"
                 aria-label="Першае падарожжа - лета 2024"
               ></div>
               <div class="timeline-content text-right flex-1 order-[-1]">
@@ -296,8 +289,6 @@
             >
               <div
                 class="timeline-dot w-5 h-5 rounded-full bg-cream border-4 border-[#333] flex-shrink-0 transition-all cursor-pointer absolute left-1/2 -translate-x-1/2 hover:bg-soft-blue hover:scale-125"
-                tabindex="0"
-                role="button"
                 aria-label="Першае 'кахаю' - лета 2024"
               ></div>
               <div class="timeline-content text-left flex-1">
@@ -320,8 +311,6 @@
             >
               <div
                 class="timeline-dot w-5 h-5 rounded-full bg-cream border-4 border-[#333] flex-shrink-0 transition-all cursor-pointer absolute left-1/2 -translate-x-1/2 hover:bg-soft-blue hover:scale-125"
-                tabindex="0"
-                role="button"
                 aria-label="Першы агульны дом - восень 2024"
               ></div>
               <div class="timeline-content text-right flex-1 order-[-1]">
@@ -344,8 +333,6 @@
             >
               <div
                 class="timeline-dot w-5 h-5 rounded-full bg-cream border-4 border-[#333] flex-shrink-0 transition-all cursor-pointer absolute left-1/2 -translate-x-1/2 hover:bg-soft-blue hover:scale-125"
-                tabindex="0"
-                role="button"
                 aria-label="Запаветнае 'Так' - восень 2025"
               ></div>
               <div class="timeline-content text-left flex-1">
@@ -892,7 +879,7 @@
 
       <form
         class="survey-form w-full max-w-[600px]"
-        action="https://formspree.io/f/xykdrgnb"
+        action="FORM_ACTION_PLACEHOLDER"
         method="POST"
         id="guestSurveyForm"
       >
@@ -909,9 +896,10 @@
             name="guest_name"
             class="form-input w-full py-4 px-5 font-skolar text-base text-primary bg-cream border-[3px] border-[#333] rounded-[15px] transition-all shadow-custom focus:outline-none focus:bg-cream focus:-translate-y-0.5 focus:shadow-custom-hover"
             required
+            aria-describedby="error-guestName"
             placeholder="Увядзіце імя і прозвішча"
           />
-          <span class="form-error text-soft-orange font-skolar text-sm mt-1.5 block hidden" data-for="guestName">Калі ласка, увядзіце імя і прозвішча</span>
+          <span class="form-error text-soft-orange font-skolar text-sm mt-1.5 block hidden" id="error-guestName" data-for="guestName">Калі ласка, увядзіце імя і прозвішча</span>
         </div>
 
         <!-- Attendance Status -->
@@ -926,13 +914,14 @@
             name="attendance"
             class="form-select w-full py-4 px-5 font-skolar text-base text-primary bg-cream border-[3px] border-[#333] rounded-[15px] transition-all shadow-custom focus:outline-none focus:bg-cream focus:-translate-y-0.5 focus:shadow-custom-hover cursor-pointer"
             required
+            aria-describedby="error-attendance"
           >
             <option value="" disabled selected>Выберыце адзін варыянт</option>
             <option value="yes_alone">Так, з задавальненнем!</option>
             <option value="yes_with_partner">Прыду з парай</option>
             <option value="no">На жаль, не змагу</option>
           </select>
-          <span class="form-error text-soft-orange font-skolar text-sm mt-1.5 block hidden" data-for="attendance">Калі ласка, выберыце, ці плануеце вы прысутнічаць</span>
+          <span class="form-error text-soft-orange font-skolar text-sm mt-1.5 block hidden" id="error-attendance" data-for="attendance">Калі ласка, выберыце, ці плануеце вы прысутнічаць</span>
         </div>
 
         <!-- Second Day Attendance -->
@@ -947,12 +936,13 @@
             name="attendance_second_day"
             class="form-select w-full py-4 px-5 font-skolar text-base text-primary bg-cream border-[3px] border-[#333] rounded-[15px] transition-all shadow-custom focus:outline-none focus:bg-cream focus:-translate-y-0.5 focus:shadow-custom-hover cursor-pointer"
             required
+            aria-describedby="error-attendanceSecondDay"
           >
             <option value="" disabled selected>Выберыце адзін варыянт</option>
             <option value="yes">Так</option>
             <option value="no">Не</option>
           </select>
-          <span class="form-error text-soft-orange font-skolar text-sm mt-1.5 block hidden" data-for="attendanceSecondDay">Калі ласка, выберыце, ці плануеце вы прысутнічаць на другі дзень</span>
+          <span class="form-error text-soft-orange font-skolar text-sm mt-1.5 block hidden" id="error-attendanceSecondDay" data-for="attendanceSecondDay">Калі ласка, выберыце, ці плануеце вы прысутнічаць на другі дзень</span>
         </div>
 
         <!-- Partner Name (conditional) -->
@@ -969,9 +959,10 @@
             id="partnerName"
             name="partner_name"
             class="form-input w-full py-4 px-5 font-skolar text-base text-primary bg-cream border-[3px] border-[#333] rounded-[15px] transition-all shadow-custom focus:outline-none focus:bg-cream focus:-translate-y-0.5 focus:shadow-custom-hover"
+            aria-describedby="error-partnerName"
             placeholder="Увядзіце імя і прозвішча партнёра"
           />
-          <span class="form-error text-soft-orange font-skolar text-sm mt-1.5 block hidden" data-for="partnerName">Калі ласка, увядзіце імя і прозвішча вашай пары</span>
+          <span class="form-error text-soft-orange font-skolar text-sm mt-1.5 block hidden" id="error-partnerName" data-for="partnerName">Калі ласка, увядзіце імя і прозвішча вашай пары</span>
         </div>
 
         <!-- Alcohol Preferences (checkboxes) -->

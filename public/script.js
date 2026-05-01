@@ -1,7 +1,5 @@
 let weddingDate;
 let configData;
-const CONFIG_API_ENDPOINT = '/api/config';
-const SUBMIT_FORM_ENDPOINT = '/api/submit-form';
 
 /* Performance optimization utilities */
 const isMobile = () => window.innerWidth <= 767;
@@ -272,9 +270,8 @@ function initGuestSurvey() {
       submitBtn.disabled = true;
 
       try {
-        const formspreeEndpoint = configData?.formspreeEndpoint || form.action;
-        const response = await fetch(formspreeEndpoint, {
-          method: 'POST',
+        const response = await fetch(form.action, {
+          method: form.method,
           headers: {
             'Content-Type': 'application/json',
           },

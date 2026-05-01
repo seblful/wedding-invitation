@@ -355,8 +355,13 @@ body {
 
   .timeline-dot {
     position: absolute;
-    left: 30px !important;
+    left: 25px !important;
     transform: translateX(-50%) !important;
+  }
+
+  .timeline-dot.active {
+    width: 20px;
+    height: 20px;
   }
 
   .timeline-content {

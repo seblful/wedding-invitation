@@ -854,6 +854,52 @@
       </div>
     </section>
 
+    <!-- Second Day Section -->
+    <section
+      class="location-section relative py-15 px-5 flex flex-col items-center justify-center min-h-screen w-full"
+      aria-label="Другі дзень"
+    >
+      <h2
+        class="location-title font-skolar text-2xl font-bold mb-5 text-center text-primary"
+      >
+        Другі дзень
+      </h2>
+      <div
+        class="location-subtitle-frame inline-block bg-cream border-[3px] border-[#333] rounded-[15px] py-5 px-9 mb-5 shadow-custom transition-all hover:-translate-y-0.5 hover:shadow-custom-hover hover:bg-soft-peach"
+      >
+        <p
+          class="location-subtitle font-skolar text-lg text-primary m-0 text-center font-medium"
+        >
+          <a
+            href="https://www.instagram.com/dom_banya_7_pjatnic"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="location-link text-primary hover:text-primary transition-all text-decoration-none"
+            >Баня LOFT</a
+          >
+        </p>
+      </div>
+      <p
+        class="location-description font-skolar text-base text-primary mb-10 text-center italic leading-relaxed max-w-[700px]"
+      >
+        Запрашаем усіх жадаючых працягнуць вечарыну ў атмасфернай лазні
+      </p>
+      <p
+        class="location-description font-skolar text-base text-primary mb-10 text-center italic leading-relaxed max-w-[700px]"
+      >
+        Пачатак у 15:00
+      </p>
+      <div
+        class="map-container w-full max-w-[900px] h-[500px] rounded-[20px] overflow-hidden shadow-custom border-[3px] border-[#333] bg-white mx-auto mb-5"
+        id="mapContainerSecondDay"
+      ></div>
+      <p
+        class="location-address font-skolar text-base text-primary mb-10 text-center font-medium"
+      >
+        горад Гродна, вуліца Прыгародная, д. 26,<br />уваход з вуліцы Ціхай
+      </p>
+    </section>
+
     <!-- Guest Survey Form Section -->
     <section
       class="survey-section relative py-20 px-5 flex flex-col items-center justify-center min-h-screen w-full"
@@ -910,6 +956,25 @@
             <option value="yes_alone">Так, з задавальненнем!</option>
             <option value="yes_with_partner">Прыду з парай</option>
             <option value="no">На жаль, не змагу</option>
+          </select>
+        </div>
+
+        <!-- Second Day Attendance -->
+        <div class="form-group w-full max-w-[600px] mb-6">
+          <label
+            for="attendanceSecondDay"
+            class="form-label block font-skolar text-base font-semibold text-primary mb-2.5"
+            >Ці плануеце вы прысутнічаць на другі дзень?</label
+          >
+          <select
+            id="attendanceSecondDay"
+            name="attendance_second_day"
+            class="form-select w-full py-4 px-5 font-skolar text-base text-primary bg-cream border-[3px] border-[#333] rounded-[15px] transition-all shadow-custom focus:outline-none focus:bg-cream focus:-translate-y-0.5 focus:shadow-custom-hover cursor-pointer"
+            required
+          >
+            <option value="" disabled selected>Выберыце адзін варыянт</option>
+            <option value="yes">Так</option>
+            <option value="no">Не</option>
           </select>
         </div>
 

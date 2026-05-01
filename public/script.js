@@ -130,8 +130,27 @@ async function initCountdown() {
   const configLoaded = await fetchConfig();
   if (configLoaded) {
     loadMap();
+    loadSecondDayMap();
     updateCountdown();
     setInterval(updateCountdown, 1000);
+  }
+}
+
+function loadSecondDayMap() {
+  const mapContainer = document.getElementById('mapContainerSecondDay');
+  if (mapContainer && configData?.secondDayLocation?.yandexMapUrl) {
+    const width = configData.secondDayLocation.mapDimensions?.width || 580;
+    const height = configData.secondDayLocation.mapDimensions?.height || 346;
+    mapContainer.innerHTML = `
+      <iframe
+        src="${configData.secondDayLocation.yandexMapUrl}"
+        width="${width}"
+        height="${height}"
+        frameborder="0"
+        allowfullscreen="true"
+        style="position: relative"
+      ></iframe>
+    `;
   }
 }
 
@@ -202,6 +221,13 @@ function initGuestSurvey() {
       const checkboxes = form.querySelectorAll(
         'input[name="alcohol_preference"]:checked'
       );
+      const secondDayAttendance = form.querySelector('#attendanceSecondDay').value;
+
+      if (!secondDayAttendance) {
+        alert('Калі ласка, выберыце, ці плануеце вы прысутнічаць на другі дзень');
+        return;
+      }
+
       const selectedAlcohol = Array.from(checkboxes)
         .map((cb) => cb.value)
         .join(', ');
@@ -218,6 +244,7 @@ function initGuestSurvey() {
             attendance: attendance,
             partner_name: partnerName,
             alcohol_preference: selectedAlcohol,
+            second_day_attendance: secondDayAttendance,
           }),
         });
 

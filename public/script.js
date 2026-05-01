@@ -87,8 +87,7 @@ async function fetchConfig() {
     configData = data;
     weddingDate = new Date(data.weddingDate).getTime();
     return true;
-  } catch (error) {
-    console.error('Failed to fetch config:', error);
+  } catch {
     return false;
   }
 }
@@ -172,15 +171,31 @@ function loadMap() {
   }
 }
 
+function showFieldError(fieldId) {
+  const errorEl = document.querySelector(`.form-error[data-for="${fieldId}"]`);
+  if (errorEl) errorEl.classList.add('active');
+}
+
+function clearFieldError(fieldId) {
+  const errorEl = document.querySelector(`.form-error[data-for="${fieldId}"]`);
+  if (errorEl) errorEl.classList.remove('active');
+}
+
+function clearAllErrors() {
+  document.querySelectorAll('.form-error').forEach((el) => el.classList.remove('active'));
+}
+
 function initGuestSurvey() {
   const form = document.getElementById('guestSurveyForm');
   const attendanceSelect = document.getElementById('attendance');
   const partnerNameGroup = document.querySelector('.partner-name-group');
   const formSuccess = document.getElementById('formSuccess');
   const formError = document.getElementById('formError');
+  let isSubmitting = false;
 
   if (attendanceSelect) {
     attendanceSelect.addEventListener('change', function () {
+      clearFieldError('attendance');
       if (this.value === 'yes_with_partner') {
         partnerNameGroup.classList.remove('partner-group-hidden');
         setTimeout(() => {
@@ -189,48 +204,72 @@ function initGuestSurvey() {
         }, 100);
       } else {
         partnerNameGroup.classList.add('partner-group-hidden');
+        clearFieldError('partnerName');
       }
     });
   }
+
+  document.querySelectorAll('.form-input, .form-select').forEach((input) => {
+    input.addEventListener('input', function () {
+      clearFieldError(this.id);
+    });
+    input.addEventListener('change', function () {
+      clearFieldError(this.id);
+    });
+  });
 
   if (form) {
     form.addEventListener('submit', async function (e) {
       e.preventDefault();
 
+      if (isSubmitting) return;
+
+      clearAllErrors();
+      if (formError) formError.classList.add('form-message-hidden');
+      if (formSuccess) formSuccess.classList.add('form-message-hidden');
+
       const guestName = form.querySelector('#guestName').value.trim();
       const attendance = form.querySelector('#attendance').value;
       const partnerName = form.querySelector('#partnerName').value.trim();
+      const secondDayAttendance = form.querySelector('#attendanceSecondDay').value;
+
+      let hasError = false;
 
       if (!guestName) {
-        alert('Калі ласка, увядзіце імя і прозвішча');
-        return;
+        showFieldError('guestName');
+        hasError = true;
       }
 
       if (!attendance) {
-        alert('Калі ласка, выберыце, ці плануеце вы прысутнічаць');
-        return;
+        showFieldError('attendance');
+        hasError = true;
+      }
+
+      if (!secondDayAttendance) {
+        showFieldError('attendanceSecondDay');
+        hasError = true;
       }
 
       if (attendance === 'yes_with_partner' && !partnerName) {
-        alert('Калі ласка, увядзіце імя і прозвішча вашай пары');
-        return;
+        showFieldError('partnerName');
+        hasError = true;
       }
 
-      if (formError) formError.classList.add('form-message-hidden');
+      if (hasError) return;
 
       const checkboxes = form.querySelectorAll(
         'input[name="alcohol_preference"]:checked'
       );
-      const secondDayAttendance = form.querySelector('#attendanceSecondDay').value;
-
-      if (!secondDayAttendance) {
-        alert('Калі ласка, выберыце, ці плануеце вы прысутнічаць на другі дзень');
-        return;
-      }
 
       const selectedAlcohol = Array.from(checkboxes)
         .map((cb) => cb.value)
         .join(', ');
+
+      isSubmitting = true;
+      const submitBtn = form.querySelector('.form-submit-btn');
+      const originalText = submitBtn.textContent;
+      submitBtn.textContent = 'Адпраўка...';
+      submitBtn.disabled = true;
 
       try {
         const formspreeEndpoint = configData?.formspreeEndpoint || form.action;
@@ -248,21 +287,20 @@ function initGuestSurvey() {
           }),
         });
 
-        const data = await response.json();
-
         if (response.ok) {
           if (formSuccess) formSuccess.classList.remove('form-message-hidden');
-          if (formError) formError.classList.add('form-message-hidden');
           form.reset();
           if (partnerNameGroup)
             partnerNameGroup.classList.add('partner-group-hidden');
         } else {
-          throw new Error('Form submission failed');
+          if (formError) formError.classList.remove('form-message-hidden');
         }
-      } catch (error) {
-        console.error('Form submission error:', error);
-        if (formSuccess) formSuccess.classList.add('form-message-hidden');
+      } catch {
         if (formError) formError.classList.remove('form-message-hidden');
+      } finally {
+        isSubmitting = false;
+        submitBtn.textContent = originalText;
+        submitBtn.disabled = false;
       }
     });
   }
@@ -317,7 +355,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const closingSection = document.querySelector('.closing-section');
 
   if (closingText && closingSection) {
-    const observer = new IntersectionObserver(
+    const closingObserver = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
@@ -327,15 +365,8 @@ document.addEventListener('DOMContentLoaded', () => {
       },
       { rootMargin: '-10% 0px', threshold: 0.5 }
     );
-    observer.observe(closingSection);
+    closingObserver.observe(closingSection);
   }
-
-  const sections = document.querySelectorAll(
-    'section:not(.first-section):not(.closing-section)'
-  );
-  sections.forEach((section) => {
-    section.classList.add('section-visible');
-  });
 });
 
 function createFallingPetals() {
@@ -564,22 +595,18 @@ function setupFlowerScroll(
     flower.element.style.removeProperty('bottom');
 
     if (flower.usesLeft) {
-      flower.element.style.setProperty('left', `${x}%`, 'important');
+      flower.element.style.left = `${x}%`;
     } else if (flower.usesRight) {
-      flower.element.style.setProperty('right', `${100 - x}%`, 'important');
+      flower.element.style.right = `${100 - x}%`;
     }
 
     if (flower.useTop) {
-      flower.element.style.setProperty('top', `${y}%`, 'important');
+      flower.element.style.top = `${y}%`;
     } else {
-      flower.element.style.setProperty('bottom', `${y}%`, 'important');
+      flower.element.style.bottom = `${y}%`;
     }
 
-    flower.element.style.setProperty(
-      'transform',
-      `scale(${scale})`,
-      'important'
-    );
+    flower.element.style.transform = `scale(${scale})`;
   }
 
   const throttledUpdate = requestAnimationFrameThrottle(updateAnimations);
@@ -589,11 +616,7 @@ function setupFlowerScroll(
   allFlowerData.forEach((flower) => {
     if (!flower.isCropped) {
       flower.element.style.opacity = '1';
-      flower.element.style.setProperty(
-        'transform',
-        `scale(${initial})`,
-        'important'
-      );
+      flower.element.style.transform = `scale(${initial})`;
     }
   });
 

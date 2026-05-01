@@ -2,46 +2,14 @@
 <html lang="be">
   <head>
     <meta charset="UTF-8" />
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
-    />
-    <meta name="theme-color" content="#fdf4e3" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="THEME_COLOR_PLACEHOLDER" />
     <link rel="icon" type="image/png" href="/images/icon.png" />
-    <title>Вяселле Аляксея і Дар'і</title>
+    <title>PAGE_TITLE_PLACEHOLDER</title>
 
-    <meta property="og:title" content="Вяселле Аляксея і Дар'і" />
-    <meta
-      property="og:description"
-      content="Запрашаем вас падзяліць з намі наш асаблівы дзень! 2 жніўня 2026 года будзем рады бачыць вас на нашым вяселлі ў River Hall, Гродна."
-    />
-    <meta
-      property="og:image"
-      content="https://вяселле.бел/images/preview.png"
-    />
-    <meta property="og:url" content="https://вяселле.бел/" />
-    <meta property="og:type" content="website" />
-
-    <meta name="twitter:card" content="summary" />
-    <meta name="twitter:title" content="Вяселле Аляксея і Дар'і" />
-    <meta
-      name="twitter:description"
-      content="Запрашаем вас падзяліць з намі наш асаблівы дзень! 2 жніўня 2026 года будзем рады бачыць вас на нашым вяселлі ў River Hall, Гродна."
-    />
-    <meta
-      name="twitter:image"
-      content="https://вяселле.бел/images/preview.png"
-    />
+    <!-- OPENGRAPH_PLACEHOLDER -->
 
     <link rel="stylesheet" href="styles.css" />
-    <style>
-      :root {
-        --bg-section: #b9dfc6;
-      }
-      body {
-        background: var(--bg-section);
-      }
-    </style>
   </head>
   <body class="antialiased touch-manipulation">
     <!-- Corner Decorations -->
@@ -137,6 +105,8 @@
         />
       </div>
     </div>
+
+    <h1 class="visually-hidden">Вяселле Аляксея і Дар'і</h1>
 
     <!-- Center Content -->
     <section
@@ -917,7 +887,7 @@
       <p
         class="survey-deadline font-skolar text-base text-secondary mb-10 text-center italic"
       >
-        Калі ласка, запоўніце анкету да 30 чэрвеня 2026 года
+        Калі ласка, запоўніце анкету да FORM_DEADLINE_PLACEHOLDER
       </p>
 
       <form
@@ -941,6 +911,7 @@
             required
             placeholder="Увядзіце імя і прозвішча"
           />
+          <span class="form-error text-soft-orange font-skolar text-sm mt-1.5 block hidden" data-for="guestName">Калі ласка, увядзіце імя і прозвішча</span>
         </div>
 
         <!-- Attendance Status -->
@@ -961,6 +932,7 @@
             <option value="yes_with_partner">Прыду з парай</option>
             <option value="no">На жаль, не змагу</option>
           </select>
+          <span class="form-error text-soft-orange font-skolar text-sm mt-1.5 block hidden" data-for="attendance">Калі ласка, выберыце, ці плануеце вы прысутнічаць</span>
         </div>
 
         <!-- Second Day Attendance -->
@@ -980,6 +952,7 @@
             <option value="yes">Так</option>
             <option value="no">Не</option>
           </select>
+          <span class="form-error text-soft-orange font-skolar text-sm mt-1.5 block hidden" data-for="attendanceSecondDay">Калі ласка, выберыце, ці плануеце вы прысутнічаць на другі дзень</span>
         </div>
 
         <!-- Partner Name (conditional) -->
@@ -998,6 +971,7 @@
             class="form-input w-full py-4 px-5 font-skolar text-base text-primary bg-cream border-[3px] border-[#333] rounded-[15px] transition-all shadow-custom focus:outline-none focus:bg-cream focus:-translate-y-0.5 focus:shadow-custom-hover"
             placeholder="Увядзіце імя і прозвішча партнёра"
           />
+          <span class="form-error text-soft-orange font-skolar text-sm mt-1.5 block hidden" data-for="partnerName">Калі ласка, увядзіце імя і прозвішча вашай пары</span>
         </div>
 
         <!-- Alcohol Preferences (checkboxes) -->
@@ -1016,7 +990,7 @@
                 type="checkbox"
                 name="alcohol_preference"
                 value="ігрыстае"
-                class="w-5 h-5 cursor-pointer accent-[#333]"
+                class="w-5 h-5 cursor-pointer"
               />
               <span class="font-skolar text-base text-primary font-medium"
                 >Вiно iгрыстае</span
@@ -1029,7 +1003,7 @@
                 type="checkbox"
                 name="alcohol_preference"
                 value="вiно_чырвонае_паўсалодкае"
-                class="w-5 h-5 cursor-pointer accent-[#333]"
+                class="w-5 h-5 cursor-pointer"
               />
               <span class="font-skolar text-base text-primary font-medium"
                 >Віно чырвонае (паўсалодкае)</span
@@ -1042,7 +1016,7 @@
                 type="checkbox"
                 name="alcohol_preference"
                 value="вiно_чырвонае_паўсухое"
-                class="w-5 h-5 cursor-pointer accent-[#333]"
+                class="w-5 h-5 cursor-pointer"
               />
               <span class="font-skolar text-base text-primary font-medium"
                 >Віно чырвонае (паўсухое)</span
@@ -1055,7 +1029,7 @@
                 type="checkbox"
                 name="alcohol_preference"
                 value="вiно_белае_паўсалодкае"
-                class="w-5 h-5 cursor-pointer accent-[#333]"
+                class="w-5 h-5 cursor-pointer"
               />
               <span class="font-skolar text-base text-primary font-medium"
                 >Віно белае (паўсалодкае)</span
@@ -1068,7 +1042,7 @@
                 type="checkbox"
                 name="alcohol_preference"
                 value="вiно_белае_паўсухое"
-                class="w-5 h-5 cursor-pointer accent-[#333]"
+                class="w-5 h-5 cursor-pointer"
               />
               <span class="font-skolar text-base text-primary font-medium"
                 >Віно белае (паўсухое)</span
@@ -1081,7 +1055,7 @@
                 type="checkbox"
                 name="alcohol_preference"
                 value="гарэлка"
-                class="w-5 h-5 cursor-pointer accent-[#333]"
+                class="w-5 h-5 cursor-pointer"
               />
               <span class="font-skolar text-base text-primary font-medium"
                 >Гарэлка</span
@@ -1094,7 +1068,7 @@
                 type="checkbox"
                 name="alcohol_preference"
                 value="ром"
-                class="w-5 h-5 cursor-pointer accent-[#333]"
+                class="w-5 h-5 cursor-pointer"
               />
               <span class="font-skolar text-base text-primary font-medium"
                 >Ром</span
@@ -1107,7 +1081,7 @@
                 type="checkbox"
                 name="alcohol_preference"
                 value="віскі"
-                class="w-5 h-5 cursor-pointer accent-[#333]"
+                class="w-5 h-5 cursor-pointer"
               />
               <span class="font-skolar text-base text-primary font-medium"
                 >Віскі</span
@@ -1120,7 +1094,7 @@
                 type="checkbox"
                 name="alcohol_preference"
                 value="каньяк"
-                class="w-5 h-5 cursor-pointer accent-[#333]"
+                class="w-5 h-5 cursor-pointer"
               />
               <span class="font-skolar text-base text-primary font-medium"
                 >Каньяк</span
@@ -1133,7 +1107,7 @@
                 type="checkbox"
                 name="alcohol_preference"
                 value="безалкагольныя_напоі"
-                class="w-5 h-5 cursor-pointer accent-[#333]"
+                class="w-5 h-5 cursor-pointer"
               />
               <span class="font-skolar text-base text-primary font-medium"
                 >Безалкагольныя напоі</span
@@ -1176,11 +1150,11 @@
       class="closing-section relative min-h-screen flex flex-col justify-center items-center w-full"
       aria-label="Заключнае паведамленне"
     >
-      <h1
+      <h2
         class="closing-text font-inkverse text-2xl text-primary text-center m-0"
       >
         Да хуткай сустрэчы на нашым свяце!
-      </h1>
+      </h2>
     </section>
 
     <script src="script.js"></script>

@@ -9,7 +9,7 @@ module.exports = {
       'Запрашаем вас падзяліць з намі наш асаблівы дзень! 2 жніўня 2026 года будзем рады бачыць вас на нашым вяселлі ў River Hall, Гродна.',
     image: 'images/preview.png',
   },
-  weddingDate: new Date('2026-08-02T00:00:00'),
+  weddingDate: new Date('2026-08-02T12:00:00.000Z'),
   timezone: 'Europe/Minsk',
   location: {
     name: 'River Hall',

@@ -4,12 +4,14 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        'soft-blue': '#e4f7ff',
-        'soft-peach': '#fcdcc0',
-        'soft-yellow': '#fff9d2',
-        'soft-lavender': '#eed0f5',
-        'soft-green': '#d9fdd9',
-        milky: '#fdfff5',
+        'soft-blue': '#9CBDE1',
+        'soft-orange': '#EE9452',
+        'soft-yellow': '#F2E8A5',
+        'soft-lavender': '#C8ADE0',
+        'soft-green': '#A1D274',
+        'soft-pink': '#DE87A7',
+        burgundy: '#600D16',
+        beige: '#E8D5B7',
         cream: '#fdf4e3',
         'section-bg': '#b9dfc6',
         'text-primary': '#333',

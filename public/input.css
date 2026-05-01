@@ -15,12 +15,14 @@
   --shadow-color-hover: rgba(0, 0, 0, 0.15);
 
   --color-cream: #fdf4e3;
-  --color-milky: #fdfff5;
-  --color-soft-blue: #e4f7ff;
-  --color-soft-peach: #fcdcc0;
-  --color-soft-yellow: #fff9d2;
-  --color-soft-lavender: #eed0f5;
-  --color-soft-green: #d9fdd9;
+  --color-soft-blue: #9CBDE1;
+  --color-soft-orange: #EE9452;
+  --color-soft-yellow: #F2E8A5;
+  --color-soft-lavender: #C8ADE0;
+  --color-soft-green: #A1D274;
+  --color-soft-pink: #DE87A7;
+  --color-burgundy: #600D16;
+  --color-beige: #E8D5B7;
 
   --transition-fast: 150ms;
   --transition-normal: 300ms;

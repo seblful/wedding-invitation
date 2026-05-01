@@ -342,7 +342,7 @@ body {
 
   .timeline-item .timeline-dot {
     position: absolute;
-    left: 25px;
+    left: 30px;
     transform: translateX(-50%);
   }
 

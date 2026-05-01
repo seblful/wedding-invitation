@@ -347,8 +347,8 @@ body {
   }
 
   .timeline-item .timeline-dot.active {
-    width: 20px;
-    height: 20px;
+    width: 22px;
+    height: 22px;
   }
 
   .timeline-item .timeline-content {

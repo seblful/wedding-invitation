@@ -915,6 +915,26 @@
           <span class="form-error text-soft-orange font-skolar text-sm mt-1.5 block hidden" id="error-attendance" data-for="attendance">Калі ласка, выберыце, ці плануеце вы прысутнічаць</span>
         </div>
 
+        <!-- Partner Name (conditional) -->
+        <div
+          class="form-group partner-name-group partner-group-hidden w-full max-w-[600px] mb-6"
+        >
+          <label
+            for="partnerName"
+            class="form-label block font-skolar text-base font-semibold text-primary mb-2.5"
+            >Імя і прозвішча вашай пары:</label
+          >
+          <input
+            type="text"
+            id="partnerName"
+            name="partner_name"
+            class="form-input w-full py-4 px-5 font-skolar text-base text-primary bg-cream border-[3px] border-[#333] rounded-[15px] transition-all shadow-custom focus:outline-none focus:bg-cream focus:-translate-y-0.5 focus:shadow-custom-hover"
+            aria-describedby="error-partnerName"
+            placeholder="Увядзіце імя і прозвішча партнёра"
+          />
+          <span class="form-error text-soft-orange font-skolar text-sm mt-1.5 block hidden" id="error-partnerName" data-for="partnerName">Калі ласка, увядзіце імя і прозвішча вашай пары</span>
+        </div>
+
         <!-- Second Day Attendance -->
         <div class="form-group w-full max-w-[600px] mb-6">
           <label
@@ -934,26 +954,6 @@
             <option value="no">Не</option>
           </select>
           <span class="form-error text-soft-orange font-skolar text-sm mt-1.5 block hidden" id="error-attendanceSecondDay" data-for="attendanceSecondDay">Калі ласка, выберыце, ці плануеце вы прысутнічаць на другі дзень</span>
-        </div>
-
-        <!-- Partner Name (conditional) -->
-        <div
-          class="form-group partner-name-group partner-group-hidden w-full max-w-[600px] mb-6"
-        >
-          <label
-            for="partnerName"
-            class="form-label block font-skolar text-base font-semibold text-primary mb-2.5"
-            >Імя і прозвішча вашай пары:</label
-          >
-          <input
-            type="text"
-            id="partnerName"
-            name="partner_name"
-            class="form-input w-full py-4 px-5 font-skolar text-base text-primary bg-cream border-[3px] border-[#333] rounded-[15px] transition-all shadow-custom focus:outline-none focus:bg-cream focus:-translate-y-0.5 focus:shadow-custom-hover"
-            aria-describedby="error-partnerName"
-            placeholder="Увядзіце імя і прозвішча партнёра"
-          />
-          <span class="form-error text-soft-orange font-skolar text-sm mt-1.5 block hidden" id="error-partnerName" data-for="partnerName">Калі ласка, увядзіце імя і прозвішча вашай пары</span>
         </div>
 
         <!-- Alcohol Preferences (checkboxes) -->

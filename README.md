@@ -14,11 +14,16 @@ All wedding-specific content (names, dates, locations, Open Graph, form endpoint
 
 ## Development
 
-Start the dev server with CSS watch and auto-reload:
+Build CSS, then start the server:
 
 ```bash
-npm run dev
+npm run build:css
+node server.js
 ```
+
+Open [http://localhost:3000](http://localhost:3000).
+
+> `npm run dev` uses `nodemon` (auto-reload on file changes) — install it globally if you want that: `npm install -g nodemon`.
 
 ## Build
 

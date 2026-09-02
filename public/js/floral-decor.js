@@ -249,18 +249,32 @@ export function initFloralDecor() {
   let scale = scaleProfile();
   let compact = isMobile();
 
+  /**
+   * Layout reads are hoisted out of the scroll handler: `offsetHeight` and
+   * `offsetTop` force a synchronous layout, and doing that on every scroll
+   * frame is what made the decoration janky on mid-range phones. Nothing here
+   * changes without a resize or a late-loading image.
+   *
+   * @type {{ heroHeight: number, closingTop: number, viewportHeight: number }}
+   */
+  let metrics = { heroHeight: 0, closingTop: 0, viewportHeight: 0 };
+
+  function measureMetrics() {
+    metrics = {
+      heroHeight: heroSection.offsetHeight || window.innerHeight,
+      closingTop:
+        closingSection instanceof HTMLElement ? closingSection.offsetTop : 0,
+      viewportHeight: window.innerHeight,
+    };
+  }
+
   function render() {
     const scrollY = window.scrollY;
-    const heroHeight = heroSection.offsetHeight || window.innerHeight;
-    const closingTop =
-      closingSection instanceof HTMLElement ? closingSection.offsetTop : 0;
+    const { heroHeight, closingTop, viewportHeight } = metrics;
 
     const heroProgress = Math.min(scrollY / heroHeight, 1);
     const closingProgress = Math.min(
-      Math.max(
-        (scrollY + window.innerHeight - closingTop) / window.innerHeight,
-        0
-      ),
+      Math.max((scrollY + viewportHeight - closingTop) / viewportHeight, 0),
       1
     );
     const inClosingPhase = closingProgress > 0;
@@ -318,14 +332,25 @@ export function initFloralDecor() {
     flowers = measureFlowers();
     scale = scaleProfile();
     compact = isMobile();
+    measureMetrics();
     reset();
   });
 
+  // Images above the closing section settle late; its offsetTop moves with
+  // them, so take the measurement again once they are in.
+  const onLoad = () => {
+    measureMetrics();
+    render();
+  };
+  window.addEventListener('load', onLoad, { once: true });
+
   window.addEventListener('scroll', onScroll, { passive: true });
+  measureMetrics();
   reset();
 
   return () => {
     window.removeEventListener('scroll', onScroll);
+    window.removeEventListener('load', onLoad);
     stopViewportWatch();
   };
 }

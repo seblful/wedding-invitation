@@ -1,0 +1,19 @@
+# Normalise line endings: LF in the repository, native in the working tree.
+* text=auto eol=lf
+
+# Binary assets must never be touched.
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.otf binary
+*.ttf binary
+*.woff binary
+*.woff2 binary
+*.ai binary
+*.mp4 binary
+*.avif binary
+
+# Generated; keep it out of diffs and language stats.
+public/styles.css linguist-generated=true
+package-lock.json linguist-generated=true

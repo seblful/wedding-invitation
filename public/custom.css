@@ -1,3 +1,10 @@
+/*
+ * Design tokens.
+ *
+ * `--bg-primary` and `--section-bg` are the defaults; src/render.js injects a
+ * later `:root` block from config.js (themeColor / backgroundColor) that wins
+ * over these, so the palette has a single source of truth.
+ */
 :root {
   --font-display: swap;
   --bg-primary: #fdf4e3;
@@ -10,14 +17,15 @@
   --shadow-color-hover: rgba(0, 0, 0, 0.15);
 
   --color-cream: #fdf4e3;
-  --color-soft-blue: #9CBDE1;
-  --color-soft-orange: #EE9452;
-  --color-soft-yellow: #F2E8A5;
-  --color-soft-lavender: #C8ADE0;
-  --color-soft-green: #A1D274;
-  --color-soft-pink: #DE87A7;
-  --color-burgundy: #600D16;
-  --color-beige: #E8D5B7;
+  --color-soft-blue: #9cbde1;
+  --color-soft-orange: #ee9452;
+  --color-soft-yellow: #f2e8a5;
+  --color-soft-lavender: #c8ade0;
+  --color-soft-green: #a1d274;
+  --color-soft-pink: #de87a7;
+  --color-burgundy: #600d16;
+  --color-beige: #e8d5b7;
+  --color-soft-peach: #f9dcc4;
 
   --z-floral: 1;
   --z-content: 10;
@@ -273,16 +281,10 @@ body {
   z-index: var(--z-petal);
   pointer-events: none;
   opacity: 0.8;
-}
-
-.petal::before {
-  content: '';
-  display: block;
-  width: 100%;
-  height: 100%;
-  background-size: contain;
-  background-repeat: no-repeat;
-  background-position: center;
+  /* Petal silhouette: two rounded corners on opposite diagonals. */
+  border-radius: 100% 0% 100% 0%;
+  will-change: transform, opacity;
+  contain: layout style paint;
 }
 
 @keyframes fall {
@@ -321,6 +323,16 @@ body {
 
 .scroll-indicator {
   animation: bounce-center 2s infinite;
+  background: none;
+  border: 0;
+  padding: 0;
+  transition: opacity var(--transition-normal) var(--ease-out);
+}
+
+/* Toggled by js/scroll-indicator.js once the hero has scrolled away. */
+.scroll-indicator-hidden {
+  opacity: 0;
+  pointer-events: none;
 }
 
 @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
@@ -403,11 +415,17 @@ body {
   display: none !important;
 }
 
+/* Field errors are in the DOM from the start (so `aria-describedby` always
+   resolves) but hidden until js/rsvp-form.js marks the field invalid. */
+.form-error {
+  display: none;
+}
+
 .form-error.active {
   display: block;
 }
 
-.checkbox-item input[type="checkbox"] {
+.checkbox-item input[type='checkbox'] {
   appearance: none;
   -webkit-appearance: none;
   width: 1.25rem;
@@ -417,11 +435,12 @@ body {
   background: var(--bg-primary);
   cursor: pointer;
   flex-shrink: 0;
-  transition: background var(--transition-fast) var(--ease-out),
+  transition:
+    background var(--transition-fast) var(--ease-out),
     border-color var(--transition-fast) var(--ease-out);
 }
 
-.checkbox-item input[type="checkbox"]:checked {
+.checkbox-item input[type='checkbox']:checked {
   background: var(--color-soft-orange);
   border-color: var(--border-color);
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath fill='white' d='M13.78 4.22a.75.75 0 010 1.06l-7.5 7.5a.75.75 0 01-1.06 0L2.22 9.78a.75.75 0 011.06-1.06L5.5 11.44l6.72-6.72a.75.75 0 011.06 0z'/%3E%3C/svg%3E");
@@ -430,7 +449,7 @@ body {
   background-position: center;
 }
 
-.checkbox-item input[type="checkbox"]:focus-visible {
+.checkbox-item input[type='checkbox']:focus-visible {
   outline: 2px solid var(--color-soft-orange);
   outline-offset: 2px;
 }
@@ -440,6 +459,20 @@ body {
   height: 100%;
   border: none;
   display: block;
+}
+
+/* Shown instead of the map when /config.json could not be loaded. */
+.map-fallback {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  margin: 0;
+  padding: 1rem;
+  font-family: 'Skolar PE', serif;
+  font-style: italic;
+  color: var(--text-secondary);
+  text-align: center;
 }
 
 section {
@@ -659,5 +692,31 @@ section:not(.first-section):not(.closing-section) {
   .colors-container {
     flex-wrap: nowrap;
     justify-content: flex-start;
+  }
+}
+
+/*
+ * Reduced motion.
+ *
+ * js/petals.js and js/floral-decor.js already opt out of their animations, so
+ * this covers the purely declarative ones: the bouncing arrow, the closing
+ * fade-in and any lingering transitions.
+ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .closing-text {
+    opacity: 1;
+  }
+
+  .petal {
+    display: none;
   }
 }

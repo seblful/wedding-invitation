@@ -1,21 +1,36 @@
+/**
+ * Tailwind theme.
+ *
+ * Colour keys are the utility suffix: `primary` produces `text-primary`,
+ * `bg-primary` and `border-primary`. The keys used to be spelled
+ * `text-primary` / `text-secondary`, which generated `.text-text-primary` — so
+ * every `text-primary` and `text-secondary` in the markup resolved to nothing.
+ */
+
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-  content: ['./public/**/*.html', './public/**/*.js'],
+  content: ['./public/**/*.html', './public/js/**/*.js'],
   theme: {
     extend: {
       colors: {
-        'soft-blue': '#9CBDE1',
-        'soft-orange': '#EE9452',
-        'soft-yellow': '#F2E8A5',
-        'soft-lavender': '#C8ADE0',
-        'soft-green': '#A1D274',
-        'soft-pink': '#DE87A7',
-        burgundy: '#600D16',
-        beige: '#E8D5B7',
+        // Ink and supporting text.
+        primary: '#333333',
+        secondary: '#666666',
+
+        // Surfaces.
         cream: '#fdf4e3',
         'section-bg': '#b9dfc6',
-        'text-primary': '#333',
-        'text-secondary': '#666',
+
+        // Accent palette, mirrored as custom properties in custom.css.
+        'soft-blue': '#9cbde1',
+        'soft-orange': '#ee9452',
+        'soft-yellow': '#f2e8a5',
+        'soft-lavender': '#c8ade0',
+        'soft-green': '#a1d274',
+        'soft-pink': '#de87a7',
+        'soft-peach': '#f9dcc4',
+        burgundy: '#600d16',
+        beige: '#e8d5b7',
       },
       fontFamily: {
         inkverse: ['InkVerse', 'Georgia', 'Garamond', 'serif'],
@@ -33,21 +48,9 @@ module.exports = {
         15: '60px',
         20: '80px',
       },
-      screens: {
-        375: '375px',
-        428: '428px',
-        768: '768px',
-        1024: '1024px',
-      },
       boxShadow: {
         custom: '0 4px 15px rgba(0, 0, 0, 0.1)',
         'custom-hover': '0 6px 25px rgba(0, 0, 0, 0.15)',
-      },
-      transitionTimingFunction: {
-        'ease-out': 'cubic-bezier(0, 0, 0.2, 1)',
-      },
-      touchAction: {
-        manipulation: 'manipulation',
       },
     },
   },

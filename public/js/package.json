@@ -1,0 +1,4 @@
+{
+  "//": "Scopes public/js/*.js to ES modules. Browsers rely on <script type=\"module\">; this lets Node (and the test suite) import the same files without renaming them to .mjs.",
+  "type": "module"
+}

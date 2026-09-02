@@ -2,13 +2,15 @@
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "wedding-invitation",
   "compatibility_date": "2025-09-27",
-  "observability": {
-    "enabled": true
-  },
+
+  // Static-assets-only deployment: there is no Worker script, so the site is
+  // served straight from `build/`. Security headers come from `build/_headers`,
+  // which `scripts/build-static.js` generates from `src/security.js`.
   "assets": {
-    "directory": "build"
+    "directory": "build",
   },
-  "compatibility_flags": [
-    "nodejs_compat"
-  ]
+
+  "observability": {
+    "enabled": true,
+  },
 }

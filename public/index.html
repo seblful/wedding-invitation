@@ -4,34 +4,39 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="THEME_COLOR_PLACEHOLDER" />
+    <meta name="description" content="PAGE_DESCRIPTION_PLACEHOLDER" />
     <link rel="icon" type="image/png" href="/images/icon.png" />
+    <link rel="canonical" href="CANONICAL_URL_PLACEHOLDER" />
     <title>PAGE_TITLE_PLACEHOLDER</title>
 
     <!-- OPENGRAPH_PLACEHOLDER -->
 
+    <!-- Above-the-fold typefaces; `crossorigin` matches the CORS-mode fetch
+         that @font-face issues, otherwise the file is downloaded twice. -->
+    <link rel="preload" href="fonts/InkVerse.otf" as="font" type="font/otf" crossorigin />
+    <link
+      rel="preload"
+      href="fonts/Skolar PE Variable Regular.ttf"
+      as="font"
+      type="font/ttf"
+      crossorigin
+    />
+
     <link rel="stylesheet" href="styles.css" />
     <link rel="stylesheet" href="custom.css" />
+
+    <!-- THEME_VARS_PLACEHOLDER -->
+
+    <script type="module" src="js/main.js"></script>
   </head>
   <body class="antialiased touch-manipulation">
     <!-- Corner Decorations -->
     <div class="floral-background" aria-hidden="true">
       <!-- Top Left -->
       <div class="corner-group top-left-group">
-        <img
-          src="images/background/TopLeft_1.png"
-          class="flower-piece standard p-tl-1"
-          alt=""
-        />
-        <img
-          src="images/background/TopLeft_2.png"
-          class="flower-piece standard p-tl-2"
-          alt=""
-        />
-        <img
-          src="images/background/TopLeft_3.png"
-          class="flower-piece standard p-tl-3"
-          alt=""
-        />
+        <img src="images/background/TopLeft_1.png" class="flower-piece standard p-tl-1" alt="" />
+        <img src="images/background/TopLeft_2.png" class="flower-piece standard p-tl-2" alt="" />
+        <img src="images/background/TopLeft_3.png" class="flower-piece standard p-tl-3" alt="" />
         <img
           src="images/background/TopLeftCropped_1.png"
           class="flower-piece cropped-flower p-tl-c1"
@@ -41,16 +46,8 @@
 
       <!-- Top Right -->
       <div class="corner-group top-right-group">
-        <img
-          src="images/background/TopRight_1.png"
-          class="flower-piece standard p-tr-1"
-          alt=""
-        />
-        <img
-          src="images/background/TopRight_2.png"
-          class="flower-piece standard p-tr-2"
-          alt=""
-        />
+        <img src="images/background/TopRight_1.png" class="flower-piece standard p-tr-1" alt="" />
+        <img src="images/background/TopRight_2.png" class="flower-piece standard p-tr-2" alt="" />
         <img
           src="images/background/TopRightCropped_1.png"
           class="flower-piece cropped-flower p-tr-c1"
@@ -65,16 +62,8 @@
 
       <!-- Bottom Left -->
       <div class="corner-group bottom-left-group">
-        <img
-          src="images/background/BottomLeft_1.png"
-          class="flower-piece standard p-bl-1"
-          alt=""
-        />
-        <img
-          src="images/background/BottomLeft_2.png"
-          class="flower-piece standard p-bl-2"
-          alt=""
-        />
+        <img src="images/background/BottomLeft_1.png" class="flower-piece standard p-bl-1" alt="" />
+        <img src="images/background/BottomLeft_2.png" class="flower-piece standard p-bl-2" alt="" />
         <img
           src="images/background/BottomLeftCropped_1.png"
           class="flower-piece cropped-flower p-bl-c1"
@@ -117,11 +106,7 @@
       <div
         class="center-content relative flex flex-col justify-center items-center h-screen w-full flex-shrink-0"
       >
-        <div
-          class="faces-container flex gap-6 justify-center items-start min-h-[200px]"
-          role="img"
-          aria-label="Партрэты маладых"
-        >
+        <div class="faces-container flex gap-6 justify-center items-start min-h-[200px]">
           <div class="face-card flex flex-col items-center">
             <img
               src="images/faces/Aliaksei.png"
@@ -143,14 +128,10 @@
             />
           </div>
         </div>
-        <div
-          class="names-board text-center -mt-1 relative"
-          role="img"
-          aria-label="Назвы: Аляксей і Дар'я"
-        >
+        <div class="names-board text-center -mt-1 relative">
           <img
             src="images/faces/names_board.png"
-            alt="Рамка для імёнаў"
+            alt=""
             class="names-image max-w-[480px] h-auto block"
             loading="eager"
             fetchpriority="high"
@@ -159,211 +140,155 @@
           <p
             class="board-names absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-3xl font-bold whitespace-nowrap"
           >
-            Аляксей i Дар'я
+            Аляксей і Дар'я
           </p>
         </div>
-        <img
-          src="images/arrow.png"
-          alt="Пракруціце да наступнага раздзела"
-          class="scroll-indicator fixed left-1/2 -translate-x-1/2 bottom-10 z-[3] w-15 h-10 opacity-60 filter brightness-0 invert cursor-pointer transition-transform hover:scale-110 md:absolute md:bottom-10"
-          role="button"
-          tabindex="0"
-          aria-label="Пракруціце да наступнага раздзела"
-        />
+        <button
+          type="button"
+          class="scroll-indicator fixed left-1/2 -translate-x-1/2 bottom-10 z-[3] w-15 h-10 opacity-60 cursor-pointer transition-transform hover:scale-110 md:absolute md:bottom-10"
+          aria-label="Пракруціць да наступнага раздзела"
+        >
+          <img
+            src="images/arrow.png"
+            alt=""
+            aria-hidden="true"
+            class="w-full h-full filter brightness-0 invert"
+          />
+        </button>
       </div>
     </section>
 
     <!-- Timeline Section -->
     <section
       class="timeline-section relative py-15 px-5 flex flex-col items-center justify-center min-h-screen w-full"
-      aria-label="Гадзінасць пара"
+      aria-labelledby="timeline-heading"
     >
       <h2
+        id="timeline-heading"
         class="timeline-title font-skolar text-2xl font-bold mb-4 text-center text-primary"
       >
         Наш шлях
       </h2>
       <div class="timeline-container w-full max-w-[600px]">
-        <div
-          class="timeline-scroll w-full overflow-x-visible py-5"
-          role="region"
-          aria-label="Гарызантальная пракрутка гадзінасці"
-        >
-          <div
-            class="timeline-track flex flex-col gap-0 py-5 relative items-start"
-            role="list"
-            aria-label="Асноўныя моманты адносін"
+        <div class="timeline-scroll w-full overflow-x-visible py-5">
+          <ol
+            class="timeline-track flex flex-col gap-0 py-5 relative items-start list-none"
+            aria-label="Асноўныя моманты нашых адносін"
           >
-            <div
-              class="timeline-item flex flex-row items-center gap-8 w-full py-5 relative z-[1]"
-              role="listitem"
-            >
+            <li class="timeline-item flex flex-row items-center gap-8 w-full py-5 relative z-[1]">
               <div
                 class="timeline-dot w-5 h-5 rounded-full bg-cream border-4 border-[#333] flex-shrink-0 transition-all cursor-pointer absolute left-1/2 -translate-x-1/2 hover:bg-soft-blue hover:scale-125"
-                aria-label="Першая сустрэча - лета 2022"
-                data-event="Першая сустрэча - лета 2022"
+                aria-hidden="true"
               ></div>
               <div class="timeline-content text-left flex-1">
-                <h3
-                  class="timeline-date font-skolar text-lg font-bold text-primary mb-1.25"
-                >
+                <h3 class="timeline-date font-skolar text-lg font-bold text-primary mb-1.5">
                   Лета 2022
                 </h3>
-                <p
-                  class="timeline-text font-skolar italic text-md text-secondary leading-relaxed"
-                >
+                <p class="timeline-text font-skolar italic text-md text-secondary leading-relaxed">
                   Першая сустрэча
                 </p>
               </div>
-            </div>
+            </li>
 
-            <div
-              class="timeline-item flex flex-row items-center gap-8 w-full py-5 relative z-[1]"
-              role="listitem"
-            >
+            <li class="timeline-item flex flex-row items-center gap-8 w-full py-5 relative z-[1]">
               <div
                 class="timeline-dot w-5 h-5 rounded-full bg-cream border-4 border-[#333] flex-shrink-0 transition-all cursor-pointer absolute left-1/2 -translate-x-1/2 hover:bg-soft-blue hover:scale-125"
-                aria-label="Першае спатканне - лета 2023"
+                aria-hidden="true"
               ></div>
               <div class="timeline-content text-right flex-1 order-[-1]">
-                <h3
-                  class="timeline-date font-skolar text-lg font-bold text-primary mb-1.25"
-                >
+                <h3 class="timeline-date font-skolar text-lg font-bold text-primary mb-1.5">
                   Лета 2023
                 </h3>
-                <p
-                  class="timeline-text font-skolar italic text-md text-secondary leading-relaxed"
-                >
+                <p class="timeline-text font-skolar italic text-md text-secondary leading-relaxed">
                   Першае спатканне
                 </p>
               </div>
-            </div>
+            </li>
 
-            <div
-              class="timeline-item flex flex-row items-center gap-8 w-full py-5 relative z-[1]"
-              role="listitem"
-            >
+            <li class="timeline-item flex flex-row items-center gap-8 w-full py-5 relative z-[1]">
               <div
                 class="timeline-dot w-5 h-5 rounded-full bg-cream border-4 border-[#333] flex-shrink-0 transition-all cursor-pointer absolute left-1/2 -translate-x-1/2 hover:bg-soft-blue hover:scale-125"
-                aria-label="Першы пацалунак - лета 2023"
+                aria-hidden="true"
               ></div>
               <div class="timeline-content text-left flex-1">
-                <h3
-                  class="timeline-date font-skolar text-lg font-bold text-primary mb-1.25"
-                >
+                <h3 class="timeline-date font-skolar text-lg font-bold text-primary mb-1.5">
                   Лета 2023
                 </h3>
-                <p
-                  class="timeline-text font-skolar italic text-md text-secondary leading-relaxed"
-                >
+                <p class="timeline-text font-skolar italic text-md text-secondary leading-relaxed">
                   Першы пацалунак
                 </p>
               </div>
-            </div>
+            </li>
 
-            <div
-              class="timeline-item flex flex-row items-center gap-8 w-full py-5 relative z-[1]"
-              role="listitem"
-            >
+            <li class="timeline-item flex flex-row items-center gap-8 w-full py-5 relative z-[1]">
               <div
                 class="timeline-dot w-5 h-5 rounded-full bg-cream border-4 border-[#333] flex-shrink-0 transition-all cursor-pointer absolute left-1/2 -translate-x-1/2 hover:bg-soft-blue hover:scale-125"
-                aria-label="Першае падарожжа - лета 2024"
+                aria-hidden="true"
               ></div>
               <div class="timeline-content text-right flex-1 order-[-1]">
-                <h3
-                  class="timeline-date font-skolar text-lg font-bold text-primary mb-1.25"
-                >
+                <h3 class="timeline-date font-skolar text-lg font-bold text-primary mb-1.5">
                   Лета 2024
                 </h3>
-                <p
-                  class="timeline-text font-skolar italic text-md text-secondary leading-relaxed"
-                >
+                <p class="timeline-text font-skolar italic text-md text-secondary leading-relaxed">
                   Першае падарожжа
                 </p>
               </div>
-            </div>
+            </li>
 
-            <div
-              class="timeline-item flex flex-row items-center gap-8 w-full py-5 relative z-[1]"
-              role="listitem"
-            >
+            <li class="timeline-item flex flex-row items-center gap-8 w-full py-5 relative z-[1]">
               <div
                 class="timeline-dot w-5 h-5 rounded-full bg-cream border-4 border-[#333] flex-shrink-0 transition-all cursor-pointer absolute left-1/2 -translate-x-1/2 hover:bg-soft-blue hover:scale-125"
-                aria-label="Першае 'кахаю' - лета 2024"
+                aria-hidden="true"
               ></div>
               <div class="timeline-content text-left flex-1">
-                <h3
-                  class="timeline-date font-skolar text-lg font-bold text-primary mb-1.25"
-                >
+                <h3 class="timeline-date font-skolar text-lg font-bold text-primary mb-1.5">
                   Лета 2024
                 </h3>
-                <p
-                  class="timeline-text font-skolar italic text-md text-secondary leading-relaxed"
-                >
+                <p class="timeline-text font-skolar italic text-md text-secondary leading-relaxed">
                   Першае "кахаю"
                 </p>
               </div>
-            </div>
+            </li>
 
-            <div
-              class="timeline-item flex flex-row items-center gap-8 w-full py-5 relative z-[1]"
-              role="listitem"
-            >
+            <li class="timeline-item flex flex-row items-center gap-8 w-full py-5 relative z-[1]">
               <div
                 class="timeline-dot w-5 h-5 rounded-full bg-cream border-4 border-[#333] flex-shrink-0 transition-all cursor-pointer absolute left-1/2 -translate-x-1/2 hover:bg-soft-blue hover:scale-125"
-                aria-label="Першы агульны дом - восень 2024"
+                aria-hidden="true"
               ></div>
               <div class="timeline-content text-right flex-1 order-[-1]">
-                <h3
-                  class="timeline-date font-skolar text-lg font-bold text-primary mb-1.25"
-                >
+                <h3 class="timeline-date font-skolar text-lg font-bold text-primary mb-1.5">
                   Восень 2024
                 </h3>
-                <p
-                  class="timeline-text font-skolar italic text-md text-secondary leading-relaxed"
-                >
+                <p class="timeline-text font-skolar italic text-md text-secondary leading-relaxed">
                   Першы агульны дом
                 </p>
               </div>
-            </div>
+            </li>
 
-            <div
-              class="timeline-item flex flex-row items-center gap-8 w-full py-5 relative z-[1]"
-              role="listitem"
-            >
+            <li class="timeline-item flex flex-row items-center gap-8 w-full py-5 relative z-[1]">
               <div
                 class="timeline-dot w-5 h-5 rounded-full bg-cream border-4 border-[#333] flex-shrink-0 transition-all cursor-pointer absolute left-1/2 -translate-x-1/2 hover:bg-soft-blue hover:scale-125"
-                aria-label="Запаветнае 'Так' - восень 2025"
+                aria-hidden="true"
               ></div>
               <div class="timeline-content text-left flex-1">
-                <h3
-                  class="timeline-date font-skolar text-lg font-bold text-primary mb-1.25"
-                >
+                <h3 class="timeline-date font-skolar text-lg font-bold text-primary mb-1.5">
                   Восень 2025
                 </h3>
-                <p
-                  class="timeline-text font-skolar italic text-md text-secondary leading-relaxed"
-                >
+                <p class="timeline-text font-skolar italic text-md text-secondary leading-relaxed">
                   Запаветнае "Так"
                 </p>
               </div>
-            </div>
+            </li>
 
-            <div
+            <li
               class="timeline-item active final-milestone flex flex-row items-center gap-8 w-full py-5 relative z-[1]"
-              role="listitem"
             >
               <div
                 class="timeline-dot active w-7 h-7 rounded-full bg-cream border-4 border-[#333] flex-shrink-0 transition-all cursor-pointer absolute left-1/2 -translate-x-1/2 shadow-lg"
-                tabindex="0"
-                role="button"
-                aria-current="true"
-                aria-label="Стварэнне сям'і - лета 2026"
+                aria-hidden="true"
               ></div>
               <div class="timeline-content text-right flex-1 order-[-1]">
-                <h3
-                  class="timeline-date font-skolar text-lg font-bold text-primary mb-1.25"
-                >
+                <h3 class="timeline-date font-skolar text-lg font-bold text-primary mb-1.5">
                   Лета 2026
                 </h3>
                 <p
@@ -372,8 +297,8 @@
                   Стварэнне нашай сям'і.
                 </p>
               </div>
-            </div>
-          </div>
+            </li>
+          </ol>
         </div>
       </div>
     </section>
@@ -381,19 +306,25 @@
     <!-- Countdown Timer Section -->
     <section
       class="timer-section relative py-15 px-5 flex flex-col items-center justify-center min-h-screen w-full"
+      aria-labelledby="timer-heading"
     >
       <h2
+        id="timer-heading"
         class="timer-title font-skolar text-2xl font-bold mb-4 text-center text-primary"
       >
         Лічым дні да нашага "шчаслівыя разам"
       </h2>
-      <p
-        class="timer-date font-skolar text-xl text-secondary mb-11 text-center italic"
-      >
+      <p class="timer-date font-skolar text-xl text-secondary mb-11 text-center italic">
         2 жніўня 2026 года, нядзеля
       </p>
+      <!-- The date is rendered inline so the countdown never waits on
+           /config.json. `aria-live="off"` stops the per-second tick from being
+           announced over and over. -->
       <div
         class="timer-container flex justify-center items-center gap-5 flex-wrap"
+        data-wedding-date="WEDDING_DATE_PLACEHOLDER"
+        role="timer"
+        aria-live="off"
       >
         <div class="timer-item flex flex-col items-center gap-4">
           <div
@@ -408,11 +339,7 @@
             Дзён
           </div>
         </div>
-        <div
-          class="timer-separator font-skolar text-2xl font-bold text-primary mb-10"
-        >
-          :
-        </div>
+        <div class="timer-separator font-skolar text-2xl font-bold text-primary mb-10">:</div>
         <div class="timer-item flex flex-col items-center gap-4">
           <div
             class="timer-number font-skolar text-2xl font-bold text-primary min-w-[120px] text-center leading-none bg-cream py-8 px-5 rounded-[15px] border-[3px] border-[#333] shadow-custom"
@@ -426,11 +353,7 @@
             Гадзін
           </div>
         </div>
-        <div
-          class="timer-separator font-skolar text-2xl font-bold text-primary mb-10"
-        >
-          :
-        </div>
+        <div class="timer-separator font-skolar text-2xl font-bold text-primary mb-10">:</div>
         <div class="timer-item flex flex-col items-center gap-4">
           <div
             class="timer-number font-skolar text-2xl font-bold text-primary min-w-[120px] text-center leading-none bg-cream py-8 px-5 rounded-[15px] border-[3px] border-[#333] shadow-custom"
@@ -444,11 +367,7 @@
             Хвілін
           </div>
         </div>
-        <div
-          class="timer-separator font-skolar text-2xl font-bold text-primary mb-10"
-        >
-          :
-        </div>
+        <div class="timer-separator font-skolar text-2xl font-bold text-primary mb-10">:</div>
         <div class="timer-item flex flex-col items-center gap-4">
           <div
             class="timer-number font-skolar text-2xl font-bold text-primary min-w-[120px] text-center leading-none bg-cream py-8 px-5 rounded-[15px] border-[3px] border-[#333] shadow-custom"
@@ -470,22 +389,18 @@
       class="location-section relative py-15 px-5 flex flex-col items-center justify-center min-h-screen w-full"
       aria-label="Інфармацыя пра месца правядзення"
     >
-      <h2
-        class="location-title font-skolar text-2xl font-bold mb-5 text-center text-primary"
-      >
+      <h2 class="location-title font-skolar text-2xl font-bold mb-5 text-center text-primary">
         Месца правядзення
       </h2>
       <div
         class="location-subtitle-frame inline-block bg-cream border-[3px] border-[#333] rounded-[15px] py-5 px-9 mb-5 shadow-custom transition-all hover:-translate-y-0.5 hover:shadow-custom-hover hover:bg-soft-peach"
       >
-        <p
-          class="location-subtitle font-skolar text-lg text-primary m-0 text-center font-medium"
-        >
+        <p class="location-subtitle font-skolar text-lg text-primary m-0 text-center font-medium">
           <a
             href="https://www.instagram.com/riverhall.by"
             target="_blank"
             rel="noopener noreferrer"
-            class="location-link text-primary hover:text-primary transition-all text-decoration-none"
+            class="location-link text-primary hover:text-primary transition-all no-underline"
             >River Hall – госцевы комплекс</a
           >
         </p>
@@ -493,8 +408,8 @@
       <p
         class="location-description font-skolar text-base text-primary mb-10 text-center italic leading-relaxed max-w-[700px]"
       >
-        Менавіта тут, на набярэжнай побач, мы ўпершыню пацалаваліся, таму гэтае
-        месца для нас асаблівае.
+        Менавіта тут, на набярэжнай побач, мы ўпершыню пацалаваліся, таму гэтае месца для нас
+        асаблівае.
       </p>
       <div class="gallery-container w-full max-w-[900px] mb-7">
         <div
@@ -525,11 +440,11 @@
       <div
         class="map-container w-full max-w-[900px] h-[500px] rounded-[20px] overflow-hidden shadow-custom border-[3px] border-[#333] bg-white mx-auto mb-5"
         id="mapContainer"
+        data-venue="location"
+        data-venue-title="Карта: River Hall, Гродна"
       ></div>
-      <p
-        class="location-address font-skolar text-base text-primary mb-10 text-center font-medium"
-      >
-        горад Гродна, вулiца Падольная, дом 23
+      <p class="location-address font-skolar text-base text-primary mb-10 text-center font-medium">
+        горад Гродна, вуліца Падольная, дом 23
       </p>
     </section>
 
@@ -538,14 +453,10 @@
       class="celebration-section relative py-15 px-5 flex flex-col items-center justify-center min-h-screen w-full"
       aria-label="Праграма святкавання"
     >
-      <h2
-        class="celebration-title font-skolar text-2xl font-bold mb-4 text-center text-primary"
-      >
+      <h2 class="celebration-title font-skolar text-2xl font-bold mb-4 text-center text-primary">
         Праграма святкавання
       </h2>
-      <p
-        class="celebration-subtitle font-skolar text-md text-secondary mb-12 text-center italic"
-      >
+      <p class="celebration-subtitle font-skolar text-md text-secondary mb-12 text-center italic">
         2 жніўня 2026 года, нядзеля
       </p>
       <div class="schedule-container flex flex-col gap-6 max-w-[800px] w-full">
@@ -557,9 +468,7 @@
           >
             15:00
           </div>
-          <div
-            class="schedule-activity font-skolar text-md text-primary font-medium"
-          >
+          <div class="schedule-activity font-skolar text-md text-primary font-medium">
             Збор гасцей
           </div>
         </div>
@@ -572,11 +481,7 @@
           >
             15:30
           </div>
-          <div
-            class="schedule-activity font-skolar text-md text-primary font-medium"
-          >
-            Фуршэт
-          </div>
+          <div class="schedule-activity font-skolar text-md text-primary font-medium">Фуршэт</div>
         </div>
 
         <div
@@ -587,9 +492,7 @@
           >
             16:00
           </div>
-          <div
-            class="schedule-activity font-skolar text-md text-primary font-medium"
-          >
+          <div class="schedule-activity font-skolar text-md text-primary font-medium">
             Выязная цырымонія
           </div>
         </div>
@@ -602,11 +505,7 @@
           >
             17:00
           </div>
-          <div
-            class="schedule-activity font-skolar text-md text-primary font-medium"
-          >
-            Банкет
-          </div>
+          <div class="schedule-activity font-skolar text-md text-primary font-medium">Банкет</div>
         </div>
 
         <div
@@ -617,9 +516,7 @@
           >
             23:00
           </div>
-          <div
-            class="schedule-activity font-skolar text-md text-primary font-medium"
-          >
+          <div class="schedule-activity font-skolar text-md text-primary font-medium">
             Фінал урачыстасці
           </div>
         </div>
@@ -631,38 +528,38 @@
       class="dresscode-section relative py-15 px-5 flex flex-col items-center justify-center min-h-screen w-full"
       aria-label="Рэкамендацыі па дрэс-коду"
     >
-      <h2
-        class="dresscode-title font-skolar text-2xl font-bold mb-5 text-center text-primary"
-      >
+      <h2 class="dresscode-title font-skolar text-2xl font-bold mb-5 text-center text-primary">
         Дрэс-код
       </h2>
       <p
         class="dresscode-description font-skolar text-base text-primary mb-2 text-center leading-relaxed max-w-[700px]"
       >
-        Нам будзе прыемна, калі вы падтрымаеце атмасферу свята сваімі прыгожымі
-        ўборамі ў <a href="https://pin.it/73vQ1VXB6" target="_blank" rel="noopener noreferrer" class="text-soft-orange underline hover:text-burgundy transition-colors"><strong>прапанаваных танах</strong></a>.
+        Нам будзе прыемна, калі вы падтрымаеце атмасферу свята сваімі прыгожымі ўборамі ў
+        <a
+          href="https://pin.it/73vQ1VXB6"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="text-soft-orange underline hover:text-burgundy transition-colors"
+          ><strong>прапанаваных танах</strong></a
+        >.
       </p>
       <p
         class="dresscode-description font-skolar text-base text-primary mb-10 text-center leading-relaxed max-w-[700px]"
       >
-        Для мужчын выдатным рашэннем стане <strong>кашуля ў колерах
-        палітры</strong>, таксама будуць дарэчнымі <strong>класічныя касцюмы ў
-        светлых або цёмных адценнях</strong>.
+        Для мужчын выдатным рашэннем стане <strong>кашуля ў колерах палітры</strong>, таксама будуць
+        дарэчнымі <strong>класічныя касцюмы ў светлых або цёмных адценнях</strong>.
       </p>
-      <div
-        class="colors-container flex flex-wrap justify-center items-center gap-10 max-w-[900px]"
-      >
+      <div class="colors-container flex flex-wrap justify-center items-center gap-10 max-w-[900px]">
         <a
           href="https://pinterest.com/search/pins/?q=Pale%20yellow%20matching%20wedding%20guest%20outfits%20for%20man%20and%20woman"
           target="_blank"
           rel="noopener noreferrer"
-          class="color-card flex flex-col items-center gap-4 w-[130px] transition-transform hover:-translate-y-1 cursor-pointer text-decoration-none text-inherit"
+          class="color-card flex flex-col items-center gap-4 w-[130px] transition-transform hover:-translate-y-1 cursor-pointer no-underline text-inherit"
         >
           <div
             class="color-swatch w-20 h-20 rounded-full shadow-custom border-[3px] border-white transition-all hover:shadow-custom-hover hover:scale-110 bg-soft-yellow"
           ></div>
-          <span
-            class="color-name font-skolar text-base text-primary font-semibold text-center"
+          <span class="color-name font-skolar text-base text-primary font-semibold text-center"
             >Бледна-жоўты</span
           >
         </a>
@@ -670,13 +567,12 @@
           href="https://pinterest.com/search/pins/?q=Light%20orange%20matching%20wedding%20guest%20outfits%20for%20man%20and%20woman"
           target="_blank"
           rel="noopener noreferrer"
-          class="color-card flex flex-col items-center gap-4 w-[130px] transition-transform hover:-translate-y-1 cursor-pointer text-decoration-none text-inherit"
+          class="color-card flex flex-col items-center gap-4 w-[130px] transition-transform hover:-translate-y-1 cursor-pointer no-underline text-inherit"
         >
           <div
             class="color-swatch w-20 h-20 rounded-full shadow-custom border-[3px] border-white transition-all hover:shadow-custom-hover hover:scale-110 bg-soft-orange"
           ></div>
-          <span
-            class="color-name font-skolar text-base text-primary font-semibold text-center"
+          <span class="color-name font-skolar text-base text-primary font-semibold text-center"
             >Светла-аранжавы</span
           >
         </a>
@@ -684,13 +580,12 @@
           href="https://pinterest.com/search/pins/?q=Light%20pink%20matching%20wedding%20guest%20outfits%20for%20man%20and%20woman"
           target="_blank"
           rel="noopener noreferrer"
-          class="color-card flex flex-col items-center gap-4 w-[130px] transition-transform hover:-translate-y-1 cursor-pointer text-decoration-none text-inherit"
+          class="color-card flex flex-col items-center gap-4 w-[130px] transition-transform hover:-translate-y-1 cursor-pointer no-underline text-inherit"
         >
           <div
             class="color-swatch w-20 h-20 rounded-full shadow-custom border-[3px] border-white transition-all hover:shadow-custom-hover hover:scale-110 bg-soft-pink"
           ></div>
-          <span
-            class="color-name font-skolar text-base text-primary font-semibold text-center"
+          <span class="color-name font-skolar text-base text-primary font-semibold text-center"
             >Светла-ружовы</span
           >
         </a>
@@ -698,13 +593,12 @@
           href="https://pinterest.com/search/pins/?q=Light%20blue%20matching%20wedding%20guest%20outfits%20for%20man%20and%20woman"
           target="_blank"
           rel="noopener noreferrer"
-          class="color-card flex flex-col items-center gap-4 w-[130px] transition-transform hover:-translate-y-1 cursor-pointer text-decoration-none text-inherit"
+          class="color-card flex flex-col items-center gap-4 w-[130px] transition-transform hover:-translate-y-1 cursor-pointer no-underline text-inherit"
         >
           <div
             class="color-swatch w-20 h-20 rounded-full shadow-custom border-[3px] border-white transition-all hover:shadow-custom-hover hover:scale-110 bg-soft-blue"
           ></div>
-          <span
-            class="color-name font-skolar text-base text-primary font-semibold text-center"
+          <span class="color-name font-skolar text-base text-primary font-semibold text-center"
             >Светла-блакітны</span
           >
         </a>
@@ -712,13 +606,12 @@
           href="https://pinterest.com/search/pins/?q=Light%20green%20matching%20wedding%20guest%20outfits%20for%20man%20and%20woman"
           target="_blank"
           rel="noopener noreferrer"
-          class="color-card flex flex-col items-center gap-4 w-[130px] transition-transform hover:-translate-y-1 cursor-pointer text-decoration-none text-inherit"
+          class="color-card flex flex-col items-center gap-4 w-[130px] transition-transform hover:-translate-y-1 cursor-pointer no-underline text-inherit"
         >
           <div
             class="color-swatch w-20 h-20 rounded-full shadow-custom border-[3px] border-white transition-all hover:shadow-custom-hover hover:scale-110 bg-soft-green"
           ></div>
-          <span
-            class="color-name font-skolar text-base text-primary font-semibold text-center"
+          <span class="color-name font-skolar text-base text-primary font-semibold text-center"
             >Светла-зялёны</span
           >
         </a>
@@ -726,13 +619,12 @@
           href="https://pinterest.com/search/pins/?q=Lilac%20matching%20wedding%20guest%20outfits%20for%20man%20and%20woman"
           target="_blank"
           rel="noopener noreferrer"
-          class="color-card flex flex-col items-center gap-4 w-[130px] transition-transform hover:-translate-y-1 cursor-pointer text-decoration-none text-inherit"
+          class="color-card flex flex-col items-center gap-4 w-[130px] transition-transform hover:-translate-y-1 cursor-pointer no-underline text-inherit"
         >
           <div
             class="color-swatch w-20 h-20 rounded-full shadow-custom border-[3px] border-white transition-all hover:shadow-custom-hover hover:scale-110 bg-soft-lavender"
           ></div>
-          <span
-            class="color-name font-skolar text-base text-primary font-semibold text-center"
+          <span class="color-name font-skolar text-base text-primary font-semibold text-center"
             >Бэзавы</span
           >
         </a>
@@ -740,13 +632,12 @@
           href="https://pinterest.com/search/pins/?q=Burgundy%20matching%20wedding%20guest%20outfits%20for%20man%20and%20woman"
           target="_blank"
           rel="noopener noreferrer"
-          class="color-card flex flex-col items-center gap-4 w-[130px] transition-transform hover:-translate-y-1 cursor-pointer text-decoration-none text-inherit"
+          class="color-card flex flex-col items-center gap-4 w-[130px] transition-transform hover:-translate-y-1 cursor-pointer no-underline text-inherit"
         >
           <div
             class="color-swatch w-20 h-20 rounded-full shadow-custom border-[3px] border-white transition-all hover:shadow-custom-hover hover:scale-110 bg-burgundy"
           ></div>
-          <span
-            class="color-name font-skolar text-base text-primary font-semibold text-center"
+          <span class="color-name font-skolar text-base text-primary font-semibold text-center"
             >Бардовы</span
           >
         </a>
@@ -754,13 +645,12 @@
           href="https://pinterest.com/search/pins/?q=Beige%20matching%20wedding%20guest%20outfits%20for%20man%20and%20woman"
           target="_blank"
           rel="noopener noreferrer"
-          class="color-card flex flex-col items-center gap-4 w-[130px] transition-transform hover:-translate-y-1 cursor-pointer text-decoration-none text-inherit"
+          class="color-card flex flex-col items-center gap-4 w-[130px] transition-transform hover:-translate-y-1 cursor-pointer no-underline text-inherit"
         >
           <div
             class="color-swatch w-20 h-20 rounded-full shadow-custom border-[3px] border-white transition-all hover:shadow-custom-hover hover:scale-110 bg-beige"
           ></div>
-          <span
-            class="color-name font-skolar text-base text-primary font-semibold text-center"
+          <span class="color-name font-skolar text-base text-primary font-semibold text-center"
             >Бэжавы</span
           >
         </a>
@@ -773,39 +663,29 @@
       aria-label="Пажаданні маладых"
     >
       <div class="wishes-container max-w-[800px] w-full text-center">
-        <p
-          class="wishes-subtitle font-skolar text-2xl text-primary mb-8 font-bold"
-        >
+        <p class="wishes-subtitle font-skolar text-2xl text-primary mb-8 font-bold">
           Маленькія пажаданні:
         </p>
         <div
           class="wishes-item bg-cream border-[3px] border-[#333] rounded-[15px] py-6 px-8 mb-6 text-left shadow-custom transition-all hover:-translate-y-1 hover:shadow-custom-hover"
         >
-          <h3
-            class="wishes-item-title font-skolar text-md text-primary mb-4 font-bold"
-          >
+          <h3 class="wishes-item-title font-skolar text-md text-primary mb-4 font-bold">
             Пра кветкі:
           </h3>
-          <p
-            class="wishes-item-text font-skolar text-md text-primary leading-relaxed italic"
-          >
-            Не турбуйцеся пра букеты — яны хутка вянуць. Замест іх мы будзем
-            рады атрымаць у падарунак бутэльку добрага напою на ваш густ.
+          <p class="wishes-item-text font-skolar text-md text-primary leading-relaxed italic">
+            Не турбуйцеся пра букеты — яны хутка вянуць. Замест іх мы будзем рады атрымаць у
+            падарунак бутэльку добрага напою на ваш густ.
           </p>
         </div>
         <div
           class="wishes-item bg-cream border-[3px] border-[#333] rounded-[15px] py-6 px-8 mb-6 text-left shadow-custom transition-all hover:-translate-y-1 hover:shadow-custom-hover"
         >
-          <h3
-            class="wishes-item-title font-skolar text-md text-primary mb-4 font-bold"
-          >
+          <h3 class="wishes-item-title font-skolar text-md text-primary mb-4 font-bold">
             Пра дзеткі:
           </h3>
-          <p
-            class="wishes-item-text font-skolar text-md text-primary leading-relaxed italic"
-          >
-            Мы плануем вечарыну толькі для дарослых, каб кожны змог максімальна
-            адпачыць і адцягнуцца ад клопатаў.
+          <p class="wishes-item-text font-skolar text-md text-primary leading-relaxed italic">
+            Мы плануем вечарыну толькі для дарослых, каб кожны змог максімальна адпачыць і
+            адцягнуцца ад клопатаў.
           </p>
         </div>
       </div>
@@ -816,27 +696,21 @@
       class="location-section relative py-15 px-5 flex flex-col items-center justify-center min-h-screen w-full"
       aria-label="Другі дзень"
     >
-      <h2
-        class="location-title font-skolar text-2xl font-bold mb-5 text-center text-primary"
-      >
+      <h2 class="location-title font-skolar text-2xl font-bold mb-5 text-center text-primary">
         Другі дзень
       </h2>
-      <p
-        class="celebration-subtitle font-skolar text-md text-secondary mb-5 text-center italic"
-      >
+      <p class="celebration-subtitle font-skolar text-md text-secondary mb-5 text-center italic">
         3 жніўня 2026 года, панядзелак, 15:00
       </p>
       <div
         class="location-subtitle-frame inline-block bg-cream border-[3px] border-[#333] rounded-[15px] py-5 px-9 mb-5 shadow-custom transition-all hover:-translate-y-0.5 hover:shadow-custom-hover hover:bg-soft-peach"
       >
-        <p
-          class="location-subtitle font-skolar text-lg text-primary m-0 text-center font-medium"
-        >
+        <p class="location-subtitle font-skolar text-lg text-primary m-0 text-center font-medium">
           <a
             href="https://www.instagram.com/dom_banya_7_pjatnic"
             target="_blank"
             rel="noopener noreferrer"
-            class="location-link text-primary hover:text-primary transition-all text-decoration-none"
+            class="location-link text-primary hover:text-primary transition-all no-underline"
             >Дом | Баня</a
           >
         </p>
@@ -844,10 +718,10 @@
       <div
         class="map-container w-full max-w-[900px] h-[500px] rounded-[20px] overflow-hidden shadow-custom border-[3px] border-[#333] bg-white mx-auto mb-5"
         id="mapContainerSecondDay"
+        data-venue="secondDayLocation"
+        data-venue-title="Карта: месца святкавання на другі дзень"
       ></div>
-      <p
-        class="location-address font-skolar text-base text-primary mb-10 text-center font-medium"
-      >
+      <p class="location-address font-skolar text-base text-primary mb-10 text-center font-medium">
         горад Гродна, вуліца Прыгародная, д. 26,<br />уваход з вуліцы Ціхай
       </p>
     </section>
@@ -857,22 +731,27 @@
       class="survey-section relative py-20 px-5 flex flex-col items-center justify-center min-h-screen w-full"
       aria-label="Анкета для госцей"
     >
-      <h2
-        class="survey-title font-skolar text-2xl font-bold mb-4 text-center text-primary"
-      >
+      <h2 class="survey-title font-skolar text-2xl font-bold mb-4 text-center text-primary">
         Чакаем ваш адказ
       </h2>
-      <p
-        class="survey-deadline font-skolar text-base text-secondary mb-10 text-center italic"
-      >
+      <p class="survey-deadline font-skolar text-base text-secondary mb-10 text-center italic">
         Калі ласка, запоўніце анкету да FORM_DEADLINE_PLACEHOLDER
       </p>
 
+      <!--
+        `novalidate` hands validation to js/rsvp-form.js. Without it the
+        browser's own constraint validation aborts submission before the submit
+        handler runs, so the styled Belarusian error messages below could never
+        appear and guests saw an unstyled bubble in the browser's language
+        instead. The `required` attributes stay: they still convey
+        `aria-required` to assistive technology.
+      -->
       <form
         class="survey-form w-full max-w-[600px]"
         action="FORM_ACTION_PLACEHOLDER"
         method="POST"
         id="guestSurveyForm"
+        novalidate
       >
         <!-- Guest Name -->
         <div class="form-group w-full max-w-[600px] mb-6">
@@ -890,7 +769,13 @@
             aria-describedby="error-guestName"
             placeholder="Увядзіце імя і прозвішча"
           />
-          <span class="form-error text-soft-orange font-skolar text-sm mt-1.5 block hidden" id="error-guestName" data-for="guestName">Калі ласка, увядзіце імя і прозвішча</span>
+          <span
+            class="form-error text-soft-orange font-skolar text-sm mt-1.5"
+            role="alert"
+            id="error-guestName"
+            data-for="guestName"
+            >Калі ласка, увядзіце імя і прозвішча</span
+          >
         </div>
 
         <!-- Attendance Status -->
@@ -912,13 +797,17 @@
             <option value="yes_with_partner">Прыду з парай</option>
             <option value="no">На жаль, не змагу</option>
           </select>
-          <span class="form-error text-soft-orange font-skolar text-sm mt-1.5 block hidden" id="error-attendance" data-for="attendance">Калі ласка, выберыце, ці плануеце вы прысутнічаць</span>
+          <span
+            class="form-error text-soft-orange font-skolar text-sm mt-1.5"
+            role="alert"
+            id="error-attendance"
+            data-for="attendance"
+            >Калі ласка, выберыце, ці плануеце вы прысутнічаць</span
+          >
         </div>
 
         <!-- Partner Name (conditional) -->
-        <div
-          class="form-group partner-name-group partner-group-hidden w-full max-w-[600px] mb-6"
-        >
+        <div class="form-group partner-name-group partner-group-hidden w-full max-w-[600px] mb-6">
           <label
             for="partnerName"
             class="form-label block font-skolar text-base font-semibold text-primary mb-2.5"
@@ -932,7 +821,13 @@
             aria-describedby="error-partnerName"
             placeholder="Увядзіце імя і прозвішча партнёра"
           />
-          <span class="form-error text-soft-orange font-skolar text-sm mt-1.5 block hidden" id="error-partnerName" data-for="partnerName">Калі ласка, увядзіце імя і прозвішча вашай пары</span>
+          <span
+            class="form-error text-soft-orange font-skolar text-sm mt-1.5"
+            role="alert"
+            id="error-partnerName"
+            data-for="partnerName"
+            >Калі ласка, увядзіце імя і прозвішча вашай пары</span
+          >
         </div>
 
         <!-- Second Day Attendance -->
@@ -953,13 +848,18 @@
             <option value="yes">Так</option>
             <option value="no">Не</option>
           </select>
-          <span class="form-error text-soft-orange font-skolar text-sm mt-1.5 block hidden" id="error-attendanceSecondDay" data-for="attendanceSecondDay">Калі ласка, выберыце, ці плануеце вы прысутнічаць на другі дзень</span>
+          <span
+            class="form-error text-soft-orange font-skolar text-sm mt-1.5"
+            role="alert"
+            id="error-attendanceSecondDay"
+            data-for="attendanceSecondDay"
+            >Калі ласка, выберыце, ці плануеце вы прысутнічаць на другі дзень</span
+          >
         </div>
 
         <!-- Alcohol Preferences (checkboxes) -->
         <div class="form-group w-full max-w-[600px] mb-6">
-          <label
-            class="form-label block font-skolar text-base font-semibold text-primary mb-2.5"
+          <label class="form-label block font-skolar text-base font-semibold text-primary mb-2.5"
             >Які алкаголь вы хочаце ўжываць на банкеце?</label
           >
           <div
@@ -974,9 +874,7 @@
                 value="ігрыстае"
                 class="w-5 h-5 cursor-pointer"
               />
-              <span class="font-skolar text-base text-primary font-medium"
-                >Вiно iгрыстае</span
-              >
+              <span class="font-skolar text-base text-primary font-medium">Віно ігрыстае</span>
             </label>
             <label
               class="checkbox-item flex items-center gap-2.5 cursor-pointer p-2.5 rounded-[10px] transition-colors hover:bg-cream"
@@ -984,7 +882,7 @@
               <input
                 type="checkbox"
                 name="alcohol_preference"
-                value="вiно_чырвонае_паўсалодкае"
+                value="віно_чырвонае_паўсалодкае"
                 class="w-5 h-5 cursor-pointer"
               />
               <span class="font-skolar text-base text-primary font-medium"
@@ -997,7 +895,7 @@
               <input
                 type="checkbox"
                 name="alcohol_preference"
-                value="вiно_чырвонае_паўсухое"
+                value="віно_чырвонае_паўсухое"
                 class="w-5 h-5 cursor-pointer"
               />
               <span class="font-skolar text-base text-primary font-medium"
@@ -1010,7 +908,7 @@
               <input
                 type="checkbox"
                 name="alcohol_preference"
-                value="вiно_белае_паўсалодкае"
+                value="віно_белае_паўсалодкае"
                 class="w-5 h-5 cursor-pointer"
               />
               <span class="font-skolar text-base text-primary font-medium"
@@ -1023,7 +921,7 @@
               <input
                 type="checkbox"
                 name="alcohol_preference"
-                value="вiно_белае_паўсухое"
+                value="віно_белае_паўсухое"
                 class="w-5 h-5 cursor-pointer"
               />
               <span class="font-skolar text-base text-primary font-medium"
@@ -1039,9 +937,7 @@
                 value="гарэлка"
                 class="w-5 h-5 cursor-pointer"
               />
-              <span class="font-skolar text-base text-primary font-medium"
-                >Гарэлка</span
-              >
+              <span class="font-skolar text-base text-primary font-medium">Гарэлка</span>
             </label>
             <label
               class="checkbox-item flex items-center gap-2.5 cursor-pointer p-2.5 rounded-[10px] transition-colors hover:bg-cream"
@@ -1052,9 +948,7 @@
                 value="ром"
                 class="w-5 h-5 cursor-pointer"
               />
-              <span class="font-skolar text-base text-primary font-medium"
-                >Ром</span
-              >
+              <span class="font-skolar text-base text-primary font-medium">Ром</span>
             </label>
             <label
               class="checkbox-item flex items-center gap-2.5 cursor-pointer p-2.5 rounded-[10px] transition-colors hover:bg-cream"
@@ -1065,9 +959,7 @@
                 value="віскі"
                 class="w-5 h-5 cursor-pointer"
               />
-              <span class="font-skolar text-base text-primary font-medium"
-                >Віскі</span
-              >
+              <span class="font-skolar text-base text-primary font-medium">Віскі</span>
             </label>
             <label
               class="checkbox-item flex items-center gap-2.5 cursor-pointer p-2.5 rounded-[10px] transition-colors hover:bg-cream"
@@ -1078,9 +970,7 @@
                 value="каньяк"
                 class="w-5 h-5 cursor-pointer"
               />
-              <span class="font-skolar text-base text-primary font-medium"
-                >Каньяк</span
-              >
+              <span class="font-skolar text-base text-primary font-medium">Каньяк</span>
             </label>
             <label
               class="checkbox-item flex items-center gap-2.5 cursor-pointer p-2.5 rounded-[10px] transition-colors hover:bg-cream"
@@ -1112,7 +1002,7 @@
           class="form-message form-message-success form-message-hidden py-4 px-6 rounded-[15px] mt-5 max-w-[600px] text-center bg-soft-green border-[3px] border-[#333]"
         >
           <p class="font-skolar text-base text-primary font-medium">
-            Дзякуй за вашу адказ! Ваша анкета прынята.
+            Дзякуй за ваш адказ! Ваша анкета прынята.
           </p>
         </div>
 
@@ -1132,13 +1022,9 @@
       class="closing-section relative min-h-screen flex flex-col justify-center items-center w-full"
       aria-label="Заключнае паведамленне"
     >
-      <h2
-        class="closing-text font-inkverse text-2xl text-primary text-center m-0"
-      >
+      <h2 class="closing-text font-inkverse text-2xl text-primary text-center m-0" data-reveal>
         Да хуткай сустрэчы на нашым свяце!
       </h2>
     </section>
-
-    <script src="script.js"></script>
   </body>
 </html>

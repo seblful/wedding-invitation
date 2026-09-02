@@ -1,0 +1,30 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Debug server",
+      "program": "${workspaceFolder}/src/server.js",
+      "env": { "NODE_ENV": "development" },
+      "skipFiles": ["<node_internals>/**"]
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Debug tests",
+      "runtimeExecutable": "node",
+      "runtimeArgs": ["--test", "test/"],
+      "cwd": "${workspaceFolder}",
+      "console": "integratedTerminal",
+      "skipFiles": ["<node_internals>/**"]
+    },
+    {
+      "type": "chrome",
+      "request": "launch",
+      "name": "Open site in Chrome",
+      "url": "http://localhost:3000",
+      "webRoot": "${workspaceFolder}/public"
+    }
+  ]
+}

@@ -1,8 +1,0 @@
-{
-  "permissions": {
-    "allow": [
-      "Skill(glm-plan-usage:usage-query-skill)",
-      "Skill(glm-plan-usage:usage-query-skill:*)"
-    ]
-  }
-}

@@ -49,6 +49,46 @@ resolve to nothing (this was a real bug).
 generated CSS. If it flags a class, fix the name or add the value to the theme
 — do not add it to an ignore list.
 
+**Style repeated elements through a component class in `public/input.css`, not
+a utility string in the markup.** `class="schedule-item"`, then
+`.schedule-item { @apply ... }`. Utility soup in the HTML is how the dead
+hover states got in: `hover:bg-cream` on an already-cream card, copied into
+five rows, invisible in every one. `@apply` also fails the build on a class
+Tailwind cannot resolve, where markup fails silently.
+
+Two tests keep the two halves honest: every component class must reach the
+stylesheet, and every component class must be used by the markup. A component
+nobody references is deleted, not kept "for later".
+
+Leave in the markup only what genuinely varies per instance — a swatch's
+colour, a single overridden margin.
+
+## Colour and focus
+
+Contrast is measured against `--section-bg` (the green behind most sections),
+not against white. `#666` body text sits at 3.9:1 there and fails AA; the
+soft orange fails badly enough (1.6:1) that it must not carry text or a focus
+ring.
+
+Every focusable control shares one `:focus-visible` ring built from the
+`--focus-ring` token. **Do not add `outline: none` or Tailwind's
+`focus:outline-none`** unless you are replacing it with something that stays
+visible at every breakpoint — the fields used to rely on a 2px lift that the
+touch breakpoint cancels.
+
+## Fonts
+
+`@font-face` takes _descriptors_, not properties: `var()` does not work there.
+`font-display: var(--font-display)` was silently invalid, so the fonts blocked
+text while loading. A test asserts `font-display` is a literal.
+
+Skolar PE is variable with a 300–700 `wght` axis and is declared
+`font-weight: 300 700`. Narrowing that to `normal` brings back browser-faked
+bold on every heading.
+
+The static build ships only fonts something references, and prints what it
+skipped. Add a font by referencing it, not by copying it into `public/fonts/`.
+
 ## Browser modules (`public/js/`)
 
 - Keep the top level side-effect free. Only `main.js` may touch the DOM at
@@ -69,6 +109,15 @@ generated CSS. If it flags a class, fix the name or add the value to the theme
   to Express; `scripts/build-static.js` writes the same policy to
   `build/_headers`. Change both by changing that one file.
 - Do not disable CSP to make something work. Add the origin it needs.
+
+## The RSVP form
+
+`FIELDS` in `public/js/rsvp-form.js` is the one place a field is described.
+Its `field` value **must** equal the element's `name` in the markup: with
+JavaScript the module builds the payload, without it the browser posts the form
+natively, and the two used to disagree about the second-day question — the same
+answer arrived under two different keys depending on the guest's browser. A
+test compares the table against `index.html`.
 
 ## Accessibility
 

@@ -23,6 +23,7 @@ the static build. Both must be green.
 | ----------------------------------- | ------------------------------------------- |
 | Names, dates, venues, RSVP deadline | `config.js`                                 |
 | Section copy, headings, timeline    | `public/index.html`                         |
+| Look of a repeated element          | `public/input.css` (component classes)      |
 | Colours, fonts, animations, layout  | `public/custom.css`, `tailwind.config.js`   |
 | Browser behaviour                   | `public/js/<feature>.js`                    |
 | Server or build behaviour           | `src/`, `scripts/`                          |
@@ -46,6 +47,20 @@ A colour key in `tailwind.config.js` becomes the utility suffix: `primary`
 yields `text-primary`, not `text-text-primary`. `test/styles.test.js` fails the
 build if the markup uses a utility class that generates no CSS, so a misspelled
 class is caught rather than silently doing nothing.
+
+Anything that appears more than once gets a component class in
+`public/input.css` (`.schedule-item { @apply ... }`) and the markup names only
+that class. Repeating utility strings in the HTML is what let five copies of a
+cream-on-cream hover survive unnoticed, and `@apply` turns an unresolvable
+class into a build failure instead of silence. Keep per-instance values — a
+swatch colour, one overridden margin — in the markup.
+
+### Focus and contrast
+
+Every focusable control shares one `:focus-visible` ring from the
+`--focus-ring` token. Do not add `focus:outline-none` without a replacement
+that survives every breakpoint. Measure text contrast against `--section-bg`
+rather than white: the soft orange is 1.6:1 there and cannot carry text.
 
 ### Browser modules
 
@@ -88,11 +103,11 @@ npm run test:watch
 node --test test/render.test.js     # a single file
 ```
 
-| Suite                    | Covers                                            |
-| ------------------------ | ------------------------------------------------- |
-| `config.test.js`         | Config validation, env overrides                  |
-| `render.test.js`         | Escaping, OG tags, placeholder substitution       |
-| `app.test.js`            | HTTP behaviour, headers, routing (real server)    |
-| `build-static.test.js`   | Build output, dev/prod parity, `_headers`         |
-| `styles.test.js`         | Every utility class in the markup resolves to CSS |
-| `client-modules.test.js` | Browser module graph and pure logic               |
+| Suite                    | Covers                                           |
+| ------------------------ | ------------------------------------------------ |
+| `config.test.js`         | Config validation, env overrides                 |
+| `render.test.js`         | Escaping, OG tags, placeholder substitution      |
+| `app.test.js`            | HTTP behaviour, headers, routing (real server)   |
+| `build-static.test.js`   | Build output, dev/prod parity, `_headers`        |
+| `styles.test.js`         | Classes resolve to CSS; `@font-face` correctness |
+| `client-modules.test.js` | Browser module graph and pure logic              |

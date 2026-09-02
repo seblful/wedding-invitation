@@ -7,6 +7,31 @@
 
 const SUBMITTING_LABEL = 'Адпраўка...';
 
+/**
+ * The form's fields, keyed by element id.
+ *
+ * `field` is the name Formspree files the answer under, and it has to be the
+ * `name` attribute in the markup: without JavaScript the browser posts the form
+ * natively, and the two paths used to disagree about the second-day question
+ * (`attendance_second_day` in the HTML, `second_day_attendance` here), so the
+ * same answer landed in two different columns depending on the guest's browser.
+ *
+ * @type {ReadonlyArray<{ id: string, field: string, required: boolean }>}
+ */
+export const FIELDS = Object.freeze([
+  { id: 'guestName', field: 'guest_name', required: true },
+  { id: 'attendance', field: 'attendance', required: true },
+  // Required only when the guest says they are bringing someone.
+  { id: 'partnerName', field: 'partner_name', required: false },
+  { id: 'attendanceSecondDay', field: 'attendance_second_day', required: true },
+]);
+
+/** Checkbox group; it has a shared `name` rather than a single element id. */
+const ALCOHOL_FIELD = 'alcohol_preference';
+
+/** The `#attendance` value that makes the partner name mandatory. */
+const ATTENDING_WITH_PARTNER = 'yes_with_partner';
+
 /** Formspree only answers with JSON when asked; without this it 302s to HTML. */
 const FORMSPREE_HEADERS = Object.freeze({
   'Content-Type': 'application/json',
@@ -62,35 +87,23 @@ function readAndValidate(form) {
       form.querySelector(`#${id}`)
     )?.value.trim() ?? '';
 
-  const guestName = value('guestName');
-  const attendance = value('attendance');
-  const partnerName = value('partnerName');
-  const secondDayAttendance = value('attendanceSecondDay');
+  /** @type {Record<string, string>} */
+  const values = {};
+  for (const { id, field } of FIELDS) values[field] = value(id);
 
-  const alcoholPreference = Array.from(
-    form.querySelectorAll('input[name="alcohol_preference"]:checked')
+  values[ALCOHOL_FIELD] = Array.from(
+    form.querySelectorAll(`input[name="${ALCOHOL_FIELD}"]:checked`)
   )
     .map((input) => /** @type {HTMLInputElement} */ (input).value)
     .join(', ');
 
-  const invalidFieldIds = [];
-  if (!guestName) invalidFieldIds.push('guestName');
-  if (!attendance) invalidFieldIds.push('attendance');
-  if (!secondDayAttendance) invalidFieldIds.push('attendanceSecondDay');
-  if (attendance === 'yes_with_partner' && !partnerName) {
-    invalidFieldIds.push('partnerName');
-  }
+  const bringingPartner = values.attendance === ATTENDING_WITH_PARTNER;
+  const invalidFieldIds = FIELDS.filter(
+    ({ id, field, required }) =>
+      !values[field] && (required || (id === 'partnerName' && bringingPartner))
+  ).map(({ id }) => id);
 
-  return {
-    values: {
-      guest_name: guestName,
-      attendance,
-      partner_name: partnerName,
-      alcohol_preference: alcoholPreference,
-      second_day_attendance: secondDayAttendance,
-    },
-    invalidFieldIds,
-  };
+  return { values, invalidFieldIds };
 }
 
 /**
@@ -141,15 +154,28 @@ export function initRsvpForm(root = document) {
     }
   };
 
-  /** @param {HTMLElement | null} element @param {boolean} visible */
+  /**
+   * Shows or hides one of the two result banners.
+   *
+   * Revealing one also moves focus to it: the banner sits below the submit
+   * button, so on a phone the outcome was often off-screen, and a screen
+   * reader had nothing pulling it to the announcement.
+   *
+   * @param {HTMLElement | null} element
+   * @param {boolean} visible
+   */
   const setMessageVisible = (element, visible) => {
-    element?.classList.toggle('form-message-hidden', !visible);
+    if (!element) return;
+    element.classList.toggle('form-message-hidden', !visible);
+    if (!visible) return;
+    element.focus({ preventScroll: true });
+    element.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
   };
 
   if (attendanceSelect instanceof HTMLSelectElement) {
     attendanceSelect.addEventListener('change', () => {
       setFieldError(form, 'attendance', false);
-      setPartnerVisible(attendanceSelect.value === 'yes_with_partner');
+      setPartnerVisible(attendanceSelect.value === ATTENDING_WITH_PARTNER);
     });
   }
 

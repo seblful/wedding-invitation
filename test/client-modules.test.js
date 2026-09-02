@@ -113,3 +113,56 @@ describe('init functions', () => {
     });
   }
 });
+
+describe('RSVP field table', () => {
+  const html = fs.readFileSync(
+    path.join(__dirname, '..', 'public', 'index.html'),
+    'utf8'
+  );
+
+  /**
+   * The whole `<input>` / `<select>` tag carrying a given id.
+   *
+   * @param {string} id
+   * @returns {string | null}
+   */
+  function tagWithId(id) {
+    const at = html.indexOf(`id="${id}"`);
+    if (at === -1) return null;
+    const open = html.lastIndexOf('<', at);
+    const close = html.indexOf('>', at);
+    return open === -1 || close === -1 ? null : html.slice(open, close + 1);
+  }
+
+  it('names each field exactly as the markup does', async () => {
+    // A guest without JavaScript posts the form natively, so the payload key
+    // the module builds has to be the element's own `name`. These two used to
+    // disagree about the second-day question and filed it under two names.
+    const { FIELDS } = await importModule('rsvp-form.js');
+
+    for (const { id, field } of FIELDS) {
+      const tag = tagWithId(id);
+      assert.ok(tag, `no element in index.html with id="${id}"`);
+
+      const name = /name="([^"]*)"/.exec(tag)?.[1];
+      assert.equal(
+        name,
+        field,
+        `#${id} is name="${name}" in the markup but rsvp-form.js submits it as "${field}"`
+      );
+    }
+  });
+
+  it('marks every field the module requires as required in the markup', async () => {
+    // `required` no longer gates submission (the form is `novalidate`) but it
+    // is what tells assistive technology the field is mandatory.
+    const { FIELDS } = await importModule('rsvp-form.js');
+
+    for (const { id } of FIELDS.filter((f) => f.required)) {
+      assert.ok(
+        tagWithId(id)?.includes('required'),
+        `#${id} is required by rsvp-form.js but not marked required in the markup`
+      );
+    }
+  });
+});

@@ -5,7 +5,7 @@
  * page edges while the hero section scrolls away, and drift back in over the
  * closing section. Cropped pieces cross-fade instead of moving.
  *
- * Final positions live in the two tables below — edit those, not the maths.
+ * Final positions live in the table below — edit those, not the maths.
  */
 
 import {
@@ -17,63 +17,55 @@ import {
 } from './environment.js';
 
 /**
- * Where each flower ends up after the hero has scrolled away, in percent of the
- * corner group. `left` is measured from the left edge; a right-anchored flower
- * is placed at `right: (100 - left)%`.
+ * Every flower, one entry each.
+ *
+ * `left` is measured from the left edge of the corner group; a right-anchored
+ * flower is placed at `right: (100 - left)%`. Whether an entry names `top` or
+ * `bottom` is what anchors it vertically -- there is no separate table of
+ * bottom-anchored selectors to keep in step, because the target already says.
+ *
+ * These are the positions after the hero has scrolled away, in percent of the
+ * corner group. Mobile targets sit further inside the viewport so nothing
+ * clips off a narrow screen. Edit these, not the maths.
  */
-const DESKTOP_FINAL_POSITIONS = Object.freeze({
-  '.p-tl-c1': { left: 3, top: 2 },
-  '.p-tl-1': { left: 0, top: 20 },
-  '.p-tl-2': { left: 8, top: 3 },
-  '.p-tl-3': { left: 12, top: 40 },
-  '.p-bl-c1': { left: 3, bottom: 2 },
-  '.p-bl-c2': { left: 15, bottom: 12 },
-  '.p-bl-1': { left: 0, bottom: 17 },
-  '.p-bl-2': { left: 11, bottom: 0 },
-  '.p-tr-c2': { left: 80, top: 2 },
-  '.p-tr-2': { left: 82, top: 3 },
-  '.p-tr-c1': { left: 80, top: 22 },
-  '.p-tr-1': { left: 75, top: 27 },
-  '.p-br-c1': { left: 80, bottom: 2 },
-  '.p-br-c2': { left: 72, bottom: 15 },
-  '.p-br-2': { left: 85, bottom: 26 },
-  '.p-br-1': { left: 75, bottom: 0 },
+const FLOWERS = Object.freeze({
+  '.p-tl-c1': { desktop: { left: 3, top: 2 }, mobile: { left: 6, top: 3 } },
+  '.p-tl-1': { desktop: { left: 0, top: 20 }, mobile: { left: 4, top: 20 } },
+  '.p-tl-2': { desktop: { left: 8, top: 3 }, mobile: { left: 10, top: 4 } },
+  '.p-tl-3': { desktop: { left: 12, top: 40 }, mobile: { left: 13, top: 40 } },
+  '.p-bl-c1': {
+    desktop: { left: 3, bottom: 2 },
+    mobile: { left: 6, bottom: 3 },
+  },
+  '.p-bl-c2': {
+    desktop: { left: 15, bottom: 12 },
+    mobile: { left: 16, bottom: 12 },
+  },
+  '.p-bl-1': {
+    desktop: { left: 0, bottom: 17 },
+    mobile: { left: 6, bottom: 17 },
+  },
+  '.p-bl-2': {
+    desktop: { left: 11, bottom: 0 },
+    mobile: { left: 13, bottom: 2 },
+  },
+  '.p-tr-c2': { desktop: { left: 80, top: 2 }, mobile: { left: 88, top: 3 } },
+  '.p-tr-2': { desktop: { left: 82, top: 3 }, mobile: { left: 90, top: 4 } },
+  '.p-tr-c1': { desktop: { left: 80, top: 22 }, mobile: { left: 86, top: 22 } },
+  '.p-tr-1': { desktop: { left: 75, top: 27 }, mobile: { left: 84, top: 28 } },
+  '.p-br-c1': {
+    desktop: { left: 80, bottom: 2 },
+    mobile: { left: 88, bottom: 3 },
+  },
+  '.p-br-2': {
+    desktop: { left: 85, bottom: 26 },
+    mobile: { left: 86, bottom: 27 },
+  },
+  '.p-br-1': {
+    desktop: { left: 75, bottom: 0 },
+    mobile: { left: 82, bottom: 2 },
+  },
 });
-
-/** Pulled further inside the viewport so nothing clips off a narrow screen. */
-const MOBILE_FINAL_POSITIONS = Object.freeze({
-  '.p-tl-c1': { left: 6, top: 3 },
-  '.p-tl-1': { left: 4, top: 20 },
-  '.p-tl-2': { left: 10, top: 4 },
-  '.p-tl-3': { left: 13, top: 40 },
-  '.p-bl-c1': { left: 6, bottom: 3 },
-  '.p-bl-c2': { left: 16, bottom: 12 },
-  '.p-bl-1': { left: 6, bottom: 17 },
-  '.p-bl-2': { left: 13, bottom: 2 },
-  '.p-tr-c2': { left: 88, top: 3 },
-  '.p-tr-2': { left: 90, top: 4 },
-  '.p-tr-c1': { left: 86, top: 22 },
-  '.p-tr-1': { left: 84, top: 28 },
-  '.p-br-c1': { left: 88, bottom: 3 },
-  '.p-br-c2': { left: 85, bottom: 15 },
-  '.p-br-2': { left: 86, bottom: 27 },
-  '.p-br-1': { left: 82, bottom: 2 },
-});
-
-/** Selectors anchored to the bottom of their corner group. */
-const BOTTOM_ANCHORED = new Set([
-  '.p-bl-c1',
-  '.p-bl-c2',
-  '.p-bl-1',
-  '.p-bl-2',
-  '.p-br-c1',
-  '.p-br-c2',
-  '.p-br-2',
-  '.p-br-1',
-]);
-
-/** Fallback edge positions for a flower missing from the tables. */
-const FALLBACK_EDGE = Object.freeze({ left: 3, right: 97 });
 
 /** Cropped pieces have finished fading by this much of the hero scroll. */
 const CROPPED_FADE_FRACTION = 0.7;
@@ -126,18 +118,17 @@ function clearInlinePlacement(element) {
  * target. Inline styles are stripped first, otherwise a re-measure after a
  * resize would read back the animated position instead of the stylesheet one.
  *
+ * @param {Document | HTMLElement} root
  * @returns {Flower[]}
  */
-function measureFlowers() {
-  const positions = isMobile()
-    ? MOBILE_FINAL_POSITIONS
-    : DESKTOP_FINAL_POSITIONS;
+function measureFlowers(root) {
+  const breakpoint = isMobile() ? 'mobile' : 'desktop';
 
   /** @type {Flower[]} */
   const flowers = [];
 
-  for (const selector of Object.keys(positions)) {
-    const element = document.querySelector(selector);
+  for (const [selector, entry] of Object.entries(FLOWERS)) {
+    const element = root.querySelector(selector);
     if (!(element instanceof HTMLElement)) continue;
 
     clearInlinePlacement(element);
@@ -150,9 +141,13 @@ function measureFlowers() {
       (group instanceof HTMLElement ? group.offsetHeight : 0) ||
       window.innerHeight;
 
+    // The target's own key decides the vertical anchor. Horizontally both
+    // edges are spelled `left` in the table, so that one still comes from the
+    // stylesheet.
+    const target = entry[breakpoint];
+    const anchorTop = 'top' in target;
     const computed = getComputedStyle(element);
     const anchorLeft = computed.left !== 'auto';
-    const anchorTop = !BOTTOM_ANCHORED.has(selector);
 
     const startX = anchorLeft
       ? toPercent(computed.left, groupWidth)
@@ -161,20 +156,16 @@ function measureFlowers() {
       ? toPercent(computed.top, groupHeight)
       : toPercent(computed.bottom, groupHeight);
 
-    const target = positions[/** @type {keyof typeof positions} */ (selector)];
-    const isCropped = element.classList.contains('cropped-flower');
-
     flowers.push({
       element,
       selector,
       anchorLeft,
       anchorTop,
-      isCropped,
+      isCropped: element.classList.contains('cropped-flower'),
       startX,
       startY,
-      targetX:
-        target?.left ?? (anchorLeft ? FALLBACK_EDGE.left : FALLBACK_EDGE.right),
-      targetY: (anchorTop ? target?.top : target?.bottom) ?? startY,
+      targetX: target.left,
+      targetY: anchorTop ? target.top : target.bottom,
       lastWrite: null,
     });
   }
@@ -230,15 +221,16 @@ function settle(flowers, scale) {
 /**
  * Starts the scroll-linked floral animation.
  *
+ * @param {Document | HTMLElement} [root]
  * @returns {() => void} teardown
  */
-export function initFloralDecor() {
-  const heroSection = document.querySelector('.first-section');
+export function initFloralDecor(root = document) {
+  const heroSection = root.querySelector('.first-section');
   if (!(heroSection instanceof HTMLElement)) return () => {};
 
-  const closingSection = document.querySelector('.closing-section');
+  const closingSection = root.querySelector('.closing-section');
 
-  let flowers = measureFlowers();
+  let flowers = measureFlowers(root);
   if (flowers.length === 0) return () => {};
 
   if (prefersReducedMotion()) {
@@ -329,7 +321,7 @@ export function initFloralDecor() {
   // A resize changes the breakpoint, the corner-group size and therefore every
   // measured percentage — remeasure rather than animate from stale numbers.
   const stopViewportWatch = onViewportChange(() => {
-    flowers = measureFlowers();
+    flowers = measureFlowers(root);
     scale = scaleProfile();
     compact = isMobile();
     measureMetrics();

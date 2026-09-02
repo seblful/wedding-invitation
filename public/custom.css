@@ -1,28 +1,17 @@
 /*
  * Design tokens.
  *
- * `--bg-primary` and `--section-bg` are the defaults; src/render.js injects a
- * later `:root` block from config.js (themeColor / backgroundColor) that wins
- * over these, so the palette has a single source of truth.
+ * No colour is declared here. Every `--bg-primary`, `--text-secondary` and the
+ * rest comes from `palette.js`, which src/render.js renders into a `:root`
+ * block in the document head and `tailwind.config.js` reads for its utility
+ * colours. The values used to be written out here as well, and drifted: this
+ * file's #555 body grey was the corrected one while Tailwind's `secondary` —
+ * the copy four component classes `@apply` — stayed at the failing #666.
  *
- * Colours belong in `tailwind.config.js`. Only the handful this file needs
- * directly are mirrored here — the palette used to be duplicated in full, ten
- * hexes with no reader, which is two sources of truth for one value and
- * exactly the drift the generated config.json was removed to avoid. A test
- * fails on a token nothing references.
+ * A test fails on a custom property this file reads that neither it nor the
+ * palette declares, and on a token nothing references.
  */
 :root {
-  --bg-primary: #fdf4e3;
-  --text-primary: #333;
-  /* #666 measured 3.9:1 against the green section behind it — under the 4.5:1
-     WCAG AA needs for body text. #555 clears it at 5.1:1. */
-  --text-secondary: #555;
-  --section-bg: #b9dfc6;
-  --border-color: #333;
-
-  --color-soft-orange: #ee9452;
-  --color-burgundy: #600d16;
-
   /* Burgundy, not the soft orange this used to be: the orange sits at 2.1:1
      on cream and 1.6:1 on the green sections, so the ring was invisible
      exactly where it mattered. Burgundy clears 9:1 on both. */
@@ -205,12 +194,6 @@ body {
   bottom: 0%;
   right: 0%;
   width: 9vw;
-}
-
-.p-br-c2 {
-  bottom: 8%;
-  right: 15%;
-  width: 10vw;
 }
 
 .p-br-2 {
@@ -403,7 +386,7 @@ body {
   display: block;
 }
 
-/* Shown instead of the map when /config.json could not be loaded. */
+/* The <noscript> stand-in for a map embed. */
 .map-fallback {
   display: flex;
   align-items: center;
@@ -540,7 +523,6 @@ section > * {
   .p-bl-1,
   .p-bl-2,
   .p-br-c1,
-  .p-br-c2,
   .p-br-1,
   .p-br-2 {
     width: 13vw;

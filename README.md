@@ -24,8 +24,11 @@ Requires Node 22.11+ (see `.nvmrc`); Node 20 reached end of life in April 2026.
 **Everything guest-facing lives in [`config.js`](config.js)** — names, dates,
 venues, map URLs, the Open Graph card, the RSVP deadline and the Formspree
 endpoint. It is the single source of truth: the Express server and the static
-build both render from it, and `/config.json` is generated from it rather than
-hand-maintained.
+build both render from it.
+
+Colours are not content — they live in [`palette.js`](palette.js), which
+`tailwind.config.js` reads for its utility colours and `src/render.js` renders
+into the page's custom properties.
 
 The values are validated on startup, so a typo fails immediately with a list of
 problems instead of rendering `undefined` into the page.
@@ -37,10 +40,12 @@ schedule, the wishes) lives in `public/index.html`.
 
 ```
 config.js                  wedding content — edit this
+palette.js                 every colour, once — read by Tailwind and render.js
 src/
-  config.js                loads + validates config.js, applies env overrides
+  config.js                loadContent(): validates config.js + env overrides
   render.js                placeholder substitution, OG tags, HTML escaping
   security.js              CSP and security headers, defined once
+  caching.js               Cache-Control per path, defined once
   app.js                   Express app factory (no listen — testable)
   server.js                process entry: listen + graceful shutdown
 scripts/
@@ -59,10 +64,13 @@ public/
     floral-decor.js        scroll-driven corner flowers
     scroll-indicator.js    hero scroll arrow
     reveal-on-scroll.js    fade-in on intersection
-    site-config.js         fetches /config.json
     environment.js         viewport + reduced-motion probes
 test/                      node:test suites
 ```
+
+`src/security.js` and `src/caching.js` are the same shape: one table, two
+adapters — Helmet and `express.static` on the dev server, `build/_headers` at
+the edge — with a test asserting the two agree.
 
 Both renderers call `src/render.js`, so **`npm run dev` and `npm run build`
 produce byte-identical HTML** — verified by a test. `renderIndexHtml` throws if

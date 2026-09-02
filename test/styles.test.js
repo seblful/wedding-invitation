@@ -181,7 +181,7 @@ describe('generated stylesheet', () => {
       // fails the build on an `@apply` it cannot resolve, which is what makes
       // a typo here loud instead of silent.
       const css = fs.readFileSync(STYLES_CSS, 'utf8').toLowerCase();
-      const { colors } = require('../tailwind.config.js').theme.extend;
+      const { colors } = require('../palette.js');
 
       // Tailwind emits colours as `rgb(r g b / <alpha>)` so they stay
       // opacity-modifiable, so the hex itself is not what lands in the file.
@@ -210,6 +210,75 @@ describe('generated stylesheet', () => {
 
 describe('design tokens', () => {
   const css = fs.readFileSync(path.join(PUBLIC_DIR, 'custom.css'), 'utf8');
+
+  it('declares every custom property it reads', () => {
+    // custom.css no longer carries colour defaults: palette.js declares them
+    // and src/render.js renders them into the head. A property read here that
+    // nothing declares is a value that silently resolves to nothing.
+    const { customProperties } = require('../palette.js');
+
+    /** Properties a client module writes as an inline style, e.g. by petals.js. */
+    const setByScript = new Set(
+      fs
+        .readdirSync(path.join(PUBLIC_DIR, 'js'))
+        .filter((name) => name.endsWith('.js'))
+        .flatMap((name) => [
+          ...fs
+            .readFileSync(path.join(PUBLIC_DIR, 'js', name), 'utf8')
+            .matchAll(/(--[\w-]+):/g),
+        ])
+        .map((match) => match[1])
+    );
+
+    const read = new Set(
+      [...css.matchAll(/var\((--[\w-]+)/g)].map((match) => match[1])
+    );
+    const declaredHere = new Set(
+      [...css.matchAll(/^\s*(--[\w-]+):/gm)].map((match) => match[1])
+    );
+
+    const undeclared = [...read]
+      .filter((name) => !declaredHere.has(name))
+      .filter((name) => !(name in customProperties))
+      .filter((name) => !setByScript.has(name))
+      .sort();
+
+    assert.deepEqual(
+      undeclared,
+      [],
+      `nothing declares these: ${undeclared.join(', ')}`
+    );
+  });
+
+  it('leaves no palette property unread', () => {
+    // The palette is rendered on every page load, so a property nothing reads
+    // is bytes in every response.
+    const { customProperties } = require('../palette.js');
+    const unread = Object.keys(customProperties).filter(
+      (name) => !css.includes(`var(${name}`)
+    );
+
+    assert.deepEqual(
+      unread,
+      [],
+      `custom.css reads none of these: ${unread.join(', ')}`
+    );
+  });
+
+  it('declares no colour of its own', () => {
+    // A hex here is a second copy of a palette value, which is how the body
+    // grey came to be #555 in this file and #666 in tailwind.config.js.
+    const declarations = [...css.matchAll(/^\s*(--[\w-]+):\s*([^;]+);/gm)];
+    const colours = declarations
+      .filter(([, , value]) => /#[0-9a-fA-F]{3,8}\b/.test(value))
+      .map(([, name]) => name);
+
+    assert.deepEqual(
+      colours,
+      [],
+      `move these to palette.js: ${colours.join(', ')}`
+    );
+  });
 
   it('references every custom property it declares', () => {
     // The palette was mirrored here in full while `tailwind.config.js` was the

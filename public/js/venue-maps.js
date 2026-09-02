@@ -1,64 +1,46 @@
 /**
  * Embedded Yandex maps for the two venues.
  *
- * Both containers used to have their own near-identical loader built with
- * `innerHTML`; this builds the iframe through the DOM API instead, which keeps
+ * Every value comes off the container the renderer wrote it onto, so the
+ * frames go up on first paint. This used to wait on a `/config.json` fetch and
+ * render "the map is temporarily unavailable" whenever that failed; the
+ * `<noscript>` link behind each container already covers the case where this
+ * module never runs at all.
+ *
+ * The iframe is built through the DOM API rather than `innerHTML`, which keeps
  * venue data out of the HTML parser and lets the CSP stay strict.
  */
 
-const DEFAULT_MAP_SIZE = { width: 580, height: 346 };
-
 /**
- * @param {import('./site-config.js').Venue} venue
- * @param {string} title accessible name for the frame
+ * @param {HTMLElement} container
  * @returns {HTMLIFrameElement}
  */
-function createMapFrame(venue, title) {
+function createMapFrame(container) {
+  const { mapEmbed, mapWidth, mapHeight, mapTitle } = container.dataset;
+
   const frame = document.createElement('iframe');
-  frame.src = venue.yandexMapUrl;
-  frame.title = title;
-  frame.width = String(venue.mapDimensions?.width ?? DEFAULT_MAP_SIZE.width);
-  frame.height = String(venue.mapDimensions?.height ?? DEFAULT_MAP_SIZE.height);
+  frame.src = mapEmbed ?? '';
+  frame.title = mapTitle ?? 'Карта месца правядзення';
+  // Intrinsic size, declared in the markup beside the image dimensions, so the
+  // browser can reserve the space before the frame loads.
+  if (mapWidth) frame.width = mapWidth;
+  if (mapHeight) frame.height = mapHeight;
   frame.loading = 'lazy';
   frame.allowFullscreen = true;
   return frame;
 }
 
 /**
- * @param {HTMLElement} container
- * @param {string} message
- */
-function renderUnavailable(container, message) {
-  const note = document.createElement('p');
-  note.className = 'map-fallback';
-  note.textContent = message;
-  container.replaceChildren(note);
-}
-
-/**
- * Fills every `[data-venue]` container with its map.
+ * Fills every map container with its frame.
  *
- * The `data-venue` value names a key on the config object, so adding a third
- * venue needs markup and config only — no change here.
+ * A container is one carrying `data-map-embed`, so adding a third venue needs
+ * markup and config only — no change here.
  *
- * @param {import('./site-config.js').SiteConfig | null} config
  * @param {Document | HTMLElement} [root]
  */
-export function initVenueMaps(config, root = document) {
-  const containers = root.querySelectorAll('[data-venue]');
-
-  for (const container of containers) {
+export function initVenueMaps(root = document) {
+  for (const container of root.querySelectorAll('[data-map-embed]')) {
     if (!(container instanceof HTMLElement)) continue;
-
-    const key = container.dataset.venue ?? '';
-    const venue = config?.[/** @type {'location'} */ (key)];
-    const title = container.dataset.venueTitle ?? 'Карта месца правядзення';
-
-    if (!venue || typeof venue.yandexMapUrl !== 'string') {
-      renderUnavailable(container, 'Карта часова недаступная.');
-      continue;
-    }
-
-    container.replaceChildren(createMapFrame(venue, title));
+    container.replaceChildren(createMapFrame(container));
   }
 }

@@ -8,6 +8,9 @@
  *
  * Values are validated on load by `src/config.js` — a typo fails fast at boot
  * rather than silently producing a broken page.
+ *
+ * Colours are not here: they live in `palette.js`, which `tailwind.config.js`
+ * and `src/render.js` both read.
  */
 
 'use strict';
@@ -16,12 +19,6 @@
 module.exports = {
   /** Canonical public origin. Used for absolute Open Graph URLs. */
   baseUrl: 'https://вяселле.бел',
-
-  /** Browser UI colour (`<meta name="theme-color">`) and page surface colour. */
-  themeColor: '#fdf4e3',
-
-  /** Page background, injected as the `--section-bg` custom property. */
-  backgroundColor: '#b9dfc6',
 
   openGraph: {
     title: "Вяселле Аляксея і Дар'і",
@@ -33,6 +30,7 @@ module.exports = {
 
   /** Ceremony start, in UTC. Drives the client-side countdown. */
   weddingDate: '2026-08-02T12:00:00.000Z',
+  /** The wall-clock zone `weddingDate` was worked out in. Not rendered. */
   timezone: 'Europe/Minsk',
 
   location: {
@@ -41,7 +39,6 @@ module.exports = {
     yandexMapUrl:
       'https://yandex.ru/map-widget/v1/?ll=23.833062,53.671368&z=16&pt=23.833062,53.671368,pm2rdm',
     yandexDirectUrl: 'https://yandex.com/maps/-/CPqGnRmu',
-    mapDimensions: { width: 580, height: 346 },
   },
 
   secondDayLocation: {
@@ -49,7 +46,6 @@ module.exports = {
     address: 'вул. Прыгародная, д. 26, г. Гродна',
     yandexMapUrl:
       'https://yandex.ru/map-widget/v1/?ll=23.846794,53.667998&z=16&pt=23.846794,53.667998,pm2rdm',
-    mapDimensions: { width: 580, height: 346 },
   },
 
   form: {

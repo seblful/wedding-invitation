@@ -12,7 +12,6 @@ import { initFallingPetals } from './petals.js';
 import { initRevealOnScroll } from './reveal-on-scroll.js';
 import { initRsvpForm } from './rsvp-form.js';
 import { initScrollIndicator } from './scroll-indicator.js';
-import { loadSiteConfig } from './site-config.js';
 import { initVenueMaps } from './venue-maps.js';
 
 /**
@@ -28,19 +27,14 @@ function safely(name, init) {
 }
 
 function main() {
-  // Everything here works from the rendered HTML alone.
+  // Every module works from the rendered HTML alone.
   safely('rsvp-form', initRsvpForm);
   safely('countdown', initCountdown);
+  safely('venue-maps', initVenueMaps);
   safely('scroll-indicator', initScrollIndicator);
   safely('reveal-on-scroll', initRevealOnScroll);
   safely('petals', initFallingPetals);
   safely('floral-decor', initFloralDecor);
-
-  // Maps need the runtime config; they render a fallback if it never arrives.
-  loadSiteConfig().then(
-    (config) => safely('venue-maps', () => initVenueMaps(config)),
-    (error) => console.error('Config load rejected unexpectedly:', error)
-  );
 }
 
 if (document.readyState === 'loading') {

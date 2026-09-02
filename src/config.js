@@ -1,9 +1,16 @@
 /**
  * Configuration loader and validator.
  *
- * Reads the wedding content from `config.js`, applies environment overrides,
- * validates the result and freezes it. Anything malformed throws here, at boot,
- * instead of rendering a page with `undefined` in it.
+ * `loadContent()` reads the wedding content from `config.js`, applies
+ * environment overrides, validates the result and freezes it. Anything
+ * malformed throws a `ConfigError` listing every problem at once.
+ *
+ * Loading is a call rather than something that happens on import. When it was
+ * an import side effect, nothing could be tested against content other than
+ * the shipped file — `test/config.test.js` kept a hand-written copy of
+ * `config.js` for that — and a `ConfigError` was thrown while `src/server.js`
+ * was still being required, so the friendly one-line message it prints for one
+ * was unreachable and a bad `PORT` produced a stack trace instead.
  */
 
 'use strict';
@@ -11,25 +18,16 @@
 const siteContent = require('../config.js');
 
 /**
- * @typedef {object} MapDimensions
- * @property {number} width
- * @property {number} height
- */
-
-/**
  * @typedef {object} Venue
  * @property {string} name
  * @property {string} address
- * @property {string} yandexMapUrl
- * @property {string} [yandexDirectUrl]
- * @property {MapDimensions} mapDimensions
+ * @property {string} yandexMapUrl the embeddable map-widget URL
+ * @property {string} [yandexDirectUrl] nicer destination for a plain link
  */
 
 /**
  * @typedef {object} SiteContent
  * @property {string} baseUrl
- * @property {string} themeColor
- * @property {string} backgroundColor
  * @property {{ title: string, description: string, image: string }} openGraph
  * @property {string} weddingDate ISO 8601 timestamp
  * @property {string} timezone
@@ -48,8 +46,6 @@ class ConfigError extends Error {
     this.problems = problems;
   }
 }
-
-const HEX_COLOR = /^#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/;
 
 /**
  * Reads a dotted path out of an object without throwing on missing parents.
@@ -94,15 +90,8 @@ function findProblems(content) {
       return false;
     }
   };
-  const isPositiveInt = (v) => Number.isInteger(v) && v > 0;
 
   check('baseUrl', isHttpUrl, 'must be an http(s) URL');
-  check('themeColor', (v) => HEX_COLOR.test(String(v)), 'must be a hex colour');
-  check(
-    'backgroundColor',
-    (v) => HEX_COLOR.test(String(v)),
-    'must be a hex colour'
-  );
 
   check('openGraph.title', isNonEmptyString, 'must be a non-empty string');
   check(
@@ -123,35 +112,12 @@ function findProblems(content) {
     check(`${venue}.name`, isNonEmptyString, 'must be a non-empty string');
     check(`${venue}.address`, isNonEmptyString, 'must be a non-empty string');
     check(`${venue}.yandexMapUrl`, isHttpUrl, 'must be an http(s) URL');
-    check(
-      `${venue}.mapDimensions.width`,
-      isPositiveInt,
-      'must be a positive integer'
-    );
-    check(
-      `${venue}.mapDimensions.height`,
-      isPositiveInt,
-      'must be a positive integer'
-    );
   }
 
   check('form.deadline', isNonEmptyString, 'must be a non-empty string');
   check('form.formspreeEndpoint', isHttpUrl, 'must be an http(s) URL');
 
   return problems;
-}
-
-/**
- * @param {unknown} content
- * @returns {SiteContent} the same object, proven well-formed
- * @throws {ConfigError} when anything is missing or malformed
- */
-function validate(content) {
-  const problems = findProblems(content);
-  if (problems.length > 0) {
-    throw new ConfigError(problems);
-  }
-  return /** @type {SiteContent} */ (content);
 }
 
 /**
@@ -163,7 +129,7 @@ function validate(content) {
  * @returns {SiteContent}
  */
 function applyEnvOverrides(content, env) {
-  const merged = { ...content, form: { ...content.form } };
+  const merged = { ...content, form: { ...content?.form } };
 
   if (env.BASE_URL) merged.baseUrl = env.BASE_URL;
   if (env.FORMSPREE_ENDPOINT) {
@@ -171,25 +137,6 @@ function applyEnvOverrides(content, env) {
   }
 
   return merged;
-}
-
-/**
- * @param {NodeJS.ProcessEnv} env
- * @returns {{ port: number, host: string, nodeEnv: string }}
- */
-function loadServerConfig(env) {
-  const port = Number.parseInt(env.PORT ?? '3000', 10);
-  if (!Number.isInteger(port) || port < 0 || port > 65535) {
-    throw new ConfigError([
-      `PORT must be a valid port number (got ${env.PORT})`,
-    ]);
-  }
-
-  return {
-    port,
-    host: env.HOST ?? '0.0.0.0',
-    nodeEnv: env.NODE_ENV ?? 'development',
-  };
 }
 
 /**
@@ -208,19 +155,46 @@ function deepFreeze(value) {
   return Object.freeze(value);
 }
 
-const content = deepFreeze(
-  validate(applyEnvOverrides(siteContent, process.env))
-);
+/**
+ * The validated, frozen wedding content.
+ *
+ * @param {unknown} [source] defaults to the shipped `config.js`
+ * @param {NodeJS.ProcessEnv} [env] defaults to `process.env`
+ * @returns {Readonly<SiteContent>}
+ * @throws {ConfigError} listing every problem, when anything is malformed
+ */
+function loadContent(source = siteContent, env = process.env) {
+  const merged = applyEnvOverrides(
+    /** @type {SiteContent} */ (source ?? {}),
+    env
+  );
 
-module.exports = {
-  /** Validated, frozen wedding content. */
-  content,
-  /** Server-only settings, read from the environment. */
-  server: loadServerConfig(process.env),
-  // Exported for tests.
-  ConfigError,
-  validate,
-  findProblems,
-  applyEnvOverrides,
-  loadServerConfig,
-};
+  const problems = findProblems(merged);
+  if (problems.length > 0) {
+    throw new ConfigError(problems);
+  }
+
+  return deepFreeze(/** @type {SiteContent} */ (merged));
+}
+
+/**
+ * @param {NodeJS.ProcessEnv} [env] defaults to `process.env`
+ * @returns {{ port: number, host: string, nodeEnv: string }}
+ * @throws {ConfigError} when PORT is not a port number
+ */
+function loadServerConfig(env = process.env) {
+  const port = Number.parseInt(env.PORT ?? '3000', 10);
+  if (!Number.isInteger(port) || port < 0 || port > 65535) {
+    throw new ConfigError([
+      `PORT must be a valid port number (got ${env.PORT})`,
+    ]);
+  }
+
+  return {
+    port,
+    host: env.HOST ?? '0.0.0.0',
+    nodeEnv: env.NODE_ENV ?? 'development',
+  };
+}
+
+module.exports = { loadContent, loadServerConfig, ConfigError };

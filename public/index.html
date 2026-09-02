@@ -323,9 +323,8 @@
     <section class="timer-section" aria-labelledby="timer-heading">
       <h2 id="timer-heading" class="timer-title">Лічым дні да нашага "шчаслівыя разам"</h2>
       <p class="timer-date">2 жніўня 2026 года, нядзеля</p>
-      <!-- The date is rendered inline so the countdown never waits on
-           /config.json. `aria-live="off"` stops the per-second tick from being
-           announced over and over. -->
+      <!-- `aria-live="off"` stops the per-second tick from being announced
+           over and over. -->
       <div
         class="timer-container"
         data-wedding-date="WEDDING_DATE_PLACEHOLDER"
@@ -404,7 +403,13 @@
           />
         </div>
       </div>
-      <div class="map-container" data-venue="location" data-venue-title="Карта: River Hall, Гродна">
+      <div
+        class="map-container"
+        data-map-embed="VENUE_MAP_EMBED_PLACEHOLDER"
+        data-map-width="580"
+        data-map-height="346"
+        data-map-title="Карта: River Hall, Гродна"
+      >
         <noscript
           ><p class="map-fallback">
             <a
@@ -583,8 +588,10 @@
       </div>
       <div
         class="map-container"
-        data-venue="secondDayLocation"
-        data-venue-title="Карта: месца святкавання на другі дзень"
+        data-map-embed="SECOND_DAY_MAP_EMBED_PLACEHOLDER"
+        data-map-width="580"
+        data-map-height="346"
+        data-map-title="Карта: месца святкавання на другі дзень"
       >
         <noscript
           ><p class="map-fallback">
@@ -635,7 +642,7 @@
             aria-describedby="error-guestName"
             placeholder="Увядзіце імя і прозвішча"
           />
-          <span class="form-error" role="alert" id="error-guestName" data-for="guestName"
+          <span class="form-error" role="alert" id="error-guestName"
             >Калі ласка, увядзіце імя і прозвішча</span
           >
         </div>
@@ -655,7 +662,7 @@
             <option value="yes_with_partner">Прыду з парай</option>
             <option value="no">На жаль, не змагу</option>
           </select>
-          <span class="form-error" role="alert" id="error-attendance" data-for="attendance"
+          <span class="form-error" role="alert" id="error-attendance"
             >Калі ласка, выберыце, ці плануеце вы прысутнічаць</span
           >
         </div>
@@ -671,7 +678,7 @@
             aria-describedby="error-partnerName"
             placeholder="Увядзіце імя і прозвішча партнёра"
           />
-          <span class="form-error" role="alert" id="error-partnerName" data-for="partnerName"
+          <span class="form-error" role="alert" id="error-partnerName"
             >Калі ласка, увядзіце імя і прозвішча вашай пары</span
           >
         </div>
@@ -692,11 +699,7 @@
             <option value="yes">Так</option>
             <option value="no">Не</option>
           </select>
-          <span
-            class="form-error"
-            role="alert"
-            id="error-attendanceSecondDay"
-            data-for="attendanceSecondDay"
+          <span class="form-error" role="alert" id="error-attendanceSecondDay"
             >Калі ласка, выберыце, ці плануеце вы прысутнічаць на другі дзень</span
           >
         </div>

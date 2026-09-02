@@ -3,33 +3,21 @@
  *
  * Posts straight to Formspree — the same endpoint in development and in
  * production, so there is no untested path between the two.
+ *
+ * Nothing here spells out a payload key. A guest without JavaScript posts the
+ * form natively, so the keys have to be the `name` attributes in the markup;
+ * this module reads them off the form instead of restating them, which is what
+ * used to drift — the second-day question was `attendance_second_day` in the
+ * HTML and `second_day_attendance` here, so the same answer arrived under two
+ * different keys depending on the guest's browser.
+ *
+ * The one control it does look up by name is the attendance question, because
+ * that answer is what makes the partner name mandatory.
  */
 
 const SUBMITTING_LABEL = 'Адпраўка...';
 
-/**
- * The form's fields, keyed by element id.
- *
- * `field` is the name Formspree files the answer under, and it has to be the
- * `name` attribute in the markup: without JavaScript the browser posts the form
- * natively, and the two paths used to disagree about the second-day question
- * (`attendance_second_day` in the HTML, `second_day_attendance` here), so the
- * same answer landed in two different columns depending on the guest's browser.
- *
- * @type {ReadonlyArray<{ id: string, field: string, required: boolean }>}
- */
-export const FIELDS = Object.freeze([
-  { id: 'guestName', field: 'guest_name', required: true },
-  { id: 'attendance', field: 'attendance', required: true },
-  // Required only when the guest says they are bringing someone.
-  { id: 'partnerName', field: 'partner_name', required: false },
-  { id: 'attendanceSecondDay', field: 'attendance_second_day', required: true },
-]);
-
-/** Checkbox group; it has a shared `name` rather than a single element id. */
-const ALCOHOL_FIELD = 'alcohol_preference';
-
-/** The `#attendance` value that makes the partner name mandatory. */
+/** The `attendance` value that makes the partner name mandatory. */
 const ATTENDING_WITH_PARTNER = 'yes_with_partner';
 
 /** Formspree only answers with JSON when asked; without this it 302s to HTML. */
@@ -39,30 +27,41 @@ const FORMSPREE_HEADERS = Object.freeze({
 });
 
 /**
- * @param {HTMLFormElement} form
- * @param {string} fieldId
+ * The error message a field already points at with `aria-describedby`.
+ *
+ * The markup declares that link once, for screen readers; reading it back is
+ * cheaper than maintaining a parallel `data-for` attribute alongside it.
+ *
+ * @param {Element} field
  * @returns {HTMLElement | null}
  */
-function errorElementFor(form, fieldId) {
-  return form.querySelector(`.form-error[data-for="${fieldId}"]`);
+function errorElementFor(field) {
+  const form = /** @type {{ form?: HTMLFormElement }} */ (field).form;
+  if (!form) return null;
+
+  for (const id of (field.getAttribute('aria-describedby') ?? '').split(
+    /\s+/
+  )) {
+    if (!id) continue;
+    const element = form.querySelector(`#${id}`);
+    if (element instanceof HTMLElement && element.matches('.form-error')) {
+      return element;
+    }
+  }
+  return null;
 }
 
 /**
- * @param {HTMLFormElement} form
- * @param {string} fieldId
+ * @param {Element} field
  * @param {boolean} invalid
  */
-function setFieldError(form, fieldId, invalid) {
-  const field = form.querySelector(`#${fieldId}`);
-  const error = errorElementFor(form, fieldId);
+function setFieldError(field, invalid) {
+  errorElementFor(field)?.classList.toggle('active', invalid);
 
-  error?.classList.toggle('active', invalid);
-  if (field instanceof HTMLElement) {
-    if (invalid) {
-      field.setAttribute('aria-invalid', 'true');
-    } else {
-      field.removeAttribute('aria-invalid');
-    }
+  if (invalid) {
+    field.setAttribute('aria-invalid', 'true');
+  } else {
+    field.removeAttribute('aria-invalid');
   }
 }
 
@@ -77,33 +76,66 @@ function clearAllErrors(form) {
 }
 
 /**
+ * Every named control on the form, once per name.
+ *
  * @param {HTMLFormElement} form
- * @returns {{ values: Record<string, string>, invalidFieldIds: string[] }}
+ * @returns {Element[]}
  */
-function readAndValidate(form) {
-  /** @param {string} id */
-  const value = (id) =>
-    /** @type {HTMLInputElement | HTMLSelectElement | null} */ (
-      form.querySelector(`#${id}`)
-    )?.value.trim() ?? '';
+function namedControls(form) {
+  const seen = new Set();
+  const controls = [];
+
+  for (const element of form.elements) {
+    const { name } = /** @type {{ name?: string }} */ (element);
+    if (!name || seen.has(name)) continue;
+    seen.add(name);
+    controls.push(element);
+  }
+
+  return controls;
+}
+
+/**
+ * The payload, read out of the form exactly as the browser would post it.
+ *
+ * @param {HTMLFormElement} form
+ * @returns {Record<string, string>}
+ */
+function readPayload(form) {
+  const data = new FormData(form);
 
   /** @type {Record<string, string>} */
   const values = {};
-  for (const { id, field } of FIELDS) values[field] = value(id);
+  for (const control of namedControls(form)) {
+    const { name } = /** @type {HTMLInputElement} */ (control);
+    // `getAll` covers the alcohol checkbox group. An unchecked group yields
+    // '' rather than dropping the key, so every question reaches Formspree.
+    values[name] = data
+      .getAll(name)
+      .map((value) => String(value).trim())
+      .filter(Boolean)
+      .join(', ');
+  }
 
-  values[ALCOHOL_FIELD] = Array.from(
-    form.querySelectorAll(`input[name="${ALCOHOL_FIELD}"]:checked`)
-  )
-    .map((input) => /** @type {HTMLInputElement} */ (input).value)
-    .join(', ');
+  return values;
+}
 
-  const bringingPartner = values.attendance === ATTENDING_WITH_PARTNER;
-  const invalidFieldIds = FIELDS.filter(
-    ({ id, field, required }) =>
-      !values[field] && (required || (id === 'partnerName' && bringingPartner))
-  ).map(({ id }) => id);
-
-  return { values, invalidFieldIds };
+/**
+ * Every required control the guest left empty.
+ *
+ * `required` is read live off the element, so the conditional partner rule
+ * lives in exactly one place — the `change` handler that toggles it — rather
+ * than being restated as a validation special case.
+ *
+ * @param {HTMLFormElement} form
+ * @param {Record<string, string>} values
+ * @returns {Element[]}
+ */
+function missingRequired(form, values) {
+  return namedControls(form).filter((control) => {
+    const { name, required } = /** @type {HTMLInputElement} */ (control);
+    return required && !values[name];
+  });
 }
 
 /**
@@ -135,9 +167,11 @@ export function initRsvpForm(root = document) {
   const form = root.querySelector('#guestSurveyForm');
   if (!(form instanceof HTMLFormElement)) return;
 
-  const attendanceSelect = form.querySelector('#attendance');
+  const attendanceSelect = form.elements.namedItem('attendance');
   const partnerGroup = form.querySelector('.partner-name-group');
-  const partnerInput = form.querySelector('#partnerName');
+  // Found through the group this module already toggles, rather than by its
+  // payload key — that key belongs to the markup alone.
+  const partnerInput = partnerGroup?.querySelector('input');
   const submitButton = form.querySelector('.form-submit-btn');
   const successMessage = form.querySelector('#formSuccess');
   const errorMessage = form.querySelector('#formError');
@@ -148,9 +182,11 @@ export function initRsvpForm(root = document) {
   const setPartnerVisible = (visible) => {
     partnerGroup?.classList.toggle('partner-group-hidden', !visible);
     if (partnerInput instanceof HTMLInputElement) {
+      // This property is the whole conditional rule: `missingRequired` reads
+      // it back at submit time.
       partnerInput.required = visible;
       if (visible) partnerInput.focus();
-      else setFieldError(form, 'partnerName', false);
+      else setFieldError(partnerInput, false);
     }
   };
 
@@ -174,16 +210,18 @@ export function initRsvpForm(root = document) {
 
   if (attendanceSelect instanceof HTMLSelectElement) {
     attendanceSelect.addEventListener('change', () => {
-      setFieldError(form, 'attendance', false);
+      setFieldError(attendanceSelect, false);
       setPartnerVisible(attendanceSelect.value === ATTENDING_WITH_PARTNER);
     });
   }
 
   // Clearing on input gives immediate feedback that the field is now fine.
-  for (const field of form.querySelectorAll('.form-input, .form-select')) {
-    const clear = () => setFieldError(form, field.id, false);
-    field.addEventListener('input', clear);
-    field.addEventListener('change', clear);
+  // Only the controls the markup gave an error message to can show one.
+  for (const control of namedControls(form)) {
+    if (!errorElementFor(control)) continue;
+    const clear = () => setFieldError(control, false);
+    control.addEventListener('input', clear);
+    control.addEventListener('change', clear);
   }
 
   form.addEventListener('submit', async (event) => {
@@ -197,13 +235,12 @@ export function initRsvpForm(root = document) {
     );
     setMessageVisible(/** @type {HTMLElement | null} */ (errorMessage), false);
 
-    const { values, invalidFieldIds } = readAndValidate(form);
+    const values = readPayload(form);
+    const missing = missingRequired(form, values);
 
-    if (invalidFieldIds.length > 0) {
-      for (const id of invalidFieldIds) setFieldError(form, id, true);
-      /** @type {HTMLElement | null} */ (
-        form.querySelector(`#${invalidFieldIds[0]}`)
-      )?.focus();
+    if (missing.length > 0) {
+      for (const control of missing) setFieldError(control, true);
+      /** @type {HTMLElement} */ (missing[0]).focus();
       return;
     }
 

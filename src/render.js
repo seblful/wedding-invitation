@@ -9,6 +9,8 @@
 
 'use strict';
 
+const { customProperties, themeColor } = require('../palette.js');
+
 const HTML_ESCAPES = Object.freeze({
   '&': '&amp;',
   '<': '&lt;',
@@ -70,41 +72,39 @@ function buildSocialTags(content) {
   ].join(`\n${HEAD_INDENT}`);
 }
 
-/**
- * Emits the palette as CSS custom properties so `config.js` genuinely drives
- * the page colours instead of duplicating them in `custom.css`.
- *
- * @param {import('./config.js').SiteContent} content
- * @returns {string}
- */
-function buildThemeVars(content) {
-  // The first line lands at the placeholder's own indentation; the rest carry
-  // theirs explicitly so the emitted HTML stays readable.
-  return [
-    '<style>',
-    `${HEAD_INDENT}  :root {`,
-    `${HEAD_INDENT}    --bg-primary: ${escapeHtml(content.themeColor)};`,
-    `${HEAD_INDENT}    --section-bg: ${escapeHtml(content.backgroundColor)};`,
-    `${HEAD_INDENT}  }`,
-    `${HEAD_INDENT}</style>`,
-  ].join('\n');
-}
+/** A `<style>` block is the one place a palette value has to be safe as-is. */
+const HEX_COLOR = /^#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/;
 
 /**
- * The subset of config the browser needs at runtime. Kept deliberately small:
- * whatever lands here is public.
+ * Emits the palette as CSS custom properties, so `palette.js` genuinely drives
+ * the page colours instead of them being duplicated in `custom.css`.
  *
- * @param {import('./config.js').SiteContent} content
- * @returns {object}
+ * Values are checked rather than escaped: HTML entities do not decode inside a
+ * `<style>` element, so `escapeHtml` would corrupt a value here rather than
+ * neutralise it. A palette entry that is not a plain hex colour fails the
+ * render instead.
+ *
+ * @param {Record<string, string>} [properties] defaults to the palette
+ * @returns {string}
+ * @throws {TemplateError} when a value is not a hex colour
  */
-function buildClientConfig(content) {
-  return {
-    weddingDate: content.weddingDate,
-    timezone: content.timezone,
-    location: content.location,
-    secondDayLocation: content.secondDayLocation,
-    formspreeEndpoint: content.form.formspreeEndpoint,
-  };
+function buildThemeVars(properties = customProperties) {
+  // The first line lands at the placeholder's own indentation; the rest carry
+  // theirs explicitly so the emitted HTML stays readable.
+  const lines = ['<style>', `${HEAD_INDENT}  :root {`];
+
+  for (const [property, value] of Object.entries(properties)) {
+    if (!HEX_COLOR.test(value)) {
+      throw new TemplateError(
+        `${property} is ${JSON.stringify(value)}, which is not a hex colour ` +
+          'and cannot be written into a <style> block.'
+      );
+    }
+    lines.push(`${HEAD_INDENT}    ${property}: ${value};`);
+  }
+
+  lines.push(`${HEAD_INDENT}  }`, `${HEAD_INDENT}</style>`);
+  return lines.join('\n');
 }
 
 /**
@@ -124,11 +124,11 @@ function venueMapLink(venue) {
 function buildReplacements(content) {
   return {
     '<!-- OPENGRAPH_PLACEHOLDER -->': buildSocialTags(content),
-    '<!-- THEME_VARS_PLACEHOLDER -->': buildThemeVars(content),
+    '<!-- THEME_VARS_PLACEHOLDER -->': buildThemeVars(),
     CANONICAL_URL_PLACEHOLDER: escapeHtml(
       `${content.baseUrl.replace(/\/+$/, '')}/`
     ),
-    THEME_COLOR_PLACEHOLDER: escapeHtml(content.themeColor),
+    THEME_COLOR_PLACEHOLDER: escapeHtml(themeColor),
     // Rendered into a data attribute so the countdown does not depend on the
     // /config.json round-trip.
     WEDDING_DATE_PLACEHOLDER: escapeHtml(
@@ -144,6 +144,13 @@ function buildReplacements(content) {
     VENUE_MAP_URL_PLACEHOLDER: escapeHtml(venueMapLink(content.location)),
     SECOND_DAY_MAP_URL_PLACEHOLDER: escapeHtml(
       venueMapLink(content.secondDayLocation)
+    ),
+    // The widget URL js/venue-maps.js builds each iframe from. Rendered onto
+    // the container rather than fetched: the frames go up on first paint, and
+    // there is no /config.json round-trip to fail.
+    VENUE_MAP_EMBED_PLACEHOLDER: escapeHtml(content.location.yandexMapUrl),
+    SECOND_DAY_MAP_EMBED_PLACEHOLDER: escapeHtml(
+      content.secondDayLocation.yandexMapUrl
     ),
   };
 }
@@ -207,7 +214,6 @@ module.exports = {
   absoluteUrl,
   buildSocialTags,
   buildThemeVars,
-  buildClientConfig,
   buildReplacements,
   renderIndexHtml,
   TemplateError,

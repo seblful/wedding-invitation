@@ -1,7 +1,10 @@
 /**
  * Tailwind theme.
  *
- * Colour keys are the utility suffix: `primary` produces `text-primary`,
+ * Colours come from `palette.js`, which `src/render.js` also renders into the
+ * document's custom properties — one declaration, every rendering path.
+ *
+ * A colour key is the utility suffix: `primary` produces `text-primary`,
  * `bg-primary` and `border-primary`. The keys used to be spelled
  * `text-primary` / `text-secondary`, which generated `.text-text-primary` — so
  * every `text-primary` and `text-secondary` in the markup resolved to nothing.
@@ -12,26 +15,8 @@ module.exports = {
   content: ['./public/**/*.html', './public/js/**/*.js'],
   theme: {
     extend: {
-      colors: {
-        // Ink and supporting text.
-        primary: '#333333',
-        secondary: '#666666',
+      colors: require('./palette.js').colors,
 
-        // Surfaces.
-        cream: '#fdf4e3',
-        'section-bg': '#b9dfc6',
-
-        // Accent palette, mirrored as custom properties in custom.css.
-        'soft-blue': '#9cbde1',
-        'soft-orange': '#ee9452',
-        'soft-yellow': '#f2e8a5',
-        'soft-lavender': '#c8ade0',
-        'soft-green': '#a1d274',
-        'soft-pink': '#de87a7',
-        'soft-peach': '#f9dcc4',
-        burgundy: '#600d16',
-        beige: '#e8d5b7',
-      },
       fontFamily: {
         inkverse: ['InkVerse', 'Georgia', 'Garamond', 'serif'],
         skolar: ['"Skolar PE"', 'serif'],

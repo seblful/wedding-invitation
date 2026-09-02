@@ -5,16 +5,18 @@ const fs = require('node:fs');
 const path = require('node:path');
 const { describe, it } = require('node:test');
 
-const { content } = require('../src/config.js');
+const palette = require('../palette.js');
+const { loadContent } = require('../src/config.js');
 const {
   escapeHtml,
   absoluteUrl,
   buildSocialTags,
-  buildClientConfig,
   buildReplacements,
   renderIndexHtml,
   TemplateError,
 } = require('../src/render.js');
+
+const content = loadContent();
 
 const TEMPLATE = fs.readFileSync(
   path.join(__dirname, '..', 'public', 'index.html'),
@@ -88,35 +90,6 @@ describe('buildSocialTags', () => {
   });
 });
 
-describe('buildClientConfig', () => {
-  const clientConfig = buildClientConfig(content);
-
-  it('exposes exactly the keys the browser needs', () => {
-    assert.deepEqual(Object.keys(clientConfig).sort(), [
-      'formspreeEndpoint',
-      'location',
-      'secondDayLocation',
-      'timezone',
-      'weddingDate',
-    ]);
-  });
-
-  it('serialises to JSON without losing the wedding date', () => {
-    const roundTripped = JSON.parse(JSON.stringify(clientConfig));
-    assert.equal(
-      Date.parse(roundTripped.weddingDate),
-      Date.parse(content.weddingDate)
-    );
-  });
-
-  it('keys the venues by the names the markup asks for', () => {
-    // public/index.html uses data-venue="location" / "secondDayLocation".
-    for (const key of ['location', 'secondDayLocation']) {
-      assert.ok(clientConfig[key].yandexMapUrl, `${key} has no map URL`);
-    }
-  });
-});
-
 describe('renderIndexHtml', () => {
   const html = renderIndexHtml(TEMPLATE, content);
 
@@ -149,9 +122,54 @@ describe('renderIndexHtml', () => {
     );
   });
 
-  it('injects the palette as custom properties', () => {
-    assert.ok(html.includes(`--bg-primary: ${content.themeColor};`));
-    assert.ok(html.includes(`--section-bg: ${content.backgroundColor};`));
+  it('injects every palette custom property', () => {
+    // custom.css declares none of these itself, so a property missing here is
+    // a colour that never reaches the page.
+    for (const [property, value] of Object.entries(palette.customProperties)) {
+      assert.ok(
+        html.includes(`${property}: ${value};`),
+        `${property} was not rendered into the :root block`
+      );
+    }
+  });
+
+  it('writes palette values into the style block unescaped', () => {
+    // HTML entities do not decode inside <style>, so escaping a value here
+    // would corrupt it. buildThemeVars checks the value instead.
+    const themeBlock = /<style>([\s\S]*?)<\/style>/.exec(html)?.[1] ?? '';
+    assert.ok(themeBlock.includes('--bg-primary'), 'no theme block rendered');
+    assert.ok(!themeBlock.includes('&'), `escaped value in ${themeBlock}`);
+  });
+
+  it('refuses a value that is not a hex colour', () => {
+    // A `url(...)` or a stray `}` in this position would close the rule and
+    // let the rest of the value become CSS of its own. Escaping cannot help
+    // inside <style>, so the render fails instead.
+    const { buildThemeVars } = require('../src/render.js');
+
+    for (const bad of ['red; } body { display: none', 'url(x)', '']) {
+      assert.throws(
+        () => buildThemeVars({ '--bg-primary': bad }),
+        (error) => {
+          assert.ok(error instanceof TemplateError);
+          assert.match(error.message, /not a hex colour/);
+          return true;
+        },
+        `accepted ${JSON.stringify(bad)}`
+      );
+    }
+  });
+
+  it('accepts a three-digit hex', () => {
+    const { buildThemeVars } = require('../src/render.js');
+    assert.match(buildThemeVars({ '--x': '#abc' }), /--x: #abc;/);
+  });
+
+  it('sets the browser theme colour from the palette', () => {
+    assert.ok(
+      html.includes(`content="${palette.themeColor}"`),
+      'theme-color meta does not carry the palette value'
+    );
   });
 
   it('throws when the template has no slot for a replacement', () => {
@@ -175,6 +193,62 @@ describe('renderIndexHtml', () => {
 
   it('is deterministic', () => {
     assert.equal(renderIndexHtml(TEMPLATE, content), html);
+  });
+});
+
+describe('the venue map containers', () => {
+  const html = renderIndexHtml(TEMPLATE, content);
+
+  /** Every `<div class="map-container" ...>` opening tag, rendered. */
+  const containers = [
+    ...html.matchAll(/<div\s[^>]*class="map-container"[^>]*>/g),
+  ].map((match) => match[0]);
+
+  it('finds both maps', () => {
+    assert.equal(containers.length, 2, 'expected two map containers');
+  });
+
+  it('renders each embed URL onto its own container', () => {
+    // js/venue-maps.js builds the iframe from this attribute, so the frames go
+    // up on first paint rather than after a /config.json round-trip.
+    //
+    // The `&` separators arrive escaped, which is what an HTML attribute
+    // needs; the DOM hands `dataset.mapEmbed` back decoded.
+    const embedded = containers.map(
+      (tag) => /data-map-embed="([^"]*)"/.exec(tag)?.[1]
+    );
+
+    assert.deepEqual(embedded, [
+      escapeHtml(content.location.yandexMapUrl),
+      escapeHtml(content.secondDayLocation.yandexMapUrl),
+    ]);
+    for (const url of embedded) {
+      assert.ok(!/&(?!amp;)/.test(url ?? ''), `unescaped & in ${url}`);
+    }
+  });
+
+  it('gives every map container intrinsic dimensions', () => {
+    // Same reason the images carry width/height: the browser cannot reserve
+    // the space before the frame loads without them.
+    for (const tag of containers) {
+      assert.match(tag, /data-map-width="\d+"/, tag);
+      assert.match(tag, /data-map-height="\d+"/, tag);
+    }
+  });
+
+  it('names every map container for assistive technology', () => {
+    for (const tag of containers) {
+      assert.match(tag, /data-map-title="[^"]+"/, tag);
+    }
+  });
+
+  it('keeps a noscript link behind every embed', () => {
+    // The only fallback left: js/venue-maps.js no longer renders one, because
+    // there is no fetch left to fail.
+    assert.equal(
+      (html.match(/class="map-fallback"/g) ?? []).length,
+      containers.length
+    );
   });
 });
 
@@ -205,13 +279,33 @@ describe('the RSVP form markup', () => {
     assert.match(TEMPLATE, /id="guestName"[\s\S]{0,400}?required/);
   });
 
-  it('pairs every error message with a field that exists', () => {
-    for (const match of TEMPLATE.matchAll(/data-for="([^"]+)"/g)) {
+  it('points every field at an error message that exists', () => {
+    // js/rsvp-form.js finds a field's error span through this attribute, so
+    // the a11y wiring and the error display are now the same declaration.
+    const described = [...TEMPLATE.matchAll(/aria-describedby="([^"]+)"/g)].map(
+      (match) => match[1]
+    );
+
+    assert.ok(described.length > 0, 'no aria-describedby in the form');
+    for (const id of described) {
       assert.ok(
-        TEMPLATE.includes(`id="${match[1]}"`),
-        `.form-error[data-for="${match[1]}"] has no matching field`
+        TEMPLATE.includes(`id="${id}"`),
+        `aria-describedby="${id}" points at nothing`
       );
     }
+  });
+
+  it('has a field pointing at every error message', () => {
+    // An error span nothing describes can never be shown.
+    const orphans = [...TEMPLATE.matchAll(/id="(error-[^"]+)"/g)]
+      .map((match) => match[1])
+      .filter((id) => !TEMPLATE.includes(`aria-describedby="${id}"`));
+
+    assert.deepEqual(
+      orphans,
+      [],
+      `no field points at these error messages: ${orphans.join(', ')}`
+    );
   });
 
   it('marks every error message as an alert', () => {

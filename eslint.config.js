@@ -38,13 +38,10 @@ module.exports = [
 
   // Node: server, build scripts, tooling config.
   {
-    files: [
-      'src/**/*.js',
-      'scripts/**/*.js',
-      'test/**/*.js',
-      '*.config.js',
-      'config.js',
-    ],
+    // `*.js` is root-level only — every file there is CommonJS (config.js,
+    // palette.js, the tooling configs). Listing them one by one meant a new
+    // root module linted as neither Node nor browser and failed on `module`.
+    files: ['src/**/*.js', 'scripts/**/*.js', 'test/**/*.js', '*.js'],
     languageOptions: {
       ecmaVersion: 2023,
       sourceType: 'commonjs',

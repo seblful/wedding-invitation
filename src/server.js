@@ -5,12 +5,16 @@
 'use strict';
 
 const { createApp } = require('./app.js');
-const { server: serverConfig } = require('./config.js');
+const { loadServerConfig } = require('./config.js');
 
 /** Give in-flight requests a chance to finish before forcing exit. */
 const SHUTDOWN_GRACE_MS = 10_000;
 
 function main() {
+  // Loaded here, not at import: a ConfigError thrown while this module was
+  // still being required escaped the try/catch below, so a bad PORT printed a
+  // stack trace instead of the one-line message.
+  const serverConfig = loadServerConfig();
   const isProduction = serverConfig.nodeEnv === 'production';
   const app = createApp({ cacheHtml: isProduction });
 

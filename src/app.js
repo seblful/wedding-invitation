@@ -14,8 +14,9 @@ const compression = require('compression');
 const express = require('express');
 const helmet = require('helmet');
 
-const { content } = require('./config.js');
-const { buildClientConfig, renderIndexHtml } = require('./render.js');
+const { cacheControlFor } = require('./caching.js');
+const { loadContent } = require('./config.js');
+const { renderIndexHtml } = require('./render.js');
 const {
   contentSecurityPolicy,
   REFERRER_POLICY,
@@ -25,17 +26,21 @@ const {
 const PUBLIC_DIR = path.join(__dirname, '..', 'public');
 const INDEX_TEMPLATE = path.join(PUBLIC_DIR, 'index.html');
 
-/** Assets are unhashed, so revalidate rather than cache hard. */
-const STATIC_MAX_AGE_MS = 60 * 60 * 1000;
-
 /**
  * @param {object} [options]
+ * @param {import('./config.js').SiteContent} [options.content] The wedding
+ *   content to render. Defaults to the shipped `config.js`; a test can hand in
+ *   its own without going through the environment.
  * @param {boolean} [options.cacheHtml] Render once at boot (production) instead
  *   of on every request (development, so template edits show up on reload).
  * @param {boolean} [options.requestLogging]
  * @returns {import('express').Express}
  */
-function createApp({ cacheHtml = true, requestLogging = true } = {}) {
+function createApp({
+  content = loadContent(),
+  cacheHtml = true,
+  requestLogging = true,
+} = {}) {
   const app = express();
 
   /** @returns {string} */
@@ -87,16 +92,13 @@ function createApp({ cacheHtml = true, requestLogging = true } = {}) {
     });
   });
 
-  // Generated, never read from disk — `public/config.json` used to be a
-  // hand-maintained copy of `config.js` and had already drifted out of sync.
-  app.get('/config.json', (_req, res) => {
-    res
-      .type('application/json')
-      .send(JSON.stringify(buildClientConfig(content), null, 2));
-  });
-
   app.get('/', (_req, res) => {
-    res.type('html').send(pageHtml());
+    // `/` is a route, not a file, so express.static never gets to apply the
+    // policy to the one URL every guest actually requests.
+    res
+      .type('html')
+      .set('Cache-Control', cacheControlFor('/') ?? '')
+      .send(pageHtml());
   });
 
   // Without this, express.static would hand out the raw template complete with
@@ -110,13 +112,15 @@ function createApp({ cacheHtml = true, requestLogging = true } = {}) {
       // No directory index: `/` and `/index.html` are handled above so the
       // unrendered template can never be served.
       index: false,
-      maxAge: STATIC_MAX_AGE_MS,
       setHeaders: (res, filePath) => {
-        // Markup changes on every content edit; assets are content-addressed
-        // by ETag and safe to hold.
-        if (filePath.endsWith('.html')) {
-          res.setHeader('Cache-Control', 'no-cache');
-        }
+        // The same table build/_headers is generated from, so the dev server
+        // and the edge cannot disagree about a lifetime.
+        const sitePath = `/${path
+          .relative(PUBLIC_DIR, filePath)
+          .split(path.sep)
+          .join('/')}`;
+        const cacheControl = cacheControlFor(sitePath);
+        if (cacheControl) res.setHeader('Cache-Control', cacheControl);
       },
     })
   );

@@ -5,7 +5,10 @@ const fs = require('node:fs');
 const path = require('node:path');
 const { before, describe, it } = require('node:test');
 
-const { content } = require('../src/config.js');
+const { cacheControlFor } = require('../src/caching.js');
+const { loadContent } = require('../src/config.js');
+
+const content = loadContent();
 const { renderIndexHtml } = require('../src/render.js');
 const {
   build,
@@ -39,16 +42,10 @@ describe('build output', () => {
     assert.equal(readBuild('index.html'), renderIndexHtml(template, content));
   });
 
-  it('generates config.json from config.js', () => {
-    const clientConfig = JSON.parse(readBuild('config.json'));
-    assert.equal(
-      clientConfig.formspreeEndpoint,
-      content.form.formspreeEndpoint
-    );
-    assert.equal(
-      clientConfig.secondDayLocation.name,
-      content.secondDayLocation.name
-    );
+  it('ships no config.json', () => {
+    // It carried five keys, three of them unread; the venue maps take their
+    // URL off the rendered markup now.
+    assert.equal(fs.existsSync(path.join(BUILD_DIR, 'config.json')), false);
   });
 
   it('ships the client modules', () => {
@@ -89,6 +86,42 @@ describe('_headers', () => {
 
   it('is written into the build', () => {
     assert.equal(readBuild('_headers'), headers);
+  });
+});
+
+describe('cache lifetimes', () => {
+  /** Every file in the build, as the site path a visitor would request. */
+  const shipped = () =>
+    fs
+      .readdirSync(BUILD_DIR, { recursive: true })
+      .map((entry) => String(entry))
+      .filter((entry) => fs.statSync(path.join(BUILD_DIR, entry)).isFile())
+      .map((entry) => `/${entry.split(path.sep).join('/')}`)
+      // Cloudflare reads this one rather than serving it.
+      .filter((sitePath) => sitePath !== '/_headers');
+
+  it('declares a lifetime for every file it ships', () => {
+    // A new kind of asset with no rule would inherit whatever the CDN felt
+    // like, which is how scripts, styles and images ended up with no declared
+    // policy in production at all.
+    const uncovered = shipped()
+      .filter((sitePath) => cacheControlFor(sitePath) === null)
+      .sort();
+
+    assert.deepEqual(
+      uncovered,
+      [],
+      `nothing in src/caching.js covers these:\n  ${uncovered.join('\n  ')}`
+    );
+  });
+
+  it('holds only the fonts immutable', () => {
+    // Everything else is unhashed: an edit has to reach a returning guest.
+    const immutable = shipped()
+      .filter((sitePath) => cacheControlFor(sitePath)?.includes('immutable'))
+      .filter((sitePath) => !sitePath.startsWith('/fonts/'));
+
+    assert.deepEqual(immutable, []);
   });
 });
 

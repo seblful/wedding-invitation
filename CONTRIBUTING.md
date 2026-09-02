@@ -19,15 +19,17 @@ the static build. Both must be green.
 
 ## Where things go
 
-| Change                              | Edit                                        |
-| ----------------------------------- | ------------------------------------------- |
-| Names, dates, venues, RSVP deadline | `config.js`                                 |
-| Section copy, headings, timeline    | `public/index.html`                         |
-| Look of a repeated element          | `public/input.css` (component classes)      |
-| Colours, fonts, animations, layout  | `public/custom.css`, `tailwind.config.js`   |
-| Browser behaviour                   | `public/js/<feature>.js`                    |
-| Server or build behaviour           | `src/`, `scripts/`                          |
-| Security headers                    | `src/security.js` (applies to both targets) |
+| Change                              | Edit                                         |
+| ----------------------------------- | -------------------------------------------- |
+| Names, dates, venues, RSVP deadline | `config.js`                                  |
+| Section copy, headings, timeline    | `public/index.html`                          |
+| Look of a repeated element          | `public/input.css` (component classes)       |
+| A colour                            | `palette.js` (the only place one is spelled) |
+| Fonts, animations, layout           | `public/custom.css`, `tailwind.config.js`    |
+| Browser behaviour                   | `public/js/<feature>.js`                     |
+| Server or build behaviour           | `src/`, `scripts/`                           |
+| Security headers                    | `src/security.js` (applies to both targets)  |
+| Cache lifetimes                     | `src/caching.js` (applies to both targets)   |
 
 ## Conventions
 
@@ -43,10 +45,16 @@ asserts the two stay in step — so a placeholder cannot rot the way
 
 ### Tailwind classes
 
-A colour key in `tailwind.config.js` becomes the utility suffix: `primary`
-yields `text-primary`, not `text-text-primary`. `test/styles.test.js` fails the
-build if the markup uses a utility class that generates no CSS, so a misspelled
-class is caught rather than silently doing nothing.
+Colours come from `palette.js`, and a key there becomes the utility suffix:
+`primary` yields `text-primary`, not `text-text-primary`.
+`test/styles.test.js` fails the build if the markup uses a utility class that
+generates no CSS, so a misspelled class is caught rather than silently doing
+nothing.
+
+Write a colour in exactly one place. When the palette was spelled out in
+`tailwind.config.js`, `public/custom.css` and `config.js` at once, the body
+grey was corrected for contrast in one copy and left failing AA in the copy
+four component classes actually used.
 
 Anything that appears more than once gets a component class in
 `public/input.css` (`.schedule-item { @apply ... }`) and the markup names only

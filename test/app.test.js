@@ -4,7 +4,9 @@ const assert = require('node:assert/strict');
 const { after, before, describe, it } = require('node:test');
 
 const { createApp } = require('../src/app.js');
-const { content } = require('../src/config.js');
+const { loadContent } = require('../src/config.js');
+
+const content = loadContent();
 
 /** @type {import('node:http').Server} */
 let server;
@@ -101,26 +103,13 @@ describe('GET /index.html', () => {
 });
 
 describe('GET /config.json', () => {
-  it('returns the generated client config', async () => {
-    const response = await get('/config.json');
-    const body = await response.json();
-
-    assert.equal(response.status, 200);
-    assert.match(
-      response.headers.get('content-type') ?? '',
-      /application\/json/
-    );
-    assert.equal(body.formspreeEndpoint, content.form.formspreeEndpoint);
-    assert.equal(Date.parse(body.weddingDate), Date.parse(content.weddingDate));
-  });
-
-  it('matches what the markup looks up by data-venue', async () => {
-    const body = await get('/config.json').then((r) => r.json());
-    const html = await get('/').then((r) => r.text());
-
-    for (const match of html.matchAll(/data-venue="([^"]+)"/g)) {
-      assert.ok(body[match[1]], `config.json has no "${match[1]}" venue`);
-    }
+  it('is gone — the venue maps read the rendered markup instead', async () => {
+    // Three of the five keys it served had no reader at all; the two that did
+    // now arrive as data attributes on the map containers.
+    const response = await get('/config.json', {
+      headers: { Accept: 'application/json' },
+    });
+    assert.equal(response.status, 404);
   });
 });
 
@@ -148,6 +137,35 @@ describe('static assets', () => {
     assert.equal(response.status, 200);
     assert.match(response.headers.get('content-type') ?? '', /text\/css/);
   });
+});
+
+describe('cache lifetimes', () => {
+  // The same drift guard as the security headers above: the dev server and
+  // build/_headers must both render src/caching.js, not their own idea of a
+  // lifetime. express.static used to revalidate fonts hourly while the edge
+  // called them immutable for a year.
+  const { cacheControlFor } = require('../src/caching.js');
+
+  const paths = [
+    '/',
+    '/js/main.js',
+    '/custom.css',
+    '/styles.css',
+    '/robots.txt',
+    '/fonts/InkVerse.otf',
+    '/images/icon.png',
+  ];
+
+  for (const pathname of paths) {
+    it(`sends the declared policy for ${pathname}`, async () => {
+      const expected = cacheControlFor(pathname);
+      assert.ok(expected, `nothing in CACHE_POLICY covers ${pathname}`);
+
+      const response = await get(pathname);
+      assert.equal(response.status, 200, `${pathname} is not served`);
+      assert.equal(response.headers.get('cache-control'), expected);
+    });
+  }
 });
 
 describe('unknown routes', () => {

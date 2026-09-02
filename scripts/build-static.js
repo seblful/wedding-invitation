@@ -12,8 +12,9 @@
 const fs = require('node:fs');
 const path = require('node:path');
 
-const { content } = require('../src/config.js');
-const { buildClientConfig, renderIndexHtml } = require('../src/render.js');
+const { cacheHeaderBlocks } = require('../src/caching.js');
+const { loadContent } = require('../src/config.js');
+const { renderIndexHtml } = require('../src/render.js');
 const { staticSecurityHeaders } = require('../src/security.js');
 
 const ROOT = path.join(__dirname, '..');
@@ -36,28 +37,26 @@ const FONT_REFERENCE_SOURCES = ['custom.css', 'index.html'];
 /**
  * Cloudflare's `_headers` format: a path pattern, then indented header lines.
  *
+ * Both policies are rendered here rather than written out: `src/security.js`
+ * owns the headers and `src/caching.js` owns the lifetimes, so the edge and
+ * the dev server read from the same two tables.
+ *
  * @returns {string}
  */
 function renderHeadersFile() {
-  const lines = ['/*'];
-  for (const [name, value] of Object.entries(staticSecurityHeaders())) {
-    lines.push(`  ${name}: ${value}`);
-  }
+  const blocks = [
+    { path: '/*', headers: staticSecurityHeaders() },
+    ...cacheHeaderBlocks(),
+  ];
 
-  // Both spellings: Cloudflare matches `_headers` rules against the request
-  // path, and a visitor asks for `/`, never for `/index.html`. With only the
-  // latter listed, the page guests actually load missed the no-cache rule.
-  for (const route of ['/', '/index.html']) {
-    lines.push('');
-    lines.push(route);
-    lines.push('  Cache-Control: no-cache');
+  const lines = [];
+  for (const { path: pattern, headers } of blocks) {
+    if (lines.length > 0) lines.push('');
+    lines.push(pattern);
+    for (const [name, value] of Object.entries(headers)) {
+      lines.push(`  ${name}: ${value}`);
+    }
   }
-
-  // Font filenames are stable and their bytes never change in place; the
-  // markup and CSS around them do.
-  lines.push('');
-  lines.push('/fonts/*');
-  lines.push('  Cache-Control: public, max-age=31536000, immutable');
 
   lines.push('');
   return lines.join('\n');
@@ -121,6 +120,7 @@ function assertStylesheetBuilt() {
 function build() {
   console.log('Building static site...');
 
+  const content = loadContent();
   assertStylesheetBuilt();
 
   fs.rmSync(BUILD_DIR, { recursive: true, force: true });
@@ -134,13 +134,6 @@ function build() {
   const template = fs.readFileSync(indexPath, 'utf8');
   fs.writeFileSync(indexPath, renderIndexHtml(template, content), 'utf8');
   console.log('  Rendered index.html');
-
-  fs.writeFileSync(
-    path.join(BUILD_DIR, 'config.json'),
-    `${JSON.stringify(buildClientConfig(content), null, 2)}\n`,
-    'utf8'
-  );
-  console.log('  Generated config.json');
 
   fs.writeFileSync(
     path.join(BUILD_DIR, '_headers'),

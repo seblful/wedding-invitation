@@ -1,134 +1,129 @@
 'use strict';
 
 const assert = require('node:assert/strict');
+const { spawnSync } = require('node:child_process');
+const path = require('node:path');
 const { describe, it } = require('node:test');
 
 const {
-  content,
-  ConfigError,
-  validate,
-  findProblems,
-  applyEnvOverrides,
+  loadContent,
   loadServerConfig,
+  ConfigError,
 } = require('../src/config.js');
 
-/** A minimal well-formed content object for mutation in individual tests. */
-function validContent() {
-  return {
-    baseUrl: 'https://example.test',
-    themeColor: '#fdf4e3',
-    backgroundColor: '#b9dfc6',
-    openGraph: { title: 'T', description: 'D', image: 'images/preview.png' },
-    weddingDate: '2026-08-02T12:00:00.000Z',
-    timezone: 'Europe/Minsk',
-    location: {
-      name: 'Venue',
-      address: 'Street 1',
-      yandexMapUrl: 'https://yandex.ru/map-widget/v1/?ll=0,0',
-      mapDimensions: { width: 580, height: 346 },
-    },
-    secondDayLocation: {
-      name: 'Venue 2',
-      address: 'Street 2',
-      yandexMapUrl: 'https://yandex.ru/map-widget/v1/?ll=1,1',
-      mapDimensions: { width: 580, height: 346 },
-    },
-    form: {
-      deadline: '30 June 2026',
-      formspreeEndpoint: 'https://formspree.io/f/test',
-    },
-  };
+/**
+ * A well-formed content object, derived from the shipped one so it cannot
+ * drift from it. This used to be twenty-eight hand-written lines duplicating
+ * `config.js`, because loading was an import side effect and there was no way
+ * to hand the loader anything else.
+ *
+ * @param {Record<string, unknown>} [overrides]
+ * @returns {Record<string, any>}
+ */
+function content(overrides = {}) {
+  return { ...structuredClone(loadContent()), ...overrides };
+}
+
+/**
+ * The problems `loadContent` rejects a source with.
+ *
+ * @param {unknown} source
+ * @returns {string[]}
+ */
+function problemsFor(source) {
+  try {
+    loadContent(source, {});
+    return [];
+  } catch (error) {
+    assert.ok(error instanceof ConfigError, `not a ConfigError: ${error}`);
+    return error.problems;
+  }
 }
 
 describe('the shipped config.js', () => {
   it('is valid', () => {
-    assert.deepEqual(findProblems(content), []);
+    assert.deepEqual(problemsFor(undefined), []);
   });
 
   it('is deeply frozen so handlers cannot mutate shared state', () => {
+    const loaded = loadContent();
     assert.throws(() => {
-      content.form.formspreeEndpoint = 'https://evil.test';
+      loaded.form.formspreeEndpoint = 'https://evil.test';
     }, TypeError);
   });
 
   it('no longer carries the removed api.submitFormEndpoint block', () => {
     assert.equal(
-      'api' in content,
+      'api' in loadContent(),
       false,
       'the Express form proxy was removed; config.api should be gone too'
     );
   });
+
+  it('holds no colour — palette.js owns those', () => {
+    // They were a third copy of values tailwind.config.js and custom.css also
+    // spelled out, and only one of the three had a test following it.
+    const loaded = loadContent();
+    for (const key of ['themeColor', 'backgroundColor']) {
+      assert.equal(key in loaded, false, `config.js still carries ${key}`);
+    }
+  });
+
+  it('holds no map dimensions — the markup owns those', () => {
+    for (const venue of ['location', 'secondDayLocation']) {
+      assert.equal('mapDimensions' in loadContent()[venue], false, venue);
+    }
+  });
 });
 
-describe('findProblems', () => {
+describe('loadContent validation', () => {
   it('accepts a well-formed object', () => {
-    assert.deepEqual(findProblems(validContent()), []);
+    assert.deepEqual(problemsFor(content()), []);
   });
 
   it('reports every problem at once rather than only the first', () => {
-    const broken = validContent();
-    broken.baseUrl = 'not-a-url';
-    broken.themeColor = 'burgundy';
+    const broken = content({ baseUrl: 'not-a-url' });
+    broken.location = { ...broken.location, yandexMapUrl: 'javascript:x' };
     delete broken.form.deadline;
 
-    const problems = findProblems(broken);
+    const problems = problemsFor(broken);
     assert.equal(problems.length, 3);
     assert.ok(problems.some((p) => p.startsWith('baseUrl')));
-    assert.ok(problems.some((p) => p.startsWith('themeColor')));
+    assert.ok(problems.some((p) => p.startsWith('location.yandexMapUrl')));
     assert.ok(problems.some((p) => p.startsWith('form.deadline')));
   });
 
   it('rejects a non-http protocol', () => {
-    const broken = validContent();
+    const broken = content();
     broken.location.yandexMapUrl = 'javascript:alert(1)';
-    assert.equal(findProblems(broken).length, 1);
+    assert.equal(problemsFor(broken).length, 1);
   });
 
   it('rejects an unparseable wedding date', () => {
-    const broken = validContent();
-    broken.weddingDate = 'next summer';
-    assert.match(findProblems(broken)[0], /^weddingDate/);
-  });
-
-  it('rejects non-positive map dimensions', () => {
-    const broken = validContent();
-    broken.location.mapDimensions.width = 0;
-    assert.match(findProblems(broken)[0], /^location\.mapDimensions\.width/);
+    assert.match(
+      problemsFor(content({ weddingDate: 'next summer' }))[0],
+      /^weddingDate/
+    );
   });
 
   it('does not throw when whole branches are missing', () => {
-    assert.ok(findProblems({}).length > 0);
-    assert.ok(findProblems(null).length > 0);
+    assert.ok(problemsFor({}).length > 0);
+    assert.ok(problemsFor(null).length > 0);
+  });
+
+  it('names the file in the message so a boot failure is actionable', () => {
+    assert.throws(() => loadContent({}, {}), /Invalid configuration/);
   });
 });
 
-describe('validate', () => {
-  it('returns the object it was given when valid', () => {
-    const input = validContent();
-    assert.equal(validate(input), input);
-  });
-
-  it('throws a ConfigError listing the problems', () => {
-    assert.throws(
-      () => validate({}),
-      (error) => {
-        assert.ok(error instanceof ConfigError);
-        assert.ok(error.problems.length > 0);
-        assert.match(error.message, /Invalid configuration/);
-        return true;
-      }
-    );
-  });
-});
-
-describe('applyEnvOverrides', () => {
+describe('loadContent environment overrides', () => {
   it('leaves content untouched with an empty environment', () => {
-    const input = validContent();
-    assert.deepEqual(applyEnvOverrides(input, {}), input);
+    const input = content();
+    assert.deepEqual(loadContent(input, {}), input);
   });
 
   it('overrides the base URL and Formspree endpoint', () => {
-    const result = applyEnvOverrides(validContent(), {
+    const result = loadContent(content(), {
       BASE_URL: 'https://staging.test',
       FORMSPREE_ENDPOINT: 'https://formspree.io/f/staging',
     });
@@ -140,9 +135,16 @@ describe('applyEnvOverrides', () => {
   });
 
   it('does not mutate the source object', () => {
-    const input = validContent();
-    applyEnvOverrides(input, { BASE_URL: 'https://staging.test' });
+    const input = content({ baseUrl: 'https://example.test' });
+    loadContent(input, { BASE_URL: 'https://staging.test' });
     assert.equal(input.baseUrl, 'https://example.test');
+  });
+
+  it('validates the override, not just the file', () => {
+    assert.throws(
+      () => loadContent(content(), { BASE_URL: 'not-a-url' }),
+      ConfigError
+    );
   });
 });
 
@@ -169,5 +171,25 @@ describe('loadServerConfig', () => {
   it('rejects a PORT that is not a valid port number', () => {
     assert.throws(() => loadServerConfig({ PORT: 'http' }), ConfigError);
     assert.throws(() => loadServerConfig({ PORT: '70000' }), ConfigError);
+  });
+});
+
+describe('a bad configuration at boot', () => {
+  it('reports one readable line instead of a stack trace', () => {
+    // The ConfigError used to be thrown while src/server.js was still being
+    // required, so the try/catch around main() never saw it and Node printed
+    // the whole stack.
+    const result = spawnSync(
+      process.execPath,
+      [path.join(__dirname, '..', 'src', 'server.js')],
+      { env: { ...process.env, PORT: 'http' }, encoding: 'utf8' }
+    );
+
+    assert.equal(result.status, 1);
+    assert.match(result.stderr, /PORT must be a valid port number/);
+    assert.ok(
+      !result.stderr.includes('    at '),
+      `printed a stack trace:\n${result.stderr}`
+    );
   });
 });

@@ -40,7 +40,9 @@ function contentSecurityPolicy() {
     // `data:` covers the inline SVG checkmark in custom.css.
     imgSrc: ["'self'", 'data:'],
     fontSrc: ["'self'"],
-    connectSrc: ["'self'", FORMSPREE_ORIGIN],
+    // Formspree only: nothing fetches from our own origin now that the
+    // venue maps read their URL off the rendered markup.
+    connectSrc: [FORMSPREE_ORIGIN],
     frameSrc: YANDEX_ORIGINS,
     formAction: ["'self'", FORMSPREE_ORIGIN],
     upgradeInsecureRequests: [],

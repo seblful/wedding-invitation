@@ -10,6 +10,7 @@ const { renderIndexHtml } = require('../src/render.js');
 const {
   build,
   renderHeadersFile,
+  referencedFonts,
   BUILD_DIR,
 } = require('../scripts/build-static.js');
 
@@ -88,5 +89,55 @@ describe('_headers', () => {
 
   it('is written into the build', () => {
     assert.equal(readBuild('_headers'), headers);
+  });
+});
+
+describe('font shipping', () => {
+  it('ships every font the stylesheet and markup reference', () => {
+    const shipped = new Set(fs.readdirSync(path.join(BUILD_DIR, 'fonts')));
+    const missing = [...referencedFonts()].filter((f) => !shipped.has(f));
+
+    assert.deepEqual(
+      missing,
+      [],
+      `these fonts are referenced but were left out of the build: ${missing.join(', ')}`
+    );
+  });
+
+  it('ships no font nothing references', () => {
+    const referenced = referencedFonts();
+    const orphans = fs
+      .readdirSync(path.join(BUILD_DIR, 'fonts'))
+      .filter((f) => !referenced.has(f));
+
+    assert.deepEqual(
+      orphans,
+      [],
+      `dead weight on the CDN: ${orphans.join(', ')}`
+    );
+  });
+
+  it('resolves every @font-face src to a file that exists', () => {
+    const css = fs.readFileSync(path.join(BUILD_DIR, 'custom.css'), 'utf8');
+    for (const [, url] of css.matchAll(/src:\s*url\('\.\/([^']+)'/g)) {
+      assert.ok(
+        fs.existsSync(path.join(BUILD_DIR, url)),
+        `@font-face points at ${url}, which is not in the build`
+      );
+    }
+  });
+});
+
+describe('_headers cache rules', () => {
+  const headers = () => renderHeadersFile();
+
+  it('marks the page guests actually request as no-cache', () => {
+    // Cloudflare matches `_headers` on the request path, and a visitor asks
+    // for `/`. Listing only `/index.html` left the root uncovered.
+    assert.match(headers(), /^\/\n {2}Cache-Control: no-cache$/m);
+  });
+
+  it('still covers /index.html', () => {
+    assert.match(headers(), /^\/index\.html\n {2}Cache-Control: no-cache$/m);
   });
 });

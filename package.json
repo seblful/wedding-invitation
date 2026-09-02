@@ -18,6 +18,7 @@
     "build": "run-s build:css build:static",
     "build:css": "tailwindcss -i ./public/input.css -o ./public/styles.css --minify",
     "build:static": "node scripts/build-static.js",
+    "build:css:prod": "npm run build",
     "test": "node --test",
     "test:watch": "node --test --watch",
     "lint": "eslint .",

@@ -87,6 +87,11 @@ template, which prevents the two from silently drifting apart.
 `npm test` needs `public/styles.css`, which is generated. Run
 `npm run build:css` once after a fresh clone.
 
+`build:css:prod` is a compatibility alias for `build`. The Cloudflare Pages
+project's build command is set to `npm run build:css:prod` in the dashboard, so
+renaming it breaks deploys. Change that field to `npm run build`, then delete
+the alias.
+
 ## Configuration via environment
 
 Copy `.env.example` to `.env` and load it with

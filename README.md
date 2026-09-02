@@ -80,12 +80,13 @@ template, which prevents the two from silently drifting apart.
 | `npm run test:watch` | Tests in watch mode                           |
 | `npm run lint`       | ESLint (`lint:fix` to autofix)                |
 | `npm run format`     | Prettier (`format:check` to verify only)      |
-| `npm run check`      | Everything CI runs: lint, format, test, build |
+| `npm run check`      | Everything CI runs: lint, format, build, test |
 | `npm run preview`    | Build, then serve `build/` through Wrangler   |
 | `npm run deploy`     | `check`, then `wrangler deploy`               |
 
-`npm test` needs `public/styles.css`, which is generated. Run
-`npm run build:css` once after a fresh clone.
+`npm test` needs `public/styles.css`, which is generated and gitignored. Run
+`npm run build:css` once after a fresh clone — or just `npm run check`, which
+builds before it tests for exactly this reason.
 
 `build:css:prod` is a compatibility alias for `build`. The Cloudflare Pages
 project's build command is set to `npm run build:css:prod` in the dashboard, so

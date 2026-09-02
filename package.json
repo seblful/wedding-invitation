@@ -25,7 +25,7 @@
     "lint:fix": "eslint . --fix",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "check": "run-s lint format:check test build",
+    "check": "run-s lint format:check build test",
     "preview": "npm run build && wrangler dev",
     "deploy": "npm run check && wrangler deploy"
   },

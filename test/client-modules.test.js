@@ -5,7 +5,11 @@ const fs = require('node:fs');
 const path = require('node:path');
 const { after, before, describe, it } = require('node:test');
 
-const JS_DIR = path.join(__dirname, '..', 'public', 'js');
+const { loadContent } = require('../src/config.js');
+const { INDEX_TEMPLATE, PUBLIC_DIR } = require('../src/paths.js');
+const { renderIndexHtml } = require('../src/render.js');
+
+const JS_DIR = path.join(PUBLIC_DIR, 'js');
 
 /** @param {string} name */
 function importModule(name) {
@@ -95,18 +99,19 @@ describe('countdown: splitDuration', () => {
   });
 });
 
-describe('init functions', () => {
-  const entries = [
-    ['countdown.js', 'initCountdown'],
-    ['rsvp-form.js', 'initRsvpForm'],
-    ['scroll-indicator.js', 'initScrollIndicator'],
-    ['reveal-on-scroll.js', 'initRevealOnScroll'],
-    ['venue-maps.js', 'initVenueMaps'],
-    ['petals.js', 'initFallingPetals'],
-    ['floral-decor.js', 'initFloralDecor'],
-  ];
+/** Every feature module and the init it exports. All seven, no exemptions. */
+const FEATURES = [
+  ['countdown.js', 'initCountdown'],
+  ['rsvp-form.js', 'initRsvpForm'],
+  ['scroll-indicator.js', 'initScrollIndicator'],
+  ['reveal-on-scroll.js', 'initRevealOnScroll'],
+  ['venue-maps.js', 'initVenueMaps'],
+  ['petals.js', 'initFallingPetals'],
+  ['floral-decor.js', 'initFloralDecor'],
+];
 
-  for (const [file, name] of entries) {
+describe('init functions', () => {
+  for (const [file, name] of FEATURES) {
     it(`${file} exports ${name}`, async () => {
       const module = await importModule(file);
       assert.equal(typeof module[name], 'function', `${name} is not exported`);
@@ -115,29 +120,37 @@ describe('init functions', () => {
 });
 
 describe('init functions tolerate a root with none of their markup', () => {
-  // Each init guards its markup with `instanceof HTMLElement`, which needs the
-  // constructor to exist even when the answer is "no". Defining it is enough
-  // to drive the missing-markup path without a full DOM.
+  // All seven, with no exemptions: (root) => teardown is the whole interface,
+  // and driving every module through it with a root carrying none of their
+  // markup is what proves they honour it. Three used to break the convention
+  // — petals took no root and appended onto document.body, venue-maps and
+  // rsvp-form returned nothing — and this list simply left those three out.
+  //
+  // Each init guards its markup with an `instanceof` check, which needs the
+  // constructor to exist even when the answer is "no". Defining them is
+  // enough to drive the missing-markup path without a full DOM.
   const emptyRoot = { querySelector: () => null, querySelectorAll: () => [] };
 
+  const DOM_CONSTRUCTORS = [
+    'HTMLElement',
+    'HTMLFormElement',
+    'HTMLInputElement',
+    'HTMLSelectElement',
+  ];
+
   before(() => {
-    globalThis.HTMLElement = class HTMLElement {};
+    for (const name of DOM_CONSTRUCTORS) {
+      globalThis[name] = class {};
+    }
   });
 
   after(() => {
-    delete globalThis.HTMLElement;
+    for (const name of DOM_CONSTRUCTORS) {
+      delete globalThis[name];
+    }
   });
 
-  const entries = [
-    ['countdown.js', 'initCountdown'],
-    ['reveal-on-scroll.js', 'initRevealOnScroll'],
-    ['scroll-indicator.js', 'initScrollIndicator'],
-    // floral-decor used to query `document` directly and could not be reached
-    // from a test at all.
-    ['floral-decor.js', 'initFloralDecor'],
-  ];
-
-  for (const [file, name] of entries) {
+  for (const [file, name] of FEATURES) {
     it(`${name} returns a teardown instead of throwing`, async () => {
       const module = await importModule(file);
       const teardown = module[name](emptyRoot);
@@ -146,108 +159,142 @@ describe('init functions tolerate a root with none of their markup', () => {
       assert.doesNotThrow(teardown, `${name}'s teardown threw`);
     });
   }
+
+  it('brings the whole page up and back down through one seam', async () => {
+    // startPage is the interface main.js and this test both cross, which is
+    // what gives the root parameter and the teardown a real caller. main.js
+    // used to call each init with no arguments and drop every teardown.
+    const { startPage } = await importModule('page.js');
+
+    let teardown;
+    assert.doesNotThrow(() => {
+      teardown = startPage(emptyRoot);
+    }, 'startPage threw on a root with no markup');
+
+    assert.equal(typeof teardown, 'function', 'startPage returned no teardown');
+    assert.doesNotThrow(teardown, "startPage's teardown threw");
+    assert.doesNotThrow(teardown, 'tearing down twice threw');
+  });
 });
 
-describe('floral-decor position table', () => {
-  // Read out of the source rather than exported: the table is data the module
-  // shares with the markup, not part of its interface. `test/styles.test.js`
-  // reads input.css the same way.
-  const table = (() => {
+describe('the corner flowers', () => {
+  // flowers.js is the one place a flower is described and src/render.js
+  // renders it, so these assert on that table and on the markup it produces
+  // rather than on the module's source. The old versions sliced a `FLOWERS`
+  // table out of floral-decor.js with a regex and matched it against
+  // index.html, because the same flower was declared in three files.
+  const { CORNERS, FLOWERS } = require('../flowers.js');
+  const html = renderIndexHtml(
+    fs.readFileSync(INDEX_TEMPLATE, 'utf8'),
+    loadContent()
+  );
+
+  /** Every rendered flower's `<img>` tag. */
+  const rendered = [
+    ...html.matchAll(/<img[\s\S]*?data-flower-anchor[\s\S]*?\/>/g),
+  ].map((match) => match[0]);
+
+  it('renders one image per entry, and no others', () => {
+    assert.ok(FLOWERS.length > 0, 'flowers.js is empty');
+    assert.equal(
+      rendered.length,
+      FLOWERS.length,
+      'the page carries a different number of flowers than the table declares'
+    );
+  });
+
+  it('puts every flower in a corner group that exists', () => {
+    const strays = FLOWERS.map((f) => f.corner).filter(
+      (corner) => !CORNERS.includes(corner)
+    );
+    assert.deepEqual(strays, [], `no such corner group: ${strays.join(', ')}`);
+
+    for (const corner of CORNERS) {
+      assert.match(
+        html,
+        new RegExp(`class="corner-group ${corner}-group"`),
+        `${corner} group is not rendered`
+      );
+    }
+  });
+
+  it('anchors each flower to exactly one edge per axis', () => {
+    // The runtime used to recover the horizontal anchor by asking the
+    // stylesheet, via getComputedStyle(element).left !== 'auto'.
+    for (const { asset, anchor } of FLOWERS) {
+      assert.ok(['left', 'right'].includes(anchor.x), `${asset}: ${anchor.x}`);
+      assert.ok(['top', 'bottom'].includes(anchor.y), `${asset}: ${anchor.y}`);
+    }
+  });
+
+  it('gives every flower a finite start, both targets and both widths', () => {
+    for (const flower of FLOWERS) {
+      const { asset, start, target, width } = flower;
+      for (const [label, point] of [
+        ['start', start],
+        ['desktop target', target.desktop],
+        ['mobile target', target.mobile],
+      ]) {
+        assert.ok(
+          Number.isFinite(point.x) && Number.isFinite(point.y),
+          `${asset} has a non-finite ${label}`
+        );
+      }
+      assert.ok(width.desktop > 0 && width.mobile > 0, `${asset} has no width`);
+    }
+  });
+
+  it('ships the image every flower names', () => {
+    const dir = path.join(PUBLIC_DIR, 'images', 'background');
+    const missing = FLOWERS.map((f) => f.asset).filter(
+      (asset) => !fs.existsSync(path.join(dir, asset))
+    );
+    assert.deepEqual(missing, [], `no such image: ${missing.join(', ')}`);
+  });
+
+  it('places every flower inline, so it is positioned on first paint', () => {
+    for (const tag of rendered) {
+      assert.match(
+        tag,
+        /style="(?:left|right): -?[\d.]+%; (?:top|bottom): -?[\d.]+%;/,
+        `a flower rendered without an inline position:
+${tag}`
+      );
+    }
+  });
+
+  it('reads exactly the placement attributes it renders', () => {
+    // The same shape as the RSVP field names below: the renderer writes these
+    // and the browser module reads them, so a rename has to move both.
     const source = fs.readFileSync(
       path.join(JS_DIR, 'floral-decor.js'),
       'utf8'
     );
-    return source.slice(
-      source.indexOf('const FLOWERS'),
-      source.indexOf('CROPPED_FADE_FRACTION')
-    );
-  })();
 
-  /** Each entry as `{ selector, body }`, body being everything up to the next. */
-  const entries = (() => {
-    const starts = [...table.matchAll(/'\.([\w-]+)':/g)];
-    return starts.map((match, index) => ({
-      selector: match[1],
-      body: table.slice(
-        match.index + match[0].length,
-        starts[index + 1]?.index ?? table.length
+    const written = new Set(
+      [...rendered.join('').matchAll(/(data-flower-[\w-]+)=/g)].map((m) => m[1])
+    );
+    assert.ok(written.size >= 4, 'no placement attributes were rendered');
+
+    const unread = [...written].filter((name) => !source.includes(name)).sort();
+    assert.deepEqual(
+      unread,
+      [],
+      `src/render.js writes these but floral-decor.js never reads them: ${unread.join(', ')}`
+    );
+
+    const unwritten = [
+      ...new Set(
+        [...source.matchAll(/'(data-flower-[\w-]+)'/g)].map((m) => m[1])
       ),
-    }));
-  })();
-
-  /** Every `.p-*` placement class the markup puts on a flower piece. */
-  const markupFlowers = (() => {
-    const html = fs.readFileSync(
-      path.join(__dirname, '..', 'public', 'index.html'),
-      'utf8'
-    );
-    const found = new Set();
-    for (const [, classList] of html.matchAll(
-      /class="flower-piece ([^"]*)"/g
-    )) {
-      for (const name of classList.split(/\s+/)) {
-        if (/^p-[a-z]{2}-/.test(name)) found.add(name);
-      }
-    }
-    return found;
-  })();
-
-  it('finds a flower on both sides', () => {
-    // Guards the two readers above against silently matching nothing.
-    assert.ok(entries.length > 0, 'no entries parsed out of FLOWERS');
-    assert.ok(markupFlowers.size > 0, 'no flower pieces found in index.html');
-  });
-
-  it('positions only flowers the markup actually carries', () => {
-    // measureFlowers skips a selector it cannot find, so a target for an
-    // element that is not on the page is maintained for nothing. `.p-br-c2`
-    // had a target, a custom.css rule and an image, and no <img> using them.
-    const absent = entries
-      .map(({ selector }) => selector)
-      .filter((selector) => !markupFlowers.has(selector));
-
+    ]
+      .filter((name) => !written.has(name))
+      .sort();
     assert.deepEqual(
-      absent,
+      unwritten,
       [],
-      `FLOWERS positions these, but no flower piece in index.html carries the class: ${absent.join(', ')}`
+      `floral-decor.js reads these but nothing renders them: ${unwritten.join(', ')}`
     );
-  });
-
-  it('positions every flower the markup carries', () => {
-    // The other direction: a piece with no target is left where custom.css
-    // put it while the rest of its corner drifts away.
-    const targeted = new Set(entries.map(({ selector }) => selector));
-    const unpositioned = [...markupFlowers].filter(
-      (name) => !targeted.has(name)
-    );
-
-    assert.deepEqual(
-      unpositioned,
-      [],
-      `these flower pieces have no entry in FLOWERS: ${unpositioned.join(', ')}`
-    );
-  });
-
-  it('anchors each breakpoint to exactly one vertical edge', () => {
-    // measureFlowers reads the anchor off the target's own key, so an entry
-    // naming both edges, or neither, has no defined vertical anchor.
-    for (const { selector, body } of entries) {
-      for (const breakpoint of ['desktop', 'mobile']) {
-        const target = new RegExp(`${breakpoint}: \\{([^}]*)\\}`).exec(
-          body
-        )?.[1];
-        assert.ok(target, `.${selector} has no ${breakpoint} target`);
-
-        const edges = ['top', 'bottom'].filter((edge) =>
-          new RegExp(`\\b${edge}:`).test(target)
-        );
-        assert.equal(
-          edges.length,
-          1,
-          `.${selector} ${breakpoint} names ${edges.length} vertical edges (${edges.join(', ')})`
-        );
-      }
-    }
   });
 });
 

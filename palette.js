@@ -4,11 +4,11 @@
  * `tailwind.config.js` requires `colors` for `theme.extend.colors`, so a key
  * here **is** the utility suffix: `primary` produces `text-primary` and
  * `bg-primary`. `src/render.js` emits `customProperties` onto `:root`, and
- * `public/custom.css` declares no colour of its own — it only reads them.
+ * `public/input.css` declares no colour of its own — it only reads them.
  *
  * These values used to be written out in three files, and had already come
  * apart. The body-text grey was corrected to #555 for contrast in
- * `custom.css`, but the Tailwind `secondary` that four component classes
+ * the stylesheet, but the Tailwind `secondary` that four component classes
  * actually `@apply` stayed at the #666 that fails AA against the green
  * sections — and only the Tailwind copy had a test following it.
  */
@@ -48,7 +48,7 @@ const colors = {
 };
 
 /**
- * The custom properties `public/custom.css` reads, resolved to their values.
+ * The custom properties `public/input.css` reads, resolved to their values.
  *
  * `src/render.js` renders these into a `:root` block in the document head, so
  * the stylesheet needs no fallback copy of any of them. A property read but

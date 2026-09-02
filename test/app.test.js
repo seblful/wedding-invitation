@@ -5,6 +5,7 @@ const { after, before, describe, it } = require('node:test');
 
 const { createApp } = require('../src/app.js');
 const { loadContent } = require('../src/config.js');
+const { findLeftoverPlaceholders } = require('../src/render.js');
 
 const content = loadContent();
 
@@ -43,7 +44,7 @@ describe('GET /', () => {
 
     assert.equal(response.status, 200);
     assert.match(response.headers.get('content-type') ?? '', /text\/html/);
-    assert.equal(html.match(/[A-Z][A-Z0-9_]*_PLACEHOLDER/g), null);
+    assert.deepEqual(findLeftoverPlaceholders(html), []);
     assert.ok(html.includes(content.openGraph.title));
   });
 
@@ -61,11 +62,13 @@ describe('GET /', () => {
     assert.equal(headers.get('x-powered-by'), null);
   });
 
-  it('sends the same hardening headers the static build writes to _headers', async () => {
-    // Drift between the two is the bug this asserts against: the edge and the
-    // dev server must agree on everything except HSTS.
+  it('sends every header the table does not mark edge-only', async () => {
+    // Drift between the two adapters is the bug this asserts against. It used
+    // to skip Permissions-Policy as well, because that value lived inside
+    // staticSecurityHeaders() where the Express adapter could not see it — so
+    // the edge sent it and the dev server never did.
     const { headers } = await get('/');
-    const { staticSecurityHeaders } = require('../src/security.js');
+    const { securityHeaders } = require('../src/security.js');
 
     /** Directive order and inter-directive spacing carry no meaning. */
     const asDirectiveSet = (csp) =>
@@ -76,10 +79,10 @@ describe('GET /', () => {
           .filter(Boolean)
       );
 
-    for (const [name, value] of Object.entries(staticSecurityHeaders())) {
-      if (name === 'Strict-Transport-Security') continue;
-      if (name === 'Permissions-Policy') continue; // Helmet does not set it.
+    const expected = securityHeaders(content).filter((row) => !row.edgeOnly);
+    assert.ok(expected.length >= 5, 'the table went empty');
 
+    for (const { name, value } of expected) {
       const actual = headers.get(name.toLowerCase());
       if (name === 'Content-Security-Policy') {
         assert.deepEqual(
@@ -91,6 +94,30 @@ describe('GET /', () => {
       }
       assert.equal(actual, value, `${name} differs from the static build`);
     }
+  });
+
+  it('sends the one edge-only header nowhere but the edge', async () => {
+    const { headers } = await get('/');
+    const { securityHeaders } = require('../src/security.js');
+
+    for (const { name } of securityHeaders(content).filter((r) => r.edgeOnly)) {
+      assert.equal(
+        headers.get(name.toLowerCase()),
+        null,
+        `${name} is marked edge-only but the dev server sends it`
+      );
+    }
+  });
+
+  it('confines the RSVP origin in the CSP to the endpoint config names', async () => {
+    // The origin used to be a second literal in src/security.js, so the
+    // documented FORMSPREE_ENDPOINT override moved the form action and left
+    // the policy pointing at the old host.
+    const csp = (await get('/')).headers.get('content-security-policy') ?? '';
+    const origin = new URL(content.form.formspreeEndpoint).origin;
+
+    assert.match(csp, new RegExp(`form-action [^;]*${origin}`));
+    assert.match(csp, new RegExp(`connect-src [^;]*${origin}`));
   });
 });
 
@@ -133,7 +160,7 @@ describe('static assets', () => {
   });
 
   it('serves the stylesheet', async () => {
-    const response = await get('/custom.css');
+    const response = await get('/styles.css');
     assert.equal(response.status, 200);
     assert.match(response.headers.get('content-type') ?? '', /text\/css/);
   });
@@ -149,7 +176,6 @@ describe('cache lifetimes', () => {
   const paths = [
     '/',
     '/js/main.js',
-    '/custom.css',
     '/styles.css',
     '/robots.txt',
     '/fonts/InkVerse.otf',
@@ -176,7 +202,7 @@ describe('unknown routes', () => {
     const html = await response.text();
 
     assert.equal(response.status, 404);
-    assert.equal(html.match(/[A-Z][A-Z0-9_]*_PLACEHOLDER/g), null);
+    assert.deepEqual(findLeftoverPlaceholders(html), []);
   });
 
   it('returns JSON for non-HTML clients', async () => {

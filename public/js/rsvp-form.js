@@ -162,10 +162,24 @@ async function submitToFormspree(endpoint, payload) {
  * Wires up validation, the conditional partner field and submission.
  *
  * @param {Document | HTMLElement} [root]
+ * @returns {() => void} teardown
  */
 export function initRsvpForm(root = document) {
   const form = root.querySelector('#guestSurveyForm');
-  if (!(form instanceof HTMLFormElement)) return;
+  if (!(form instanceof HTMLFormElement)) return () => {};
+
+  /** Every listener this adds, so the teardown can take them all back off. */
+  const listeners = [];
+
+  /**
+   * @param {EventTarget} target
+   * @param {string} type
+   * @param {EventListener} handler
+   */
+  const listen = (target, type, handler) => {
+    target.addEventListener(type, handler);
+    listeners.push(() => target.removeEventListener(type, handler));
+  };
 
   const attendanceSelect = form.elements.namedItem('attendance');
   const partnerGroup = form.querySelector('.partner-name-group');
@@ -209,7 +223,7 @@ export function initRsvpForm(root = document) {
   };
 
   if (attendanceSelect instanceof HTMLSelectElement) {
-    attendanceSelect.addEventListener('change', () => {
+    listen(attendanceSelect, 'change', () => {
       setFieldError(attendanceSelect, false);
       setPartnerVisible(attendanceSelect.value === ATTENDING_WITH_PARTNER);
     });
@@ -220,11 +234,11 @@ export function initRsvpForm(root = document) {
   for (const control of namedControls(form)) {
     if (!errorElementFor(control)) continue;
     const clear = () => setFieldError(control, false);
-    control.addEventListener('input', clear);
-    control.addEventListener('change', clear);
+    listen(control, 'input', clear);
+    listen(control, 'change', clear);
   }
 
-  form.addEventListener('submit', async (event) => {
+  listen(form, 'submit', async (event) => {
     event.preventDefault();
     if (isSubmitting) return;
 
@@ -275,4 +289,9 @@ export function initRsvpForm(root = document) {
       }
     }
   });
+
+  return () => {
+    for (const remove of listeners) remove();
+    listeners.length = 0;
+  };
 }

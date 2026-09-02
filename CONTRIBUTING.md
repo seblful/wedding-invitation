@@ -25,7 +25,8 @@ the static build. Both must be green.
 | Section copy, headings, timeline    | `public/index.html`                          |
 | Look of a repeated element          | `public/input.css` (component classes)       |
 | A colour                            | `palette.js` (the only place one is spelled) |
-| Fonts, animations, layout           | `public/custom.css`, `tailwind.config.js`    |
+| Fonts, animations, breakpoints      | `public/input.css`, `tailwind.config.js`     |
+| A corner flower                     | `flowers.js` (position, size, target, asset) |
 | Browser behaviour                   | `public/js/<feature>.js`                     |
 | Server or build behaviour           | `src/`, `scripts/`                           |
 | Security headers                    | `src/security.js` (applies to both targets)  |
@@ -52,9 +53,14 @@ generates no CSS, so a misspelled class is caught rather than silently doing
 nothing.
 
 Write a colour in exactly one place. When the palette was spelled out in
-`tailwind.config.js`, `public/custom.css` and `config.js` at once, the body
-grey was corrected for contrast in one copy and left failing AA in the copy
-four component classes actually used.
+`tailwind.config.js`, the stylesheet and `config.js` at once, the body grey was
+corrected for contrast in one copy and left failing AA in the copy four
+component classes actually used.
+
+`public/input.css` is the only stylesheet. A second one, `public/custom.css`,
+loaded after the whole Tailwind output and styled forty of the same classes —
+base look in one file, breakpoint overrides in the other. Each page section is
+now one region holding both, so an element changes in one place.
 
 Anything that appears more than once gets a component class in
 `public/input.css` (`.schedule-item { @apply ... }`) and the markup names only
@@ -77,12 +83,18 @@ level of every module side-effect free — only `main.js` may touch the DOM at
 import time. A test enforces this, and it is what makes the modules unit
 testable from Node.
 
+`page.js` wires the modules and `main.js` calls it: `startPage(root)` starts
+all seven and returns one teardown for all of them.
+
 Each `init*` function should:
 
+- take a `root`, defaulting to `document`,
 - tolerate missing markup and return early,
 - return a teardown function,
 - read viewport state live rather than caching it at load time (so a resize or
   rotation is handled).
+
+A test drives all seven with an empty root, with no exemptions.
 
 ### Belarusian text
 

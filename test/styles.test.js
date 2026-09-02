@@ -5,8 +5,15 @@ const fs = require('node:fs');
 const path = require('node:path');
 const { describe, it } = require('node:test');
 
-const PUBLIC_DIR = path.join(__dirname, '..', 'public');
+const { loadContent } = require('../src/config.js');
+const { INDEX_TEMPLATE, PUBLIC_DIR } = require('../src/paths.js');
+const { renderIndexHtml } = require('../src/render.js');
+
 const STYLES_CSS = path.join(PUBLIC_DIR, 'styles.css');
+
+/** The page as a guest receives it, palette block and flower styles included. */
+const renderedHtml = () =>
+  renderIndexHtml(fs.readFileSync(INDEX_TEMPLATE, 'utf8'), loadContent());
 
 /**
  * Utility families whose class names must resolve to a real rule.
@@ -72,20 +79,54 @@ const UTILITY_PATTERN = new RegExp(
   `^-?(?:(?:${VARIANTS.join('|')}):)*-?(?:${UTILITY_FAMILIES.join('|')})-`
 );
 
-/** @returns {Set<string>} every class named in the markup */
+/**
+ * Every class something on the page actually carries.
+ *
+ * Read from the *rendered* page rather than the template, because the corner
+ * flowers are rendered from `flowers.js`, and extended with the classes the
+ * client modules add at runtime — `.petal` exists only because `petals.js`
+ * creates it. Without those two sources the dead-class check below could only
+ * cover the classes spelled literally in `public/index.html`, which is why 28
+ * of them used to sit outside it and how `.p-br-c2` kept a rule, a mobile
+ * override and an image after its `<img>` was deleted.
+ *
+ * @returns {Set<string>}
+ */
 function classesUsedInMarkup() {
-  const html = fs.readFileSync(path.join(PUBLIC_DIR, 'index.html'), 'utf8');
   const used = new Set();
-  for (const match of html.matchAll(/class="([^"]*)"/g)) {
+
+  for (const match of renderedHtml().matchAll(/class="([^"]*)"/g)) {
     for (const name of match[1].split(/\s+/)) {
       if (name) used.add(name);
     }
   }
+
+  for (const file of fs
+    .readdirSync(path.join(PUBLIC_DIR, 'js'))
+    .filter((name) => name.endsWith('.js'))) {
+    const source = fs.readFileSync(path.join(PUBLIC_DIR, 'js', file), 'utf8');
+    for (const [, name] of source.matchAll(
+      /classList\.(?:add|remove|toggle|contains)\(\s*'([\w-]+)'/g
+    )) {
+      used.add(name);
+    }
+    for (const [, name] of source.matchAll(
+      /querySelector(?:All)?\(\s*'\.([\w-]+)/g
+    )) {
+      used.add(name);
+    }
+  }
+
   return used;
 }
 
 /**
  * Every class `input.css` defines in its `@layer components` block.
+ *
+ * That block now holds the whole design: `public/custom.css` was a second
+ * stylesheet loaded after the entire Tailwind output, and forty of these
+ * classes were styled in both files at once — base look in one, breakpoint
+ * overrides in the other, with the cascade deciding.
  *
  * Only simple leading class selectors count: `.timeline-dot` yes,
  * `.timeline-item:nth-child(even) .timeline-content` contributes nothing new.
@@ -109,10 +150,10 @@ function componentClasses() {
  * @returns {string}
  */
 function generatedSelectors() {
-  const css =
-    fs.readFileSync(STYLES_CSS, 'utf8') +
-    fs.readFileSync(path.join(PUBLIC_DIR, 'custom.css'), 'utf8');
-  return css.split(String.fromCharCode(92)).join('');
+  return fs
+    .readFileSync(STYLES_CSS, 'utf8')
+    .split(String.fromCharCode(92))
+    .join('');
 }
 
 describe('generated stylesheet', () => {
@@ -209,15 +250,21 @@ describe('generated stylesheet', () => {
 });
 
 describe('design tokens', () => {
-  const css = fs.readFileSync(path.join(PUBLIC_DIR, 'custom.css'), 'utf8');
+  const css = fs.readFileSync(path.join(PUBLIC_DIR, 'input.css'), 'utf8');
 
   it('declares every custom property it reads', () => {
-    // custom.css no longer carries colour defaults: palette.js declares them
-    // and src/render.js renders them into the head. A property read here that
-    // nothing declares is a value that silently resolves to nothing.
-    const { customProperties } = require('../palette.js');
+    // input.css carries no colour default and no flower position: palette.js
+    // and flowers.js own those, and src/render.js renders both into the page.
+    // A property read here that nothing declares silently resolves to nothing.
+    //
+    // The declarations are taken from the *rendered page* rather than from a
+    // regex over module source, so this follows the real output: `:root` for
+    // the palette and the inline styles on each flower.
+    const declaredByRender = new Set(
+      [...renderedHtml().matchAll(/(--[\w-]+):/g)].map((match) => match[1])
+    );
 
-    /** Properties a client module writes as an inline style, e.g. by petals.js. */
+    /** Properties a client module writes at runtime, e.g. petals.js. */
     const setByScript = new Set(
       fs
         .readdirSync(path.join(PUBLIC_DIR, 'js'))
@@ -239,7 +286,7 @@ describe('design tokens', () => {
 
     const undeclared = [...read]
       .filter((name) => !declaredHere.has(name))
-      .filter((name) => !(name in customProperties))
+      .filter((name) => !declaredByRender.has(name))
       .filter((name) => !setByScript.has(name))
       .sort();
 
@@ -261,7 +308,7 @@ describe('design tokens', () => {
     assert.deepEqual(
       unread,
       [],
-      `custom.css reads none of these: ${unread.join(', ')}`
+      `input.css reads none of these: ${unread.join(', ')}`
     );
   });
 
@@ -298,7 +345,7 @@ describe('design tokens', () => {
 });
 
 describe('@font-face declarations', () => {
-  const css = fs.readFileSync(path.join(PUBLIC_DIR, 'custom.css'), 'utf8');
+  const css = fs.readFileSync(path.join(PUBLIC_DIR, 'input.css'), 'utf8');
 
   it('sets font-display to a literal value', () => {
     // `font-display: var(--font-display)` parsed as invalid and was dropped:

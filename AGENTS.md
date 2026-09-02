@@ -16,11 +16,16 @@ code is plain ES modules loaded with `<script type="module">`.
 **Run `npm run check` before claiming a change is done.** It runs ESLint,
 Prettier, the tests and the build. A change that breaks it is not finished.
 
-**`config.js` is the single source of truth** for guest-facing content, and
-**`palette.js` for every colour.** Never duplicate a value from either into
-HTML, CSS or JS. Both a hand-maintained `public/config.json` and a generated
+**`config.js` is the single source of truth** for guest-facing content,
+**`palette.js` for every colour** and **`flowers.js` for every corner
+flower.** Never duplicate a value from any of them into HTML, CSS or JS. Both a hand-maintained `public/config.json` and a generated
 one have been and gone: the browser gets what it needs rendered into the
 markup, so there is no runtime config fetch to keep in sync.
+
+**Every field in `config.js` reaches the page, and a test fails on one that
+does not.** The venue names and both addresses were validated on every boot
+and rendered nowhere, so the text a guest read lived in the markup and had
+already drifted from the copy `config.js` carried.
 
 **One table, two adapters** is the shape for anything both render targets need:
 `src/security.js` owns the headers, `src/caching.js` owns the cache lifetimes,
@@ -47,12 +52,38 @@ Both halves are required:
 `renderIndexHtml` throws if a token survives substitution or a replacement has
 no slot, so a half-finished change fails loudly rather than shipping.
 
+`src/render.js` exports `renderIndexHtml`, `findLeftoverPlaceholders` and
+`TemplateError` — nothing else. It used to export seven names, six with no
+caller outside `test/render.test.js`: internals promoted so the tests could
+reach them, while the tests still hand-copied the leftover-token regex into
+four files. Assert through `renderIndexHtml`, and pass a palette as its third
+argument when you need to drive the `<style>` block.
+
 ## Tailwind
+
+**`public/input.css` is the only stylesheet.** `public/custom.css` was a second
+sheet loaded after the whole Tailwind output, and forty component classes were
+styled in both at once — base look in one file, breakpoint overrides in the
+other, with cascade order deciding. It also never entered the PostCSS
+pipeline, so it shipped to the edge unminified and unprefixed, and the
+dead-class guard could not see any of the twenty-eight classes it alone
+declared. That is where `.p-br-c2` survived with a rule, a mobile override and
+an image but no `<img>`.
+
+So each page section is one region of `@layer components`, holding an
+element's base look _and_ its breakpoint overrides. The focus ring and
+`.visually-hidden` stay unlayered on purpose: they have to keep beating every
+component class, which is what they did as a separate sheet.
 
 Colours live in `palette.js`; `tailwind.config.js` requires it and
 `src/render.js` renders the same values into `:root` custom properties.
-`public/custom.css` declares no colour of its own and a test fails on one, so
+`public/input.css` declares no colour of its own and a test fails on one, so
 there is one place to change a colour and one place it can go wrong.
+
+`tailwind.config.js` scans `src/render.js` and `flowers.js` as well as the
+markup: the corner flowers and the palette block are rendered rather than
+written into the template, and Tailwind drops any rule in `@layer components`
+whose class it cannot find in a scanned file.
 
 A palette key **is** the utility suffix. `primary` produces `text-primary` /
 `bg-primary`; a key named `text-primary` would produce `text-text-primary` and
@@ -84,8 +115,8 @@ not against white. `#666` body text sits at 3.9:1 there and fails AA, which is
 why `secondary` is `#555`; the soft orange fails badly enough (1.6:1) that it
 must not carry text or a focus ring.
 
-That correction reached `custom.css` and not `tailwind.config.js` for months,
-because the palette was written out in both. Change a colour in `palette.js`
+That correction reached the stylesheet and not `tailwind.config.js` for
+months, because the palette was written out in both. Change a colour in `palette.js`
 and it reaches every rendering path at once.
 
 Every focusable control shares one `:focus-visible` ring built from the
@@ -106,19 +137,30 @@ bold on every heading.
 
 The static build ships only fonts something references, and prints what it
 skipped. Add a font by referencing it, not by copying it into `public/fonts/`.
+The `@font-face` rules sit at the top of `public/input.css`, which is where the
+build looks for font references.
 
 ## Browser modules (`public/js/`)
 
 - Keep the top level side-effect free. Only `main.js` may touch the DOM at
   import time; a test enforces this.
-- Each `init*` function that reads the markup takes a `root` (defaulting to
-  `document`), tolerates missing markup, returns a teardown function, and reads
-  viewport state live (`environment.js`) instead of caching it at load time.
-  Querying `document` directly is what made `floral-decor.js` untestable — a
-  test now drives every one of them with an empty root.
+- **`page.js` owns the wiring and `main.js` only calls it.** `startPage(root)`
+  starts all seven features and returns one teardown for all of them, so the
+  `root` parameter and the teardown have a real caller instead of existing for
+  the tests. `main.js` used to call each `init*` with no arguments and throw
+  every teardown away.
+- Each `init*` takes a `root` (defaulting to `document`), tolerates missing
+  markup, returns a teardown function, and reads viewport state live
+  (`environment.js`) instead of caching it at load time. **All seven, with no
+  exemptions** — a test drives every one of them with an empty root. That list
+  used to hold four: `petals.js` took no root and appended onto
+  `document.body`, `venue-maps.js` and `rsvp-form.js` returned nothing, and
+  all three were left off rather than brought into line.
 - Nothing fetches at startup. Whatever a module needs is rendered onto the
-  element it decorates — `data-wedding-date`, `data-map-embed` — so it works on
-  first paint.
+  element it decorates — `data-wedding-date`, `data-map-embed`,
+  `data-flower-target` — so it works on first paint. `floral-decor.js` used to
+  call `getComputedStyle` to recover which edge the stylesheet had pinned a
+  flower to; the anchor is declared in `flowers.js` now.
 - Respect `prefersReducedMotion()` in anything animated.
 - Clear intervals and remove listeners in the teardown; pause work while the
   tab is hidden.
@@ -138,6 +180,23 @@ skipped. Add a font by referencing it, not by copying it into `public/fonts/`.
   once in `src/caching.js`. Helmet and `express.static` apply them to Express;
   `scripts/build-static.js` writes the same policies to `build/_headers`.
   Change both targets by changing that one file.
+- `securityHeaders(content)` is the table, spelled in **wire format** — the
+  header names and values a browser receives, not Helmet's option shape. A
+  header only the edge sends says so in the table, as `edgeOnly`, and the
+  parity test asserts every other row. `staticSecurityHeaders()` used to carry
+  two values of its own, so `Permissions-Policy` reached the edge and Express
+  could not send it at all — and the test stepped over the gap with a
+  `continue`.
+- The CSP takes the loaded content, so the RSVP origin comes from
+  `new URL(content.form.formspreeEndpoint).origin`. It was a second literal in
+  `src/security.js`, which meant the `FORMSPREE_ENDPOINT` override
+  `.env.example` recommends moved the `<form action>` and left `form-action`
+  and `connect-src` naming the old host.
+- Project directories come from `src/paths.js`. Four files used to compute
+  `path.join(__dirname, '..', 'public')` for themselves while `src/app.js`
+  exported the value to nobody, and `cacheControlFor` made both callers
+  translate a filesystem path into a site path — `sitePathFor` does that once,
+  behind the interface.
 - Do not disable CSP to make something work. Add the origin it needs.
 
 ## The RSVP form

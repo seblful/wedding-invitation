@@ -8,23 +8,16 @@
 'use strict';
 
 const fs = require('node:fs');
-const path = require('node:path');
 
 const compression = require('compression');
 const express = require('express');
 const helmet = require('helmet');
 
-const { cacheControlFor } = require('./caching.js');
+const { cacheControlFor, sitePathFor } = require('./caching.js');
 const { loadContent } = require('./config.js');
+const { PUBLIC_DIR, INDEX_TEMPLATE } = require('./paths.js');
 const { renderIndexHtml } = require('./render.js');
-const {
-  contentSecurityPolicy,
-  REFERRER_POLICY,
-  FRAME_OPTIONS,
-} = require('./security.js');
-
-const PUBLIC_DIR = path.join(__dirname, '..', 'public');
-const INDEX_TEMPLATE = path.join(PUBLIC_DIR, 'index.html');
+const { expressSecurity } = require('./security.js');
 
 /**
  * @param {object} [options]
@@ -59,18 +52,17 @@ function createApp({
   app.set('etag', 'strong');
 
   app.use(compression());
-  app.use(
-    helmet({
-      contentSecurityPolicy: { directives: contentSecurityPolicy() },
-      referrerPolicy: { policy: REFERRER_POLICY },
-      frameguard: { action: FRAME_OPTIONS.toLowerCase() },
-      // The page is served over plain HTTP in local dev; HSTS is set at the
-      // edge in production (see the generated build/_headers).
-      strictTransportSecurity: false,
-      // Would block the Yandex map iframes, which send no CORP header.
-      crossOriginEmbedderPolicy: false,
-    })
-  );
+
+  // One table, two adapters: this is the Express one. `build/_headers` renders
+  // the same rows at the edge, and a test asserts the two agree.
+  const security = expressSecurity(content);
+  app.use(helmet(security.helmet));
+  app.use((_req, res, next) => {
+    for (const [name, value] of Object.entries(security.headers)) {
+      res.setHeader(name, value);
+    }
+    next();
+  });
 
   if (requestLogging) {
     app.use((req, res, next) => {
@@ -115,11 +107,7 @@ function createApp({
       setHeaders: (res, filePath) => {
         // The same table build/_headers is generated from, so the dev server
         // and the edge cannot disagree about a lifetime.
-        const sitePath = `/${path
-          .relative(PUBLIC_DIR, filePath)
-          .split(path.sep)
-          .join('/')}`;
-        const cacheControl = cacheControlFor(sitePath);
+        const cacheControl = cacheControlFor(sitePathFor(filePath, PUBLIC_DIR));
         if (cacheControl) res.setHeader('Cache-Control', cacheControl);
       },
     })
@@ -144,4 +132,4 @@ function createApp({
   return app;
 }
 
-module.exports = { createApp, PUBLIC_DIR, INDEX_TEMPLATE };
+module.exports = { createApp };

@@ -1,44 +1,23 @@
 /**
- * Entry point. Wires the feature modules to the page.
+ * Entry point. The one module that touches the DOM at import time.
  *
- * Each `init*` function is defensive about missing markup and returns a
- * teardown function, so the modules stay independently testable and a failure
- * in one decoration cannot take the RSVP form down with it.
+ * The wiring itself lives in `page.js` so it can be driven from a test with a
+ * fake root; this file exists to call it on the live document. A test asserts
+ * that every other module's top level is side-effect free, and this one is
+ * exempt because bootstrapping the page is its whole job.
  */
 
-import { initCountdown } from './countdown.js';
-import { initFloralDecor } from './floral-decor.js';
-import { initFallingPetals } from './petals.js';
-import { initRevealOnScroll } from './reveal-on-scroll.js';
-import { initRsvpForm } from './rsvp-form.js';
-import { initScrollIndicator } from './scroll-indicator.js';
-import { initVenueMaps } from './venue-maps.js';
+import { startPage } from './page.js';
 
 /**
- * @param {string} name
- * @param {() => void} init
+ * A `<script type="module">` is deferred, so the document is already parsed
+ * by the time this runs and `readyState` is never `'loading'`. The check costs
+ * nothing and keeps the bootstrap correct if the tag ever loses `type`.
  */
-function safely(name, init) {
-  try {
-    init();
-  } catch (error) {
-    console.error(`Failed to initialise "${name}":`, error);
-  }
-}
-
-function main() {
-  // Every module works from the rendered HTML alone.
-  safely('rsvp-form', initRsvpForm);
-  safely('countdown', initCountdown);
-  safely('venue-maps', initVenueMaps);
-  safely('scroll-indicator', initScrollIndicator);
-  safely('reveal-on-scroll', initRevealOnScroll);
-  safely('petals', initFallingPetals);
-  safely('floral-decor', initFloralDecor);
-}
-
 if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', main, { once: true });
+  document.addEventListener('DOMContentLoaded', () => startPage(), {
+    once: true,
+  });
 } else {
-  main();
+  startPage();
 }

@@ -15,6 +15,8 @@
 
 'use strict';
 
+const path = require('node:path');
+
 /** Fresh for a year and never revalidated. Only safe for immutable bytes. */
 const IMMUTABLE = 'public, max-age=31536000, immutable';
 
@@ -50,16 +52,25 @@ const CACHE_POLICY = Object.freeze([
     // Everything else is unhashed, so it cannot be held hard: an edit to the
     // stylesheet or a client module has to reach a guest who has been here
     // before. An hour, then revalidate.
-    paths: Object.freeze([
-      '/js/*',
-      '/images/*',
-      '/styles.css',
-      '/custom.css',
-      '/robots.txt',
-    ]),
+    paths: Object.freeze(['/js/*', '/images/*', '/styles.css', '/robots.txt']),
     cacheControl: SHORT,
   }),
 ]);
+
+/**
+ * The site path a file in a served tree is requested by.
+ *
+ * Both consumers of `cacheControlFor` hold filesystem paths, not site paths,
+ * so each used to carry this `path.sep` translation itself — the precondition
+ * leaked out of this module and was satisfied twice, identically.
+ *
+ * @param {string} filePath an absolute or `baseDir`-relative filesystem path
+ * @param {string} baseDir the root of the served tree
+ * @returns {string} a leading-slashed site path
+ */
+function sitePathFor(filePath, baseDir) {
+  return `/${path.relative(baseDir, path.resolve(baseDir, filePath)).split(path.sep).join('/')}`;
+}
 
 /**
  * @param {string} pattern an exact site path, or a prefix ending in `/*`
@@ -94,8 +105,8 @@ function cacheControlFor(pathname) {
  */
 function cacheHeaderBlocks() {
   return CACHE_POLICY.flatMap(({ paths, cacheControl }) =>
-    paths.map((path) => ({
-      path,
+    paths.map((pattern) => ({
+      path: pattern,
       headers: { 'Cache-Control': cacheControl },
     }))
   );
@@ -104,5 +115,5 @@ function cacheHeaderBlocks() {
 module.exports = {
   cacheControlFor,
   cacheHeaderBlocks,
-  CACHE_POLICY,
+  sitePathFor,
 };

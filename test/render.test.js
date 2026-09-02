@@ -2,91 +2,131 @@
 
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
-const path = require('node:path');
 const { describe, it } = require('node:test');
 
 const palette = require('../palette.js');
 const { loadContent } = require('../src/config.js');
+const { INDEX_TEMPLATE } = require('../src/paths.js');
 const {
-  escapeHtml,
-  absoluteUrl,
-  buildSocialTags,
-  buildReplacements,
   renderIndexHtml,
+  findLeftoverPlaceholders,
   TemplateError,
 } = require('../src/render.js');
 
 const content = loadContent();
 
-const TEMPLATE = fs.readFileSync(
-  path.join(__dirname, '..', 'public', 'index.html'),
-  'utf8'
-);
+const TEMPLATE = fs.readFileSync(INDEX_TEMPLATE, 'utf8');
 
-describe('escapeHtml', () => {
-  it('escapes the five characters that break markup', () => {
-    assert.equal(
-      escapeHtml(`<a href="x" title='y'>&</a>`),
-      '&lt;a href=&quot;x&quot; title=&#39;y&#39;&gt;&amp;&lt;/a&gt;'
-    );
+/**
+ * The five characters `src/render.js` escapes. Spelled here rather than
+ * imported: `escapeHtml` was one of six internals promoted to the module's
+ * exports so this file could reach them, and every assertion below now goes
+ * through `renderIndexHtml` instead — the interface callers actually use.
+ *
+ * @param {unknown} value
+ * @returns {string}
+ */
+const escapeHtml = (value) =>
+  String(value).replace(
+    /[&<>"']/g,
+    (char) =>
+      ({
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#39;',
+      })[char]
+  );
+
+/**
+ * @param {Record<string, unknown>} overrides
+ * @returns {string} the page rendered from content with `overrides` applied
+ */
+const renderWith = (overrides) =>
+  renderIndexHtml(TEMPLATE, { ...structuredClone(content), ...overrides });
+
+describe('escaping, through the rendered page', () => {
+  it("escapes the apostrophe in names such as Дар'і", () => {
+    const html = renderWith({
+      openGraph: { ...content.openGraph, title: "Вяселле Дар'і" },
+    });
+    assert.ok(html.includes('<title>Вяселле Дар&#39;і</title>'));
   });
 
   it('leaves Cyrillic text alone', () => {
-    assert.equal(escapeHtml('Вяселле'), 'Вяселле');
+    assert.ok(renderIndexHtml(TEMPLATE, content).includes('Вяселле'));
   });
 
-  it("escapes the apostrophe in names such as Дар'і", () => {
-    assert.equal(escapeHtml("Дар'і"), 'Дар&#39;і');
-  });
-});
-
-describe('absoluteUrl', () => {
-  it('joins an origin and a relative path', () => {
-    assert.equal(
-      absoluteUrl('https://example.test', 'images/preview.png'),
-      'https://example.test/images/preview.png'
-    );
+  it('escapes a quote rather than breaking out of the attribute', () => {
+    const html = renderWith({
+      openGraph: { ...content.openGraph, title: 'He said "hi"' },
+    });
+    assert.ok(html.includes('content="He said &quot;hi&quot;"'));
+    assert.ok(!html.includes('content="He said "hi""'));
   });
 
-  it('tolerates a trailing slash on the origin and a leading one on the path', () => {
-    assert.equal(
-      absoluteUrl('https://example.test///', '/images/preview.png'),
-      'https://example.test/images/preview.png'
-    );
+  it('escapes a tag rather than injecting one', () => {
+    const html = renderWith({
+      form: { ...content.form, deadline: '<script>alert(1)</script>' },
+    });
+    assert.ok(!html.includes('<script>alert(1)</script>'));
+    assert.ok(html.includes('&lt;script&gt;alert(1)&lt;/script&gt;'));
   });
 });
 
-describe('buildSocialTags', () => {
-  const tags = buildSocialTags(content);
-
-  it('makes the Open Graph image absolute', () => {
-    assert.match(
-      tags,
-      /property="og:image" content="https:\/\/[^"]+preview\.png"/
+describe('absolute URLs, through the rendered page', () => {
+  it('resolves the Open Graph image against the base URL', () => {
+    const html = renderWith({ baseUrl: 'https://example.test' });
+    assert.ok(
+      html.includes(
+        'property="og:image" content="https://example.test/images/preview.png"'
+      )
     );
   });
+
+  it('tolerates a trailing slash on the base URL', () => {
+    const html = renderWith({ baseUrl: 'https://example.test///' });
+    assert.ok(
+      html.includes(
+        'property="og:image" content="https://example.test/images/preview.png"'
+      ),
+      'a trailing slash produced a doubled separator'
+    );
+    assert.ok(html.includes('content="https://example.test/"'));
+  });
+});
+
+describe('the social card, through the rendered page', () => {
+  const html = renderIndexHtml(TEMPLATE, content);
 
   it('emits both Open Graph and Twitter cards', () => {
     for (const property of [
       'og:title',
       'og:description',
+      'og:image',
+      'og:image:alt',
       'og:url',
       'og:type',
+      'og:locale',
     ]) {
-      assert.ok(tags.includes(`property="${property}"`), `missing ${property}`);
+      assert.ok(html.includes(`property="${property}"`), `missing ${property}`);
     }
-    for (const name of ['twitter:card', 'twitter:title', 'twitter:image']) {
-      assert.ok(tags.includes(`name="${name}"`), `missing ${name}`);
+    for (const name of [
+      'twitter:card',
+      'twitter:title',
+      'twitter:description',
+      'twitter:image',
+    ]) {
+      assert.ok(html.includes(`name="${name}"`), `missing ${name}`);
     }
   });
 
-  it('escapes content rather than emitting a raw quote', () => {
-    const tricky = {
-      ...content,
-      openGraph: { ...content.openGraph, title: 'He said "hi"' },
-    };
-    const output = buildSocialTags(tricky);
-    assert.ok(output.includes('content="He said &quot;hi&quot;"'));
+  it('makes the Open Graph image absolute', () => {
+    assert.match(
+      html,
+      /property="og:image" content="https:\/\/[^"]+preview\.png"/
+    );
   });
 });
 
@@ -94,7 +134,51 @@ describe('renderIndexHtml', () => {
   const html = renderIndexHtml(TEMPLATE, content);
 
   it('leaves no placeholder behind in the real template', () => {
-    assert.equal(html.match(/[A-Z][A-Z0-9_]*_PLACEHOLDER/g), null);
+    assert.deepEqual(findLeftoverPlaceholders(html), []);
+  });
+
+  it('renders every value config.js declares', () => {
+    // The other half of the placeholder guard. renderIndexHtml already throws
+    // when a replacement has no slot and when a token survives substitution,
+    // but neither catches a *config field* nothing renders — which is how the
+    // venue names and both addresses came to be validated on every boot and
+    // read by nobody, while the text a guest saw sat in the markup and drifted.
+    /** @param {unknown} node @param {string} at @returns {Array<[string, string]>} */
+    const leaves = (node, at = '') => {
+      if (typeof node === 'string') return [[at, node]];
+      if (Array.isArray(node)) {
+        return node.flatMap((item, i) => leaves(item, `${at}[${i}]`));
+      }
+      if (node && typeof node === 'object') {
+        return Object.entries(node).flatMap(([key, value]) =>
+          leaves(value, at ? `${at}.${key}` : key)
+        );
+      }
+      return [];
+    };
+
+    const missing = leaves(content)
+      .filter(([, value]) => !html.includes(escapeHtml(value)))
+      .map(([at, value]) => `${at} = ${JSON.stringify(value)}`);
+
+    assert.deepEqual(
+      missing,
+      [],
+      `config.js declares these but nothing renders them:\n  ${missing.join('\n  ')}`
+    );
+  });
+
+  it('renders each venue name and address from the config', () => {
+    for (const venue of [content.location, content.secondDayLocation]) {
+      assert.ok(
+        html.includes(escapeHtml(venue.name)),
+        `${venue.name} is not on the page`
+      );
+      assert.ok(
+        html.includes(venue.address.map(escapeHtml).join('<br />')),
+        `${venue.name}'s address is not rendered as one block`
+      );
+    }
   });
 
   it('substitutes the page title', () => {
@@ -123,7 +207,7 @@ describe('renderIndexHtml', () => {
   });
 
   it('injects every palette custom property', () => {
-    // custom.css declares none of these itself, so a property missing here is
+    // input.css declares none of these itself, so a property missing here is
     // a colour that never reaches the page.
     for (const [property, value] of Object.entries(palette.customProperties)) {
       assert.ok(
@@ -135,21 +219,25 @@ describe('renderIndexHtml', () => {
 
   it('writes palette values into the style block unescaped', () => {
     // HTML entities do not decode inside <style>, so escaping a value here
-    // would corrupt it. buildThemeVars checks the value instead.
+    // would corrupt it. The render checks the value instead.
     const themeBlock = /<style>([\s\S]*?)<\/style>/.exec(html)?.[1] ?? '';
     assert.ok(themeBlock.includes('--bg-primary'), 'no theme block rendered');
     assert.ok(!themeBlock.includes('&'), `escaped value in ${themeBlock}`);
   });
 
-  it('refuses a value that is not a hex colour', () => {
+  it('refuses a palette value that is not a hex colour', () => {
     // A `url(...)` or a stray `}` in this position would close the rule and
     // let the rest of the value become CSS of its own. Escaping cannot help
-    // inside <style>, so the render fails instead.
-    const { buildThemeVars } = require('../src/render.js');
-
+    // inside <style>, so the render fails instead. The palette is a parameter
+    // rather than something render.js reaches for, which is what puts this
+    // path behind the one export instead of behind a promoted internal.
     for (const bad of ['red; } body { display: none', 'url(x)', '']) {
       assert.throws(
-        () => buildThemeVars({ '--bg-primary': bad }),
+        () =>
+          renderIndexHtml(TEMPLATE, content, {
+            customProperties: { '--bg-primary': bad },
+            themeColor: '#fdf4e3',
+          }),
         (error) => {
           assert.ok(error instanceof TemplateError);
           assert.match(error.message, /not a hex colour/);
@@ -161,8 +249,11 @@ describe('renderIndexHtml', () => {
   });
 
   it('accepts a three-digit hex', () => {
-    const { buildThemeVars } = require('../src/render.js');
-    assert.match(buildThemeVars({ '--x': '#abc' }), /--x: #abc;/);
+    const html = renderIndexHtml(TEMPLATE, content, {
+      customProperties: { '--bg-primary': '#abc' },
+      themeColor: '#abc',
+    });
+    assert.match(html, /--bg-primary: #abc;/);
   });
 
   it('sets the browser theme colour from the palette', () => {
@@ -253,13 +344,13 @@ describe('the venue map containers', () => {
 });
 
 describe('the template itself', () => {
-  it('declares a slot for every replacement render.js knows about', () => {
-    for (const token of Object.keys(buildReplacements(content))) {
-      assert.ok(
-        TEMPLATE.includes(token),
-        `public/index.html is missing ${token}`
-      );
-    }
+  it('is in step with render.js in both directions', () => {
+    // This used to iterate buildReplacements(content) and check each token
+    // appears in the template. renderIndexHtml enforces both halves itself —
+    // a replacement with no slot and a token with no replacement each throw —
+    // so rendering the real template without throwing *is* the assertion, and
+    // the two cases have their own tests above.
+    assert.doesNotThrow(() => renderIndexHtml(TEMPLATE, content));
   });
 
   it('loads the client entry point as a module', () => {

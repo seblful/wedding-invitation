@@ -5,19 +5,20 @@ const fs = require('node:fs');
 const path = require('node:path');
 const { before, describe, it } = require('node:test');
 
-const { cacheControlFor } = require('../src/caching.js');
+const { cacheControlFor, sitePathFor } = require('../src/caching.js');
 const { loadContent } = require('../src/config.js');
+const { PUBLIC_DIR, BUILD_DIR } = require('../src/paths.js');
 
 const content = loadContent();
-const { renderIndexHtml } = require('../src/render.js');
+const {
+  renderIndexHtml,
+  findLeftoverPlaceholders,
+} = require('../src/render.js');
 const {
   build,
   renderHeadersFile,
   referencedFonts,
-  BUILD_DIR,
 } = require('../scripts/build-static.js');
-
-const PUBLIC_DIR = path.join(__dirname, '..', 'public');
 
 before(() => {
   build();
@@ -31,7 +32,7 @@ function readBuild(relative) {
 describe('build output', () => {
   it('renders index.html with no placeholders left', () => {
     const html = readBuild('index.html');
-    assert.equal(html.match(/[A-Z][A-Z0-9_]*_PLACEHOLDER/g), null);
+    assert.deepEqual(findLeftoverPlaceholders(html), []);
   });
 
   it('matches what the Express server renders, byte for byte', () => {
@@ -69,7 +70,7 @@ describe('build output', () => {
 });
 
 describe('_headers', () => {
-  const headers = renderHeadersFile();
+  const headers = renderHeadersFile(content);
 
   it('applies a policy to every path', () => {
     assert.ok(headers.startsWith('/*\n'));
@@ -96,7 +97,7 @@ describe('cache lifetimes', () => {
       .readdirSync(BUILD_DIR, { recursive: true })
       .map((entry) => String(entry))
       .filter((entry) => fs.statSync(path.join(BUILD_DIR, entry)).isFile())
-      .map((entry) => `/${entry.split(path.sep).join('/')}`)
+      .map((entry) => sitePathFor(entry, BUILD_DIR))
       // Cloudflare reads this one rather than serving it.
       .filter((sitePath) => sitePath !== '/_headers');
 
@@ -151,8 +152,13 @@ describe('font shipping', () => {
   });
 
   it('resolves every @font-face src to a file that exists', () => {
-    const css = fs.readFileSync(path.join(BUILD_DIR, 'custom.css'), 'utf8');
-    for (const [, url] of css.matchAll(/src:\s*url\('\.\/([^']+)'/g)) {
+    // One stylesheet now: public/custom.css was a second sheet loaded after
+    // the whole Tailwind output, and it shipped unminified and unprefixed
+    // because it never entered the PostCSS pipeline.
+    const css = fs.readFileSync(path.join(BUILD_DIR, 'styles.css'), 'utf8');
+    for (const [, url] of css.matchAll(
+      /url\(\.?\/?([\w %.-]+\.(?:otf|ttf|woff2?))\)/g
+    )) {
       assert.ok(
         fs.existsSync(path.join(BUILD_DIR, url)),
         `@font-face points at ${url}, which is not in the build`
@@ -162,7 +168,7 @@ describe('font shipping', () => {
 });
 
 describe('_headers cache rules', () => {
-  const headers = () => renderHeadersFile();
+  const headers = () => renderHeadersFile(content);
 
   it('marks the page guests actually request as no-cache', () => {
     // Cloudflare matches `_headers` on the request path, and a visitor asks

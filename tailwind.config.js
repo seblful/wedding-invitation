@@ -12,7 +12,15 @@
 
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-  content: ['./public/**/*.html', './public/js/**/*.js'],
+  // `src/render.js` and `flowers.js` are scanned too: the corner flowers and
+  // the palette block are rendered rather than written into the template, and
+  // Tailwind drops any rule in `@layer components` whose class it cannot find.
+  content: [
+    './public/**/*.html',
+    './public/js/**/*.js',
+    './src/render.js',
+    './flowers.js',
+  ],
   theme: {
     extend: {
       colors: require('./palette.js').colors,

@@ -3,6 +3,85 @@
 @tailwind utilities;
 
 /*
+ * Design tokens.
+ *
+ * No colour is declared here. Every `--bg-primary`, `--text-secondary` and
+ * the rest comes from `palette.js`, which `src/render.js` renders into a
+ * `:root` block in the document head and `tailwind.config.js` reads for its
+ * utility colours. A test fails on a custom property this file reads that
+ * nothing declares, and on a token nothing references.
+ */
+:root {
+  /* Burgundy, not the soft orange this used to be: the orange sits at 2.1:1
+     on cream and 1.6:1 on the green sections, so the ring was invisible
+     exactly where it mattered. Burgundy clears 9:1 on both. */
+  --focus-ring: var(--color-burgundy);
+
+  --z-floral: 1;
+  --z-content: 10;
+  --z-header: 20;
+  --z-petal: 100;
+
+  --transition-fast: 150ms;
+  --transition-normal: 300ms;
+  --ease-out: cubic-bezier(0, 0, 0.2, 1);
+}
+
+@font-face {
+  font-family: 'InkVerse';
+  src: url('./fonts/InkVerse.otf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Skolar PE';
+  src: url('./fonts/Skolar PE Variable Regular.ttf') format('truetype');
+  /* Skolar PE is a variable font with a 300-700 weight axis. Declaring only
+     `normal` meant the browser never reached for the real Semibold or Bold and
+     smeared the regular weight instead — every `font-bold` heading on the page
+     was faux bold. The design weights are already inside the file we ship. */
+  font-weight: 300 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Skolar PE';
+  src: url('./fonts/Skolar PE Variable Italic.ttf') format('truetype');
+  font-weight: 300 700;
+  font-style: italic;
+  font-display: swap;
+}
+
+@layer base {
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  body {
+    font-family: 'InkVerse', 'Georgia', 'Garamond', serif;
+    background: var(--section-bg);
+    color: var(--text-primary);
+    position: relative;
+    overflow-x: hidden;
+  }
+
+  section {
+    position: relative;
+    z-index: var(--z-content);
+  }
+
+  section > * {
+    position: relative;
+    z-index: var(--z-header);
+  }
+}
+
+/*
  * Component classes.
  *
  * The markup used to carry these utility lists inline, repeated once per
@@ -18,7 +97,7 @@
  * colour, a one-off margin).
  */
 @layer components {
-  /* ---------------------------------------------------------------- layout */
+  /* ------------------------------------------------------------ layout */
 
   .first-section {
     @apply relative flex min-h-screen w-full flex-col items-center justify-center p-5;
@@ -75,7 +154,13 @@
     @apply mb-5;
   }
 
-  /* ------------------------------------------------------------------ hero */
+  @media (max-width: 767px) {
+    .timer-title {
+      margin-bottom: 0.75rem;
+    }
+  }
+
+  /* -------------------------------------------------------------- hero */
 
   .center-content {
     @apply relative flex h-screen w-full flex-shrink-0 flex-col items-center justify-center;
@@ -108,9 +193,74 @@
 
   .scroll-indicator {
     @apply fixed bottom-10 left-1/2 z-[3] h-10 w-15 -translate-x-1/2 cursor-pointer opacity-60 hover:scale-110 md:absolute md:bottom-10;
+    animation: bounce-center 2s infinite;
+    background: none;
+    border: 0;
+    padding: 0;
+    transition:
+      opacity var(--transition-normal) var(--ease-out),
+      transform var(--transition-normal) var(--ease-out);
   }
 
-  /* -------------------------------------------------------------- timeline */
+  /* Toggled by js/scroll-indicator.js once the hero has scrolled away. */
+  .scroll-indicator-hidden {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  @media (min-width: 1025px) {
+    .face-image {
+      max-width: 175px;
+    }
+
+    .faces-container {
+      gap: 2.5rem;
+    }
+
+    .names-image {
+      max-width: 400px;
+    }
+
+    .board-names {
+      font-size: 2.2rem;
+    }
+  }
+
+  @media (min-width: 768px) and (max-width: 1024px) {
+    .face-image {
+      max-width: 140px;
+    }
+  }
+
+  @media (max-width: 767px) {
+    .faces-container {
+      gap: 16px;
+    }
+
+    .face-image {
+      max-width: 120px;
+    }
+
+    .names-image {
+      max-width: 260px;
+    }
+
+    .board-names {
+      font-size: 1.3rem;
+    }
+
+    .scroll-indicator {
+      width: 40px;
+      height: 27px;
+      bottom: 2rem;
+    }
+
+    .names-board {
+      margin-top: -35px;
+    }
+  }
+
+  /* ---------------------------------------------------------- timeline */
 
   .timeline-container {
     @apply w-full max-w-[600px];
@@ -165,7 +315,90 @@
     @apply font-bold text-primary;
   }
 
-  /* ----------------------------------------------------------------- timer */
+  .timeline-track::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 3px;
+    background: linear-gradient(
+      180deg,
+      rgba(51, 51, 51, 0.2) 0%,
+      rgba(51, 51, 51, 0.5) 50%,
+      rgba(51, 51, 51, 0.2) 100%
+    );
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  .timeline-scroll::-webkit-scrollbar {
+    height: 8px;
+  }
+
+  .timeline-scroll::-webkit-scrollbar-track {
+    background: rgba(51, 51, 51, 0.1);
+    border-radius: 10px;
+  }
+
+  .timeline-scroll::-webkit-scrollbar-thumb {
+    background: rgba(51, 51, 51, 0.3);
+    border-radius: 10px;
+  }
+
+  .timeline-scroll::-webkit-scrollbar-thumb:hover {
+    background: rgba(51, 51, 51, 0.5);
+  }
+
+  @media (max-width: 767px) {
+    .timeline-scroll::-webkit-scrollbar {
+      display: none;
+    }
+
+    .timeline-scroll {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+
+    .timeline-track::before {
+      left: 30px;
+    }
+
+    .timeline-item {
+      flex-direction: row;
+      align-items: center;
+      padding-left: 0;
+    }
+
+    .timeline-item .timeline-dot {
+      position: absolute;
+      left: 30px;
+      transform: translateX(-50%);
+    }
+
+    .timeline-item .timeline-dot.active {
+      width: 22px;
+      height: 22px;
+    }
+
+    .timeline-item .timeline-content {
+      margin-left: 60px;
+      text-align: left;
+    }
+
+    .timeline-item:nth-child(even) .timeline-content {
+      text-align: left;
+      order: 0;
+      margin-left: 60px;
+    }
+
+    .timeline-item .timeline-dot:hover {
+      transform: translateX(-50%) scale(1.15);
+    }
+  }
+
+  /* ------------------------------------------------------------- timer */
 
   .timer-date {
     @apply mb-11 text-center font-skolar text-xl italic text-secondary;
@@ -191,7 +424,40 @@
     @apply mb-10 font-skolar text-2xl font-bold text-primary;
   }
 
-  /* -------------------------------------------------------------- location */
+  @media (min-width: 768px) and (max-width: 1024px) {
+    .timer-number {
+      min-width: 110px;
+      padding: 30px 22px;
+    }
+  }
+
+  @media (max-width: 767px) {
+    .timer-date {
+      font-size: 1.1rem;
+      margin-bottom: 2rem;
+    }
+
+    .timer-container {
+      gap: 0.5rem;
+    }
+
+    .timer-number {
+      font-size: clamp(1.5rem, 6vw, 1.8rem);
+      min-width: 80px;
+      padding: 1.25rem 0.75rem;
+    }
+
+    .timer-separator {
+      font-size: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .timer-label {
+      font-size: 0.85rem;
+    }
+  }
+
+  /* ---------------------------------------------------------- location */
 
   .location-subtitle-frame {
     @apply mb-5 inline-block rounded-[15px] border-[3px] border-[#333] bg-cream px-9 py-5 shadow-custom transition-all hover:-translate-y-0.5 hover:bg-beige hover:shadow-custom-hover;
@@ -237,7 +503,93 @@
     @apply mx-auto mb-5 h-[500px] w-full max-w-[900px] overflow-hidden rounded-[20px] border-[3px] border-[#333] bg-white shadow-custom;
   }
 
-  /* ----------------------------------------------------------- celebration */
+  .gallery-scroll::-webkit-scrollbar {
+    height: 8px;
+  }
+
+  .gallery-scroll::-webkit-scrollbar-track {
+    background: rgba(51, 51, 51, 0.1);
+    border-radius: 10px;
+  }
+
+  .gallery-scroll::-webkit-scrollbar-thumb {
+    background: rgba(51, 51, 51, 0.3);
+    border-radius: 10px;
+  }
+
+  .gallery-scroll::-webkit-scrollbar-thumb:hover {
+    background: rgba(51, 51, 51, 0.5);
+  }
+
+  .map-container iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+    display: block;
+  }
+
+  /* The <noscript> stand-in for a map embed. */
+  .map-fallback {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    margin: 0;
+    padding: 1rem;
+    font-family: 'Skolar PE', serif;
+    font-style: italic;
+    color: var(--text-secondary);
+    text-align: center;
+  }
+
+  @media (min-width: 768px) and (max-width: 1024px) {
+    .gallery-image {
+      max-width: 240px;
+    }
+
+    .map-container {
+      height: 400px;
+    }
+  }
+
+  @media (max-width: 767px) {
+    .gallery-scroll::-webkit-scrollbar {
+      display: none;
+    }
+
+    .gallery-scroll {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+
+    .gallery-image {
+      max-width: 180px;
+    }
+
+    .gallery-scroll {
+      gap: 0.75rem;
+    }
+
+    .map-container {
+      height: 280px;
+    }
+
+    .location-subtitle-frame {
+      padding: 15px 25px;
+      margin-bottom: 15px;
+    }
+  }
+
+  @media (max-width: 767px) {
+    @media (hover: hover) {
+      .location-subtitle-frame:hover,
+      .gallery-image:hover {
+        transform: none;
+      }
+    }
+  }
+
+  /* ------------------------------------------------------- celebration */
 
   .celebration-subtitle {
     @apply mb-12 text-center font-skolar text-md italic text-secondary;
@@ -259,7 +611,31 @@
     @apply font-skolar text-md font-medium text-primary;
   }
 
-  /* ------------------------------------------------------------- dresscode */
+  @media (max-width: 767px) {
+    .schedule-item {
+      padding: 1rem 1.25rem;
+      gap: 0.75rem;
+    }
+
+    .schedule-time {
+      font-size: 1.25rem;
+      min-width: 70px;
+    }
+
+    .schedule-activity {
+      font-size: 1rem;
+    }
+  }
+
+  @media (max-width: 767px) {
+    @media (hover: hover) {
+      .schedule-item:hover {
+        transform: none;
+      }
+    }
+  }
+
+  /* --------------------------------------------------------- dresscode */
 
   .dresscode-description {
     @apply mb-10 max-w-[700px] text-center font-skolar text-base leading-relaxed text-primary;
@@ -281,7 +657,35 @@
     @apply text-center font-skolar text-base font-semibold text-primary;
   }
 
-  /* ---------------------------------------------------------------- wishes */
+  @media (max-width: 767px) {
+    .colors-container {
+      gap: 1.25rem;
+    }
+
+    .color-card {
+      width: 100px;
+      gap: 0.5rem;
+    }
+
+    .color-swatch {
+      width: 60px;
+      height: 60px;
+    }
+
+    .color-name {
+      font-size: 0.9rem;
+    }
+  }
+
+  @media (max-width: 767px) {
+    @media (hover: hover) {
+      .color-card:hover {
+        transform: none;
+      }
+    }
+  }
+
+  /* ------------------------------------------------------------ wishes */
 
   .wishes-container {
     @apply w-full max-w-[800px] text-center;
@@ -303,7 +707,27 @@
     @apply font-skolar text-md italic leading-relaxed text-primary;
   }
 
-  /* ------------------------------------------------------------------ form */
+  @media (max-width: 767px) {
+    .wishes-item {
+      padding: 1.25rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .wishes-item-title,
+    .wishes-item-text {
+      font-size: 1rem;
+    }
+  }
+
+  @media (max-width: 767px) {
+    @media (hover: hover) {
+      .wishes-item:hover {
+        transform: none;
+      }
+    }
+  }
+
+  /* -------------------------------------------------------------- form */
 
   .survey-deadline {
     @apply mb-10 text-center font-skolar text-base italic text-secondary;
@@ -323,7 +747,7 @@
 
   /* No `focus:outline-none` here any more: it removed the only focus
      indicator, and the lift that replaced it is cancelled on touch layouts.
-     The ring lives in custom.css so every focusable control shares one. */
+     One unlayered ring below serves every focusable control. */
   .form-input,
   .form-select {
     @apply w-full rounded-[15px] border-[3px] border-[#333] bg-cream px-5 py-4 font-skolar text-base text-primary shadow-custom transition-all focus:-translate-y-0.5 focus:shadow-custom-hover;
@@ -368,9 +792,310 @@
     @apply bg-soft-peach;
   }
 
-  /* --------------------------------------------------------------- closing */
+  .form-message-hidden {
+    display: none !important;
+  }
+
+  /* Field errors are in the DOM from the start (so `aria-describedby` always
+     resolves) but hidden until js/rsvp-form.js marks the field invalid. */
+  .form-error {
+    display: none;
+  }
+
+  .form-error.active {
+    display: block;
+  }
+
+  .checkbox-item input[type='checkbox'] {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 1.25rem;
+    height: 1.25rem;
+    border: 2px solid var(--border-color);
+    border-radius: 4px;
+    background: var(--bg-primary);
+    cursor: pointer;
+    flex-shrink: 0;
+    transition:
+      background var(--transition-fast) var(--ease-out),
+      border-color var(--transition-fast) var(--ease-out);
+  }
+
+  .checkbox-item input[type='checkbox']:checked {
+    background: var(--color-soft-orange);
+    border-color: var(--border-color);
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath fill='white' d='M13.78 4.22a.75.75 0 010 1.06l-7.5 7.5a.75.75 0 01-1.06 0L2.22 9.78a.75.75 0 011.06-1.06L5.5 11.44l6.72-6.72a.75.75 0 011.06 0z'/%3E%3C/svg%3E");
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+  }
+
+  .checkbox-item input[type='checkbox']:focus-visible {
+    outline: 3px solid var(--focus-ring);
+    outline-offset: 2px;
+  }
+
+  @media (min-width: 768px) and (max-width: 1024px) {
+    .checkbox-group {
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    }
+  }
+
+  @media (max-width: 767px) {
+    .form-group {
+      margin-bottom: 1.25rem;
+    }
+
+    .form-input,
+    .form-select {
+      padding: 0.75rem 1rem;
+      font-size: 1rem;
+      min-height: 48px;
+    }
+
+    .checkbox-group {
+      grid-template-columns: 1fr;
+      gap: 0.5rem;
+      padding: 0.75rem;
+    }
+
+    .checkbox-item {
+      padding: 0.5rem;
+      min-height: 44px;
+    }
+
+    .form-submit-btn {
+      padding: 0.875rem 1.5rem;
+      font-size: 1rem;
+      min-height: 52px;
+    }
+
+    /* The lift is disorienting next to an on-screen keyboard; the focus ring
+         is what actually marks focus. */
+    .form-input:focus,
+    .form-select:focus {
+      transform: none;
+    }
+  }
+
+  /* ----------------------------------------------------------- closing */
 
   .closing-text {
     @apply m-0 text-center font-inkverse text-2xl text-primary;
+    opacity: 0;
+    transition: opacity 1s ease-in;
+    position: relative;
+    z-index: var(--z-header);
+  }
+
+  .closing-text.visible {
+    opacity: 1;
+  }
+
+  /* ------------------------------------------------------- decorations */
+
+  .floral-background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: var(--z-floral);
+    pointer-events: none;
+    overflow: hidden;
+  }
+
+  .corner-group {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+    will-change: transform;
+  }
+
+  .top-left-group {
+    transform-origin: top left;
+  }
+
+  .top-right-group {
+    transform-origin: top right;
+  }
+
+  .bottom-left-group {
+    transform-origin: bottom left;
+  }
+
+  .bottom-right-group {
+    transform-origin: bottom right;
+  }
+
+  .flower-piece {
+    position: absolute;
+    /* Placement and both widths arrive inline from flowers.js via
+       src/render.js, so the flowers are where they belong on first paint and
+       no rule here names an individual piece. Fifteen of those rules used to
+       live below, plus a fifteen-name selector restating one mobile width. */
+    width: var(--flower-width);
+    will-change: transform, opacity;
+    height: auto;
+    max-width: none;
+    opacity: 1;
+    transition: opacity 0.3s ease-out;
+  }
+
+  .flower-piece.cropped-flower {
+    opacity: 0;
+    will-change: opacity;
+  }
+
+  /*
+   * The layer petals fall through. Declared in the markup so `petals.js` can
+   * take a `root` like every other module; it used to append straight onto
+   * `document.body`, which is what made it the one module no test could
+   * reach. The layer carries the z-index, so a petal only has to stack
+   * against its siblings.
+   */
+  .petal-field {
+    position: fixed;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+    z-index: var(--z-petal);
+  }
+
+  .petal {
+    position: absolute;
+    top: -50px;
+    opacity: 0.8;
+    /* Petal silhouette: two rounded corners on opposite diagonals. */
+    border-radius: 100% 0% 100% 0%;
+    will-change: transform, opacity;
+    contain: layout style paint;
+  }
+
+  .partner-group-hidden {
+    display: none !important;
+  }
+
+  @media (max-width: 767px) {
+    .flower-piece {
+      width: var(--flower-width-mobile);
+    }
+
+    img {
+      max-width: 100%;
+      height: auto;
+      display: block;
+    }
+  }
+}
+
+@keyframes fall {
+  0% {
+    transform: translateY(-50px) rotate(0deg) translateX(0);
+    opacity: 0;
+  }
+  5% {
+    opacity: 0.8;
+  }
+  95% {
+    opacity: 0.8;
+  }
+  100% {
+    transform: translateY(var(--fall-distance, 100vh)) rotate(360deg)
+      translateX(100px);
+    opacity: 0;
+  }
+}
+
+@keyframes bounce-center {
+  0%,
+  20%,
+  50%,
+  80%,
+  100% {
+    transform: translateX(-50%) translateY(0);
+  }
+  40% {
+    transform: translateX(-50%) translateY(-10px);
+  }
+  60% {
+    transform: translateX(-50%) translateY(-5px);
+  }
+}
+
+/*
+ * Unlayered on purpose. These have to keep beating every component class,
+ * which is what they did while they lived in a second stylesheet loaded
+ * after the whole Tailwind output. Inside `@layer components` a rule of
+ * equal specificity declared later would win on source order alone, and the
+ * focus ring is exactly the thing that must not lose that fight.
+ */
+/*
+ * One focus ring for every control on the page.
+ *
+ * The form fields used to set `focus:outline-none` and rely on a 2px lift plus
+ * a shadow to show focus — and the touch breakpoint cancels that lift, leaving
+ * a keyboard guest on a tablet with no focus indicator at all. `:focus-visible`
+ * keeps it off mouse clicks.
+ */
+:where(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
+  outline: 3px solid var(--focus-ring);
+  outline-offset: 2px;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+@media (max-width: 767px) and (orientation: landscape) {
+  section {
+    min-height: 100vh;
+    min-height: 100svh;
+    padding: 30px 40px;
+  }
+
+  .timer-container,
+  .gallery-scroll,
+  .colors-container {
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+  }
+}
+
+/*
+ * Reduced motion.
+ *
+ * js/petals.js and js/floral-decor.js already opt out of their animations, so
+ * this covers the purely declarative ones: the bouncing arrow, the closing
+ * fade-in and any lingering transitions.
+ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .closing-text {
+    opacity: 1;
+  }
+
+  .petal {
+    display: none;
   }
 }

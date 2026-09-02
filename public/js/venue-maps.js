@@ -37,10 +37,23 @@ function createMapFrame(container) {
  * markup and config only — no change here.
  *
  * @param {Document | HTMLElement} [root]
+ * @returns {() => void} teardown; removes the frames this put up
  */
 export function initVenueMaps(root = document) {
+  /** @type {HTMLIFrameElement[]} */
+  const frames = [];
+
   for (const container of root.querySelectorAll('[data-map-embed]')) {
     if (!(container instanceof HTMLElement)) continue;
-    container.replaceChildren(createMapFrame(container));
+    const frame = createMapFrame(container);
+    frames.push(frame);
+    container.replaceChildren(frame);
   }
+
+  // The `<noscript>` fallback this replaced cannot come back, so teardown
+  // leaves an empty container rather than pretending to restore it.
+  return () => {
+    for (const frame of frames) frame.remove();
+    frames.length = 0;
+  };
 }

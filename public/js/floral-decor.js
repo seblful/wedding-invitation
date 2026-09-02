@@ -1,11 +1,17 @@
 /**
  * Scroll-driven floral corner decorations.
  *
- * The flowers start clustered (as positioned in custom.css), drift out to the
- * page edges while the hero section scrolls away, and drift back in over the
- * closing section. Cropped pieces cross-fade instead of moving.
+ * The flowers start clustered, drift out to the page edges while the hero
+ * section scrolls away, and drift back in over the closing section. Cropped
+ * pieces cross-fade instead of moving.
  *
- * Final positions live in the table below — edit those, not the maths.
+ * Every position is read off the element itself, the same way `countdown.js`
+ * reads `data-wedding-date`. `flowers.js` is the one place a flower is
+ * described and `src/render.js` renders it, so there is no table here to keep
+ * in step with the stylesheet and the markup — and no `getComputedStyle` call
+ * asking the stylesheet which edge a flower is pinned to.
+ *
+ * To move a flower, edit `flowers.js`.
  */
 
 import {
@@ -15,57 +21,6 @@ import {
   prefersReducedMotion,
   rafThrottle,
 } from './environment.js';
-
-/**
- * Every flower, one entry each.
- *
- * `left` is measured from the left edge of the corner group; a right-anchored
- * flower is placed at `right: (100 - left)%`. Whether an entry names `top` or
- * `bottom` is what anchors it vertically -- there is no separate table of
- * bottom-anchored selectors to keep in step, because the target already says.
- *
- * These are the positions after the hero has scrolled away, in percent of the
- * corner group. Mobile targets sit further inside the viewport so nothing
- * clips off a narrow screen. Edit these, not the maths.
- */
-const FLOWERS = Object.freeze({
-  '.p-tl-c1': { desktop: { left: 3, top: 2 }, mobile: { left: 6, top: 3 } },
-  '.p-tl-1': { desktop: { left: 0, top: 20 }, mobile: { left: 4, top: 20 } },
-  '.p-tl-2': { desktop: { left: 8, top: 3 }, mobile: { left: 10, top: 4 } },
-  '.p-tl-3': { desktop: { left: 12, top: 40 }, mobile: { left: 13, top: 40 } },
-  '.p-bl-c1': {
-    desktop: { left: 3, bottom: 2 },
-    mobile: { left: 6, bottom: 3 },
-  },
-  '.p-bl-c2': {
-    desktop: { left: 15, bottom: 12 },
-    mobile: { left: 16, bottom: 12 },
-  },
-  '.p-bl-1': {
-    desktop: { left: 0, bottom: 17 },
-    mobile: { left: 6, bottom: 17 },
-  },
-  '.p-bl-2': {
-    desktop: { left: 11, bottom: 0 },
-    mobile: { left: 13, bottom: 2 },
-  },
-  '.p-tr-c2': { desktop: { left: 80, top: 2 }, mobile: { left: 88, top: 3 } },
-  '.p-tr-2': { desktop: { left: 82, top: 3 }, mobile: { left: 90, top: 4 } },
-  '.p-tr-c1': { desktop: { left: 80, top: 22 }, mobile: { left: 86, top: 22 } },
-  '.p-tr-1': { desktop: { left: 75, top: 27 }, mobile: { left: 84, top: 28 } },
-  '.p-br-c1': {
-    desktop: { left: 80, bottom: 2 },
-    mobile: { left: 88, bottom: 3 },
-  },
-  '.p-br-2': {
-    desktop: { left: 85, bottom: 26 },
-    mobile: { left: 86, bottom: 27 },
-  },
-  '.p-br-1': {
-    desktop: { left: 75, bottom: 0 },
-    mobile: { left: 82, bottom: 2 },
-  },
-});
 
 /** Cropped pieces have finished fading by this much of the hero scroll. */
 const CROPPED_FADE_FRACTION = 0.7;
@@ -81,21 +36,23 @@ function scaleProfile() {
 }
 
 /**
- * @param {string} value a computed CSS length
- * @param {number} basis the containing size in px
- * @returns {number} the value as a percentage of `basis`
+ * Reads an `x y` pair of percentages off a data attribute.
+ *
+ * @param {HTMLElement} element
+ * @param {string} attribute
+ * @returns {{ x: number, y: number } | null} null when absent or malformed
  */
-function toPercent(value, basis) {
-  if (!value || value === 'auto' || basis === 0) return 0;
-  if (value.endsWith('%')) return Number.parseFloat(value);
-  if (value.endsWith('px')) return (Number.parseFloat(value) / basis) * 100;
-  return 0;
+function readPoint(element, attribute) {
+  const parts = (element.getAttribute(attribute) ?? '').trim().split(/\s+/);
+  if (parts.length !== 2) return null;
+
+  const [x, y] = parts.map(Number);
+  return Number.isFinite(x) && Number.isFinite(y) ? { x, y } : null;
 }
 
 /**
  * @typedef {object} Flower
  * @property {HTMLElement} element
- * @property {string} selector
  * @property {boolean} anchorLeft
  * @property {boolean} anchorTop
  * @property {boolean} isCropped
@@ -106,66 +63,45 @@ function toPercent(value, basis) {
  * @property {{ x: number, y: number, scale: number } | null} lastWrite
  */
 
-/** @param {HTMLElement} element */
-function clearInlinePlacement(element) {
-  for (const property of ['left', 'right', 'top', 'bottom', 'transform']) {
-    element.style.removeProperty(property);
-  }
-}
-
 /**
- * Measures every flower's CSS-defined starting position and pairs it with its
- * target. Inline styles are stripped first, otherwise a re-measure after a
- * resize would read back the animated position instead of the stylesheet one.
+ * Every flower on the page, with the placement `src/render.js` wrote onto it.
+ *
+ * No layout is read and nothing is measured: the numbers are percentages of
+ * the corner group already, so a resize only changes which target applies.
+ * This used to strip the inline styles and call `getComputedStyle` on each
+ * piece — fifteen forced layouts per resize — because the start position was
+ * the stylesheet's and only the target was declared.
  *
  * @param {Document | HTMLElement} root
  * @returns {Flower[]}
  */
-function measureFlowers(root) {
-  const breakpoint = isMobile() ? 'mobile' : 'desktop';
+function readFlowers(root) {
+  const targetAttribute = isMobile()
+    ? 'data-flower-target-mobile'
+    : 'data-flower-target';
 
   /** @type {Flower[]} */
   const flowers = [];
 
-  for (const [selector, entry] of Object.entries(FLOWERS)) {
-    const element = root.querySelector(selector);
+  for (const element of root.querySelectorAll('[data-flower-anchor]')) {
     if (!(element instanceof HTMLElement)) continue;
 
-    clearInlinePlacement(element);
-
-    const group = element.closest('.corner-group') ?? element.offsetParent;
-    const groupWidth =
-      (group instanceof HTMLElement ? group.offsetWidth : 0) ||
-      window.innerWidth;
-    const groupHeight =
-      (group instanceof HTMLElement ? group.offsetHeight : 0) ||
-      window.innerHeight;
-
-    // The target's own key decides the vertical anchor. Horizontally both
-    // edges are spelled `left` in the table, so that one still comes from the
-    // stylesheet.
-    const target = entry[breakpoint];
-    const anchorTop = 'top' in target;
-    const computed = getComputedStyle(element);
-    const anchorLeft = computed.left !== 'auto';
-
-    const startX = anchorLeft
-      ? toPercent(computed.left, groupWidth)
-      : 100 - toPercent(computed.right, groupWidth);
-    const startY = anchorTop
-      ? toPercent(computed.top, groupHeight)
-      : toPercent(computed.bottom, groupHeight);
+    const [anchorX, anchorY] = (
+      element.getAttribute('data-flower-anchor') ?? ''
+    ).split(/\s+/);
+    const start = readPoint(element, 'data-flower-start');
+    const target = readPoint(element, targetAttribute);
+    if (!start || !target) continue;
 
     flowers.push({
       element,
-      selector,
-      anchorLeft,
-      anchorTop,
+      anchorLeft: anchorX !== 'right',
+      anchorTop: anchorY !== 'bottom',
       isCropped: element.classList.contains('cropped-flower'),
-      startX,
-      startY,
-      targetX: target.left,
-      targetY: anchorTop ? target.top : target.bottom,
+      startX: start.x,
+      startY: start.y,
+      targetX: target.x,
+      targetY: target.y,
       lastWrite: null,
     });
   }
@@ -230,7 +166,7 @@ export function initFloralDecor(root = document) {
 
   const closingSection = root.querySelector('.closing-section');
 
-  let flowers = measureFlowers(root);
+  let flowers = readFlowers(root);
   if (flowers.length === 0) return () => {};
 
   if (prefersReducedMotion()) {
@@ -318,10 +254,10 @@ export function initFloralDecor(root = document) {
     render();
   }
 
-  // A resize changes the breakpoint, the corner-group size and therefore every
-  // measured percentage — remeasure rather than animate from stale numbers.
+  // A resize can cross the breakpoint, which changes which target applies.
+  // The numbers themselves are percentages, so nothing needs re-measuring.
   const stopViewportWatch = onViewportChange(() => {
-    flowers = measureFlowers(root);
+    flowers = readFlowers(root);
     scale = scaleProfile();
     compact = isMobile();
     measureMetrics();

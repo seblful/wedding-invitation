@@ -61,7 +61,7 @@ describe('the shipped config.js', () => {
   });
 
   it('holds no colour — palette.js owns those', () => {
-    // They were a third copy of values tailwind.config.js and custom.css also
+    // They were a third copy of values tailwind.config.js and the stylesheet
     // spelled out, and only one of the three had a test following it.
     const loaded = loadContent();
     for (const key of ['themeColor', 'backgroundColor']) {

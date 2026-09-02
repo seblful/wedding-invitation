@@ -5,6 +5,12 @@
  * stopped (petals kept spawning in background tabs), the spawn rate was fixed
  * at page load so it never adapted to a resize, and it ignored
  * `prefers-reduced-motion`.
+ *
+ * Petals go into `.petal-field`, a declared layer in the markup, rather than
+ * straight onto `document.body`. That one `append` was the reason this module
+ * took no `root` and could not be reached from a test at all — and the layer
+ * is where `--z-petal` belongs, since a petal only has to stack against its
+ * siblings.
  */
 
 import { isMobile, prefersReducedMotion } from './environment.js';
@@ -68,9 +74,15 @@ function createPetal(compact) {
 /**
  * Starts the petal fall.
  *
- * @returns {() => void} stop function
+ * @param {Document | HTMLElement} [root]
+ * @returns {() => void} teardown
  */
-export function initFallingPetals() {
+export function initFallingPetals(root = document) {
+  // Before the reduced-motion probe, which needs `window`: an empty root has
+  // to return without touching it, or this module cannot be tested in node.
+  const field = root.querySelector('.petal-field');
+  if (!(field instanceof HTMLElement)) return () => {};
+
   if (prefersReducedMotion()) return () => {};
 
   /** @type {Set<HTMLElement>} */
@@ -85,7 +97,7 @@ export function initFallingPetals() {
 
     const petal = createPetal(isMobile());
     live.add(petal);
-    document.body.append(petal);
+    field.append(petal);
   };
 
   const stop = () => {

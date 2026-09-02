@@ -20,7 +20,7 @@ const siteContent = require('../config.js');
 /**
  * @typedef {object} Venue
  * @property {string} name
- * @property {string} address
+ * @property {string[]} address one entry per rendered line
  * @property {string} yandexMapUrl the embeddable map-widget URL
  * @property {string} [yandexDirectUrl] nicer destination for a plain link
  */
@@ -30,7 +30,6 @@ const siteContent = require('../config.js');
  * @property {string} baseUrl
  * @property {{ title: string, description: string, image: string }} openGraph
  * @property {string} weddingDate ISO 8601 timestamp
- * @property {string} timezone
  * @property {Venue} location
  * @property {Venue} secondDayLocation
  * @property {{ deadline: string, formspreeEndpoint: string }} form
@@ -82,6 +81,8 @@ function findProblems(content) {
   };
 
   const isNonEmptyString = (v) => typeof v === 'string' && v.trim() !== '';
+  const isLines = (v) =>
+    Array.isArray(v) && v.length > 0 && v.every(isNonEmptyString);
   const isHttpUrl = (v) => {
     if (typeof v !== 'string') return false;
     try {
@@ -106,11 +107,14 @@ function findProblems(content) {
     (v) => isNonEmptyString(v) && !Number.isNaN(Date.parse(String(v))),
     'must be an ISO 8601 timestamp'
   );
-  check('timezone', isNonEmptyString, 'must be an IANA timezone name');
 
   for (const venue of ['location', 'secondDayLocation']) {
     check(`${venue}.name`, isNonEmptyString, 'must be a non-empty string');
-    check(`${venue}.address`, isNonEmptyString, 'must be a non-empty string');
+    check(
+      `${venue}.address`,
+      isLines,
+      'must be an array of non-empty address lines'
+    );
     check(`${venue}.yandexMapUrl`, isHttpUrl, 'must be an http(s) URL');
   }
 

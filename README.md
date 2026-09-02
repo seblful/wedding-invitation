@@ -41,10 +41,12 @@ schedule, the wishes) lives in `public/index.html`.
 ```
 config.js                  wedding content — edit this
 palette.js                 every colour, once — read by Tailwind and render.js
+flowers.js                 every corner flower, once — read by render.js
 src/
+  paths.js                 project directories, resolved once
   config.js                loadContent(): validates config.js + env overrides
   render.js                placeholder substitution, OG tags, HTML escaping
-  security.js              CSP and security headers, defined once
+  security.js              one header table, two adapters
   caching.js               Cache-Control per path, defined once
   app.js                   Express app factory (no listen — testable)
   server.js                process entry: listen + graceful shutdown
@@ -52,11 +54,11 @@ scripts/
   build-static.js          renders build/ for Cloudflare
 public/
   index.html               the page template (*_PLACEHOLDER tokens)
-  custom.css               design tokens, fonts, animations, layout
-  input.css                Tailwind entry point + component classes
+  input.css                the only stylesheet: tokens, fonts, components
   styles.css               generated — gitignored
   js/                      browser ES modules
-    main.js                entry point; wires the feature modules
+    main.js                entry point; calls startPage() on the document
+    page.js                wires the feature modules; returns one teardown
     countdown.js           ticking countdown
     rsvp-form.js           validation + Formspree submission
     venue-maps.js          Yandex map embeds
@@ -70,7 +72,9 @@ test/                      node:test suites
 
 `src/security.js` and `src/caching.js` are the same shape: one table, two
 adapters — Helmet and `express.static` on the dev server, `build/_headers` at
-the edge — with a test asserting the two agree.
+the edge — with a test asserting the two agree. The security table is spelled
+in wire format rather than Helmet's option shape, and a header only the edge
+sends is marked `edgeOnly` rather than living inside one adapter.
 
 Both renderers call `src/render.js`, so **`npm run dev` and `npm run build`
 produce byte-identical HTML** — verified by a test. `renderIndexHtml` throws if
@@ -159,7 +163,7 @@ row. Two reasons this is worth the indirection:
 Only genuinely per-instance values stay in the HTML: a swatch's colour, a
 one-off margin override.
 
-`custom.css` keeps what Tailwind is the wrong tool for — design tokens,
+`input.css` also keeps what Tailwind is the wrong tool for — design tokens,
 `@font-face`, keyframes, the floral positioning tables and the media queries.
 
 ## Accessibility and motion
@@ -169,7 +173,7 @@ one-off margin override.
   submit outcome is a `role="status"` / `role="alert"` banner that also takes
   focus, so it is announced and scrolled to rather than left below the fold.
 - Every focusable control shares one `:focus-visible` ring, from the
-  `--focus-ring` token in `custom.css`. Do not reintroduce `outline: none`
+  `--focus-ring` token in `input.css`. Do not reintroduce `outline: none`
   without a replacement — the fields previously relied on a 2px lift that the
   touch breakpoint cancels, leaving keyboard users on a tablet with nothing.
 - Text colours are chosen against `--section-bg`, not against white. `#666`
@@ -187,7 +191,7 @@ largest rendered width). The masters — Illustrator files and full-resolution
 exports — live in the gitignored `data/` directory; re-export from there rather
 than upscaling what is in `public/`.
 
-The build ships only fonts that `custom.css` or `index.html` actually
+The build ships only fonts that `input.css` or `index.html` actually
 reference, and says which ones it skipped. Skolar PE is a variable font with a
 300–700 weight axis, declared as `font-weight: 300 700` so bold text uses the
 real Bold rather than a browser-synthesised one.

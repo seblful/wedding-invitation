@@ -7,7 +7,7 @@
   "type": "commonjs",
   "main": "src/server.js",
   "engines": {
-    "node": ">=20.11"
+    "node": ">=22.11"
   },
   "scripts": {
     "dev": "run-p dev:css dev:server",
@@ -18,8 +18,8 @@
     "build": "run-s build:css build:static",
     "build:css": "tailwindcss -i ./public/input.css -o ./public/styles.css --minify",
     "build:static": "node scripts/build-static.js",
-    "test": "node --test \"test/**/*.test.js\"",
-    "test:watch": "node --test --watch \"test/**/*.test.js\"",
+    "test": "node --test",
+    "test:watch": "node --test --watch",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "format": "prettier --write .",

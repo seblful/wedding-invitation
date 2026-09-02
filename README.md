@@ -17,7 +17,7 @@ Open <http://localhost:3000>. `npm run dev` runs the Tailwind watcher and a
 `nodemon` server side by side, so editing `config.js`, `public/index.html` or
 anything under `src/` shows up on reload.
 
-Requires Node 20.11+ (see `.nvmrc`).
+Requires Node 22.11+ (see `.nvmrc`); Node 20 reached end of life in April 2026.
 
 ## Editing the content
 

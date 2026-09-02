@@ -222,3 +222,33 @@ describe('the RSVP form markup', () => {
     }
   });
 });
+
+describe('images', () => {
+  const tags = TEMPLATE.match(/<img[^>]*>/g) ?? [];
+
+  it('finds images to check', () => {
+    assert.ok(tags.length > 0);
+  });
+
+  it('gives every image intrinsic dimensions', () => {
+    // Without width/height the browser cannot reserve space before the file
+    // arrives, and the whole page reflows as each one lands.
+    const missing = tags
+      .filter((tag) => !tag.includes('width=') || !tag.includes('height='))
+      .map((tag) => /src="([^"]*)"/.exec(tag)?.[1] ?? tag);
+
+    assert.deepEqual(
+      missing,
+      [],
+      `these images have no width/height: ${missing.join(', ')}`
+    );
+  });
+
+  it('gives every image an alt attribute', () => {
+    const missing = tags
+      .filter((tag) => !tag.includes('alt='))
+      .map((tag) => /src="([^"]*)"/.exec(tag)?.[1] ?? tag);
+
+    assert.deepEqual(missing, [], 'every <img> needs alt, empty if decorative');
+  });
+});

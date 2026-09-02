@@ -85,6 +85,24 @@ function classesUsedInMarkup() {
 }
 
 /**
+ * Every class `input.css` defines in its `@layer components` block.
+ *
+ * Only simple leading class selectors count: `.timeline-dot` yes,
+ * `.timeline-item:nth-child(even) .timeline-content` contributes nothing new.
+ *
+ * @returns {Set<string>}
+ */
+function componentClasses() {
+  const css = fs.readFileSync(path.join(PUBLIC_DIR, 'input.css'), 'utf8');
+  const layer = css.slice(css.indexOf('@layer components'));
+  const names = new Set();
+  for (const match of layer.matchAll(/^\s{2}\.([a-z][\w-]*)[\s,{:]/gm)) {
+    names.add(match[1]);
+  }
+  return names;
+}
+
+/**
  * Tailwind escapes special characters in selectors (`.max-w-\[600px\]`).
  * Dropping the escapes makes a plain substring check reliable.
  *
@@ -125,21 +143,118 @@ describe('generated stylesheet', () => {
   );
 
   it(
-    'includes the theme colours the markup relies on',
+    'defines a rule for every component class the markup names',
     { skip: !built },
     () => {
       const css = generatedSelectors();
+      const missing = [...componentClasses()]
+        .filter((name) => !css.includes(`.${name}`))
+        .sort();
+
+      assert.deepEqual(
+        missing,
+        [],
+        `input.css declares these but no rule reached the stylesheet:\n  ${missing.join('\n  ')}`
+      );
+    }
+  );
+
+  it('leaves no component class unused by the markup', { skip: !built }, () => {
+    const used = classesUsedInMarkup();
+    const orphans = [...componentClasses()]
+      .filter((name) => !used.has(name))
+      .sort();
+
+    assert.deepEqual(
+      orphans,
+      [],
+      `these component classes are dead — nothing in index.html uses them:\n  ${orphans.join('\n  ')}`
+    );
+  });
+
+  it(
+    'carries the theme palette through into the components',
+    { skip: !built },
+    () => {
+      // The colours reach the page through `@apply` now rather than as utility
+      // classes in the markup, so assert on the values themselves. Tailwind
+      // fails the build on an `@apply` it cannot resolve, which is what makes
+      // a typo here loud instead of silent.
+      const css = fs.readFileSync(STYLES_CSS, 'utf8').toLowerCase();
+      const { colors } = require('../tailwind.config.js').theme.extend;
+
+      // Tailwind emits colours as `rgb(r g b / <alpha>)` so they stay
+      // opacity-modifiable, so the hex itself is not what lands in the file.
+      /** @param {string} hex */
+      const asRgbChannels = (hex) => {
+        const [, r, g, b] = /^#(\w{2})(\w{2})(\w{2})$/.exec(hex) ?? [];
+        return `${parseInt(r, 16)} ${parseInt(g, 16)} ${parseInt(b, 16)}`;
+      };
+
       for (const name of [
-        'bg-cream',
-        'bg-soft-peach',
-        'text-primary',
-        'text-secondary',
+        'cream',
+        'primary',
+        'secondary',
+        'beige',
+        'burgundy',
       ]) {
+        const hex = colors[name].toLowerCase();
         assert.ok(
-          css.includes(`.${name}`),
-          `.${name} is not in the stylesheet`
+          css.includes(hex) || css.includes(asRgbChannels(hex)),
+          `${name} (${colors[name]}) never made it into the stylesheet`
         );
       }
     }
   );
+});
+
+describe('design tokens', () => {
+  const css = fs.readFileSync(path.join(PUBLIC_DIR, 'custom.css'), 'utf8');
+
+  it('references every custom property it declares', () => {
+    // The palette was mirrored here in full while `tailwind.config.js` was the
+    // real source, so ten of these had no reader and could drift from the
+    // values actually rendering.
+    const declared = [...css.matchAll(/^\s*(--[\w-]+):/gm)].map((m) => m[1]);
+    const dead = declared.filter(
+      (name) => css.split(`var(${name}`).length - 1 === 0
+    );
+
+    assert.deepEqual(
+      dead,
+      [],
+      `nothing reads these tokens — delete them or use them: ${dead.join(', ')}`
+    );
+  });
+});
+
+describe('@font-face declarations', () => {
+  const css = fs.readFileSync(path.join(PUBLIC_DIR, 'custom.css'), 'utf8');
+
+  it('sets font-display to a literal value', () => {
+    // `font-display: var(--font-display)` parsed as invalid and was dropped:
+    // custom properties do not work in @font-face descriptors, so the fonts
+    // silently fell back to `auto` and blocked text while they loaded.
+    assert.ok(css.includes('font-display: swap;'), 'no font-display: swap');
+    assert.ok(
+      !/font-display:\s*var\(/.test(css),
+      'font-display uses var(), which is not valid in an @font-face descriptor'
+    );
+  });
+
+  it('declares the weight range of the variable family', () => {
+    // Skolar PE carries a 300-700 wght axis. Declaring only `normal` made the
+    // browser synthesise every bold on the page instead of using the real one.
+    const faces = css.match(/@font-face\s*{[^}]*}/g) ?? [];
+    const skolar = faces.filter((f) => f.includes("font-family: 'Skolar PE'"));
+
+    assert.ok(skolar.length > 0, 'no Skolar PE @font-face found');
+    for (const face of skolar) {
+      assert.match(
+        face,
+        /font-weight:\s*300 700;/,
+        'a Skolar PE face does not declare its variable weight range'
+      );
+    }
+  });
 });

@@ -1,3 +1,376 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/*
+ * Component classes.
+ *
+ * The markup used to carry these utility lists inline, repeated once per
+ * instance — seven identical 179-character strings for the timeline dots, ten
+ * for the checkbox rows. That is how the dead hover states got in: `hover:bg-cream`
+ * on an element that was already `bg-cream` did nothing, in five places at once.
+ *
+ * Two things follow from moving them here. A style now changes in one place,
+ * and `@apply` fails the build on a class Tailwind cannot resolve — where the
+ * same typo in markup would have silently produced no CSS at all.
+ *
+ * Only the parts that genuinely vary per instance stay in the HTML (a swatch's
+ * colour, a one-off margin).
+ */
+@layer components {
+  /* ---------------------------------------------------------------- layout */
+
+  .first-section {
+    @apply relative flex min-h-screen w-full flex-col items-center justify-center p-5;
+    min-height: 100svh;
+  }
+
+  .timeline-section,
+  .timer-section,
+  .location-section,
+  .celebration-section,
+  .dresscode-section,
+  .wishes-section,
+  .survey-section {
+    @apply relative flex min-h-screen w-full flex-col items-center justify-center px-5;
+    min-height: 100svh;
+  }
+
+  .timeline-section,
+  .timer-section,
+  .location-section,
+  .celebration-section,
+  .dresscode-section {
+    @apply py-15;
+  }
+
+  .wishes-section,
+  .survey-section {
+    @apply py-20;
+  }
+
+  .closing-section {
+    @apply relative flex min-h-screen w-full flex-col items-center justify-center;
+    min-height: 100svh;
+  }
+
+  .timeline-title,
+  .timer-title,
+  .location-title,
+  .celebration-title,
+  .dresscode-title,
+  .survey-title {
+    @apply text-center font-skolar text-2xl font-bold text-primary;
+  }
+
+  .timeline-title,
+  .timer-title,
+  .celebration-title,
+  .survey-title {
+    @apply mb-4;
+  }
+
+  .location-title,
+  .dresscode-title {
+    @apply mb-5;
+  }
+
+  /* ------------------------------------------------------------------ hero */
+
+  .center-content {
+    @apply relative flex h-screen w-full flex-shrink-0 flex-col items-center justify-center;
+    height: 100svh;
+  }
+
+  .faces-container {
+    @apply flex min-h-[200px] items-start justify-center gap-6;
+  }
+
+  .face-card {
+    @apply flex flex-col items-center;
+  }
+
+  .face-image {
+    @apply h-auto max-w-[160px];
+  }
+
+  .names-board {
+    @apply relative -mt-1 text-center;
+  }
+
+  .names-image {
+    @apply block h-auto max-w-[480px];
+  }
+
+  .board-names {
+    @apply absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 whitespace-nowrap text-3xl font-bold;
+  }
+
+  .scroll-indicator {
+    @apply fixed bottom-10 left-1/2 z-[3] h-10 w-15 -translate-x-1/2 cursor-pointer opacity-60 hover:scale-110 md:absolute md:bottom-10;
+  }
+
+  /* -------------------------------------------------------------- timeline */
+
+  .timeline-container {
+    @apply w-full max-w-[600px];
+  }
+
+  .timeline-scroll {
+    @apply w-full overflow-x-visible py-5;
+  }
+
+  .timeline-track {
+    @apply relative flex list-none flex-col items-start gap-0 py-5;
+  }
+
+  .timeline-item {
+    @apply relative z-[1] flex w-full flex-row items-center gap-8 py-5;
+  }
+
+  .timeline-dot {
+    @apply absolute left-1/2 h-5 w-5 flex-shrink-0 -translate-x-1/2 rounded-full border-4 border-[#333] bg-cream transition-all;
+  }
+
+  /* Decorative and `aria-hidden`, so it highlights on hover but never claims
+     to be clickable — it used to carry `cursor-pointer` and do nothing. */
+  .timeline-dot:not(.active):hover {
+    @apply scale-125 bg-soft-blue;
+  }
+
+  .timeline-dot.active {
+    @apply h-7 w-7 shadow-lg;
+  }
+
+  /* The track alternates sides; encoding that here beats tagging every other
+     <li> in the markup and getting one wrong. */
+  .timeline-content {
+    @apply flex-1 text-left;
+  }
+
+  .timeline-item:nth-child(even) .timeline-content {
+    @apply text-right;
+    order: -1;
+  }
+
+  .timeline-date {
+    @apply mb-1.5 font-skolar text-lg font-bold text-primary;
+  }
+
+  .timeline-text {
+    @apply font-skolar text-md italic leading-relaxed text-secondary;
+  }
+
+  .final-milestone .timeline-text {
+    @apply font-bold text-primary;
+  }
+
+  /* ----------------------------------------------------------------- timer */
+
+  .timer-date {
+    @apply mb-11 text-center font-skolar text-xl italic text-secondary;
+  }
+
+  .timer-container {
+    @apply flex flex-wrap items-center justify-center gap-5;
+  }
+
+  .timer-item {
+    @apply flex flex-col items-center gap-4;
+  }
+
+  .timer-number {
+    @apply min-w-[120px] rounded-[15px] border-[3px] border-[#333] bg-cream px-5 py-8 text-center font-skolar text-2xl font-bold leading-none text-primary shadow-custom;
+  }
+
+  .timer-label {
+    @apply font-skolar text-base font-semibold uppercase tracking-wider text-primary;
+  }
+
+  .timer-separator {
+    @apply mb-10 font-skolar text-2xl font-bold text-primary;
+  }
+
+  /* -------------------------------------------------------------- location */
+
+  .location-subtitle-frame {
+    @apply mb-5 inline-block rounded-[15px] border-[3px] border-[#333] bg-cream px-9 py-5 shadow-custom transition-all hover:-translate-y-0.5 hover:bg-beige hover:shadow-custom-hover;
+  }
+
+  .location-subtitle {
+    @apply m-0 text-center font-skolar text-lg font-medium text-primary;
+  }
+
+  /* `hover:text-primary` on text that is already `text-primary` gave the link
+     no hover feedback at all; the underline is the affordance. */
+  .location-link {
+    @apply text-primary no-underline transition-colors hover:underline;
+  }
+
+  .inline-link {
+    @apply text-burgundy underline transition-colors hover:text-soft-orange;
+  }
+
+  .location-description {
+    @apply mb-10 max-w-[700px] text-center font-skolar text-base italic leading-relaxed text-primary;
+  }
+
+  .location-address {
+    @apply mb-10 text-center font-skolar text-base font-medium text-primary;
+  }
+
+  .gallery-container {
+    @apply mb-7 w-full max-w-[900px];
+  }
+
+  /* `flex-wrap` normally keeps this from overflowing, but the landscape phone
+     breakpoint switches to `nowrap` — hence the scroll affordances. */
+  .gallery-scroll {
+    @apply flex scroll-smooth flex-wrap items-center justify-center gap-5 overflow-x-auto py-5;
+  }
+
+  .gallery-image {
+    @apply h-auto max-w-[280px] flex-shrink-0 rounded-[15px] border-[3px] border-cream shadow-custom transition-all hover:scale-105 hover:shadow-custom-hover;
+  }
+
+  .map-container {
+    @apply mx-auto mb-5 h-[500px] w-full max-w-[900px] overflow-hidden rounded-[20px] border-[3px] border-[#333] bg-white shadow-custom;
+  }
+
+  /* ----------------------------------------------------------- celebration */
+
+  .celebration-subtitle {
+    @apply mb-12 text-center font-skolar text-md italic text-secondary;
+  }
+
+  .schedule-container {
+    @apply flex w-full max-w-[800px] flex-col gap-6;
+  }
+
+  .schedule-item {
+    @apply flex items-center gap-6 rounded-[15px] border-[3px] border-[#333] bg-cream px-8 py-5 shadow-custom transition-all hover:-translate-y-1 hover:bg-beige hover:shadow-custom-hover;
+  }
+
+  .schedule-time {
+    @apply min-w-[100px] text-center font-skolar text-xl font-bold text-primary;
+  }
+
+  .schedule-activity {
+    @apply font-skolar text-md font-medium text-primary;
+  }
+
+  /* ------------------------------------------------------------- dresscode */
+
+  .dresscode-description {
+    @apply mb-10 max-w-[700px] text-center font-skolar text-base leading-relaxed text-primary;
+  }
+
+  .colors-container {
+    @apply flex max-w-[900px] flex-wrap items-center justify-center gap-10;
+  }
+
+  .color-card {
+    @apply flex w-[130px] flex-col items-center gap-4 text-inherit no-underline transition-transform hover:-translate-y-1;
+  }
+
+  .color-swatch {
+    @apply h-20 w-20 rounded-full border-[3px] border-white shadow-custom transition-all hover:scale-110 hover:shadow-custom-hover;
+  }
+
+  .color-name {
+    @apply text-center font-skolar text-base font-semibold text-primary;
+  }
+
+  /* ---------------------------------------------------------------- wishes */
+
+  .wishes-container {
+    @apply w-full max-w-[800px] text-center;
+  }
+
+  .wishes-subtitle {
+    @apply mb-8 font-skolar text-2xl font-bold text-primary;
+  }
+
+  .wishes-item {
+    @apply mb-6 rounded-[15px] border-[3px] border-[#333] bg-cream px-8 py-6 text-left shadow-custom transition-all hover:-translate-y-1 hover:shadow-custom-hover;
+  }
+
+  .wishes-item-title {
+    @apply mb-4 font-skolar text-md font-bold text-primary;
+  }
+
+  .wishes-item-text {
+    @apply font-skolar text-md italic leading-relaxed text-primary;
+  }
+
+  /* ------------------------------------------------------------------ form */
+
+  .survey-deadline {
+    @apply mb-10 text-center font-skolar text-base italic text-secondary;
+  }
+
+  .survey-form {
+    @apply w-full max-w-[600px];
+  }
+
+  .form-group {
+    @apply mb-6 w-full max-w-[600px];
+  }
+
+  .form-label {
+    @apply mb-2.5 block font-skolar text-base font-semibold text-primary;
+  }
+
+  /* No `focus:outline-none` here any more: it removed the only focus
+     indicator, and the lift that replaced it is cancelled on touch layouts.
+     The ring lives in custom.css so every focusable control shares one. */
+  .form-input,
+  .form-select {
+    @apply w-full rounded-[15px] border-[3px] border-[#333] bg-cream px-5 py-4 font-skolar text-base text-primary shadow-custom transition-all focus:-translate-y-0.5 focus:shadow-custom-hover;
+  }
+
+  .form-select {
+    @apply cursor-pointer;
+  }
+
+  /* Burgundy, not soft-orange: the orange sat at 1.6:1 against the green
+     section behind it, which is unreadable. */
+  .form-error {
+    @apply mt-1.5 font-skolar text-sm font-medium text-burgundy;
+  }
+
+  .checkbox-group {
+    @apply grid grid-cols-2 gap-x-4 gap-y-0 rounded-[15px] border-[3px] border-[#333] bg-cream p-4;
+  }
+
+  .checkbox-item {
+    @apply flex cursor-pointer items-center gap-2.5 rounded-[10px] p-2.5 transition-colors hover:bg-beige;
+  }
+
+  .checkbox-label,
+  .form-message-text {
+    @apply font-skolar text-base font-medium text-primary;
+  }
+
+  .form-submit-btn {
+    @apply mt-2.5 w-full max-w-[600px] cursor-pointer rounded-[15px] border-[3px] border-[#333] bg-cream px-10 py-5 font-skolar text-md font-semibold text-primary shadow-custom transition-all hover:-translate-y-1 hover:bg-beige hover:shadow-custom-hover active:translate-y-0;
+  }
+
+  .form-message {
+    @apply mt-5 max-w-[600px] rounded-[15px] border-[3px] border-[#333] px-6 py-4 text-center;
+  }
+
+  .form-message-success {
+    @apply bg-soft-green;
+  }
+
+  .form-message-error {
+    @apply bg-soft-peach;
+  }
+
+  /* --------------------------------------------------------------- closing */
+
+  .closing-text {
+    @apply m-0 text-center font-inkverse text-2xl text-primary;
+  }
+}

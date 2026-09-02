@@ -58,6 +58,8 @@ function buildSocialTags(content) {
     `<meta property="og:title" content="${escapeHtml(title)}" />`,
     `<meta property="og:description" content="${escapeHtml(description)}" />`,
     `<meta property="og:image" content="${escapeHtml(imageUrl)}" />`,
+    // Without this the card image is unlabelled everywhere the link is shared.
+    `<meta property="og:image:alt" content="${escapeHtml(title)}" />`,
     `<meta property="og:url" content="${escapeHtml(canonicalUrl)}" />`,
     '<meta property="og:type" content="website" />',
     '<meta property="og:locale" content="be_BY" />',
@@ -106,6 +108,16 @@ function buildClientConfig(content) {
 }
 
 /**
+ * Where a "open this in Yandex Maps" link should point for a venue.
+ *
+ * @param {import('./config.js').Venue} venue
+ * @returns {string}
+ */
+function venueMapLink(venue) {
+  return venue.yandexDirectUrl ?? venue.yandexMapUrl;
+}
+
+/**
  * @param {import('./config.js').SiteContent} content
  * @returns {Record<string, string>} placeholder token -> replacement
  */
@@ -126,6 +138,13 @@ function buildReplacements(content) {
     PAGE_DESCRIPTION_PLACEHOLDER: escapeHtml(content.openGraph.description),
     FORM_DEADLINE_PLACEHOLDER: escapeHtml(content.form.deadline),
     FORM_ACTION_PLACEHOLDER: escapeHtml(content.form.formspreeEndpoint),
+    // Targets for the <noscript> links behind each map embed. The direct link
+    // is the nicer destination; the widget URL is a usable map on its own when
+    // a venue has no direct link.
+    VENUE_MAP_URL_PLACEHOLDER: escapeHtml(venueMapLink(content.location)),
+    SECOND_DAY_MAP_URL_PLACEHOLDER: escapeHtml(
+      venueMapLink(content.secondDayLocation)
+    ),
   };
 }
 

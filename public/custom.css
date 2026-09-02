@@ -4,38 +4,37 @@
  * `--bg-primary` and `--section-bg` are the defaults; src/render.js injects a
  * later `:root` block from config.js (themeColor / backgroundColor) that wins
  * over these, so the palette has a single source of truth.
+ *
+ * Colours belong in `tailwind.config.js`. Only the handful this file needs
+ * directly are mirrored here — the palette used to be duplicated in full, ten
+ * hexes with no reader, which is two sources of truth for one value and
+ * exactly the drift the generated config.json was removed to avoid. A test
+ * fails on a token nothing references.
  */
 :root {
-  --font-display: swap;
   --bg-primary: #fdf4e3;
   --text-primary: #333;
-  --text-secondary: #666;
+  /* #666 measured 3.9:1 against the green section behind it — under the 4.5:1
+     WCAG AA needs for body text. #555 clears it at 5.1:1. */
+  --text-secondary: #555;
   --section-bg: #b9dfc6;
   --border-color: #333;
-  --border-width: 3px;
-  --shadow-color: rgba(0, 0, 0, 0.1);
-  --shadow-color-hover: rgba(0, 0, 0, 0.15);
 
-  --color-cream: #fdf4e3;
-  --color-soft-blue: #9cbde1;
   --color-soft-orange: #ee9452;
-  --color-soft-yellow: #f2e8a5;
-  --color-soft-lavender: #c8ade0;
-  --color-soft-green: #a1d274;
-  --color-soft-pink: #de87a7;
   --color-burgundy: #600d16;
-  --color-beige: #e8d5b7;
-  --color-soft-peach: #f9dcc4;
+
+  /* Burgundy, not the soft orange this used to be: the orange sits at 2.1:1
+     on cream and 1.6:1 on the green sections, so the ring was invisible
+     exactly where it mattered. Burgundy clears 9:1 on both. */
+  --focus-ring: var(--color-burgundy);
 
   --z-floral: 1;
   --z-content: 10;
   --z-header: 20;
-  --z-overlay: 50;
   --z-petal: 100;
 
   --transition-fast: 150ms;
   --transition-normal: 300ms;
-  --transition-slow: 700ms;
   --ease-out: cubic-bezier(0, 0, 0.2, 1);
 }
 
@@ -44,23 +43,27 @@
   src: url('./fonts/InkVerse.otf') format('opentype');
   font-weight: normal;
   font-style: normal;
-  font-display: var(--font-display);
+  font-display: swap;
 }
 
 @font-face {
   font-family: 'Skolar PE';
   src: url('./fonts/Skolar PE Variable Regular.ttf') format('truetype');
-  font-weight: normal;
+  /* Skolar PE is a variable font with a 300-700 weight axis. Declaring only
+     `normal` meant the browser never reached for the real Semibold or Bold and
+     smeared the regular weight instead — every `font-bold` heading on the page
+     was faux bold. The design weights are already inside the file we ship. */
+  font-weight: 300 700;
   font-style: normal;
-  font-display: var(--font-display);
+  font-display: swap;
 }
 
 @font-face {
   font-family: 'Skolar PE';
   src: url('./fonts/Skolar PE Variable Italic.ttf') format('truetype');
-  font-weight: normal;
+  font-weight: 300 700;
   font-style: italic;
-  font-display: var(--font-display);
+  font-display: swap;
 }
 
 * {
@@ -262,19 +265,6 @@ body {
   background: rgba(51, 51, 51, 0.5);
 }
 
-@media (max-width: 767px) {
-  .timeline-scroll::-webkit-scrollbar,
-  .gallery-scroll::-webkit-scrollbar {
-    display: none;
-  }
-
-  .timeline-scroll,
-  .gallery-scroll {
-    -ms-overflow-style: none;
-    scrollbar-width: none;
-  }
-}
-
 .petal {
   position: fixed;
   top: -50px;
@@ -326,7 +316,9 @@ body {
   background: none;
   border: 0;
   padding: 0;
-  transition: opacity var(--transition-normal) var(--ease-out);
+  transition:
+    opacity var(--transition-normal) var(--ease-out),
+    transform var(--transition-normal) var(--ease-out);
 }
 
 /* Toggled by js/scroll-indicator.js once the hero has scrolled away. */
@@ -335,67 +327,17 @@ body {
   pointer-events: none;
 }
 
-@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
-  .flower-piece {
-    image-rendering: auto;
-  }
-}
-
-@media (max-width: 767px) {
-  .timeline-track::before {
-    left: 30px;
-  }
-
-  .timeline-item {
-    flex-direction: row;
-    align-items: center;
-    padding-left: 0;
-  }
-
-  .timeline-item .timeline-dot {
-    position: absolute;
-    left: 30px;
-    transform: translateX(-50%);
-  }
-
-  .timeline-item .timeline-dot.active {
-    width: 22px;
-    height: 22px;
-  }
-
-  .timeline-item .timeline-content {
-    margin-left: 60px;
-    text-align: left;
-  }
-
-  .timeline-item:nth-child(even) .timeline-content {
-    text-align: left;
-    order: 0;
-    margin-left: 60px;
-  }
-
-  .timeline-item .timeline-dot:hover {
-    transform: translateX(-50%) scale(1.15);
-  }
-
-  .p-tl-c1,
-  .p-tl-1,
-  .p-tl-2,
-  .p-tl-3,
-  .p-tr-c1,
-  .p-tr-c2,
-  .p-tr-1,
-  .p-tr-2,
-  .p-bl-c1,
-  .p-bl-c2,
-  .p-bl-1,
-  .p-bl-2,
-  .p-br-c1,
-  .p-br-c2,
-  .p-br-1,
-  .p-br-2 {
-    width: 13vw;
-  }
+/*
+ * One focus ring for every control on the page.
+ *
+ * The form fields used to set `focus:outline-none` and rely on a 2px lift plus
+ * a shadow to show focus — and the touch breakpoint cancels that lift, leaving
+ * a keyboard guest on a tablet with no focus indicator at all. `:focus-visible`
+ * keeps it off mouse clicks.
+ */
+:where(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
+  outline: 3px solid var(--focus-ring);
+  outline-offset: 2px;
 }
 
 .visually-hidden {
@@ -450,7 +392,7 @@ body {
 }
 
 .checkbox-item input[type='checkbox']:focus-visible {
-  outline: 2px solid var(--color-soft-orange);
+  outline: 3px solid var(--focus-ring);
   outline-offset: 2px;
 }
 
@@ -496,11 +438,114 @@ section > * {
   opacity: 1;
 }
 
-section:not(.first-section):not(.closing-section) {
-  opacity: 1;
+@media (min-width: 1025px) {
+  .face-image {
+    max-width: 175px;
+  }
+  .faces-container {
+    gap: 2.5rem;
+  }
+  .names-image {
+    max-width: 400px;
+  }
+  .board-names {
+    font-size: 2.2rem;
+  }
 }
 
+@media (min-width: 768px) and (max-width: 1024px) {
+  .face-image {
+    max-width: 140px;
+  }
+  .timer-number {
+    min-width: 110px;
+    padding: 30px 22px;
+  }
+  .gallery-image {
+    max-width: 240px;
+  }
+  .map-container {
+    height: 400px;
+  }
+  .checkbox-group {
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  }
+}
+
+/*
+ * Phone layout (single breakpoint).
+ *
+ * These overrides used to be spread across four separate
+ * `@media (max-width: 767px)` blocks in different parts of the file, so a
+ * mobile tweak meant hunting for which one owned the selector.
+ */
 @media (max-width: 767px) {
+  .timeline-scroll::-webkit-scrollbar,
+  .gallery-scroll::-webkit-scrollbar {
+    display: none;
+  }
+
+  .timeline-scroll,
+  .gallery-scroll {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .timeline-track::before {
+    left: 30px;
+  }
+
+  .timeline-item {
+    flex-direction: row;
+    align-items: center;
+    padding-left: 0;
+  }
+
+  .timeline-item .timeline-dot {
+    position: absolute;
+    left: 30px;
+    transform: translateX(-50%);
+  }
+
+  .timeline-item .timeline-dot.active {
+    width: 22px;
+    height: 22px;
+  }
+
+  .timeline-item .timeline-content {
+    margin-left: 60px;
+    text-align: left;
+  }
+
+  .timeline-item:nth-child(even) .timeline-content {
+    text-align: left;
+    order: 0;
+    margin-left: 60px;
+  }
+
+  .timeline-item .timeline-dot:hover {
+    transform: translateX(-50%) scale(1.15);
+  }
+
+  .p-tl-c1,
+  .p-tl-1,
+  .p-tl-2,
+  .p-tl-3,
+  .p-tr-c1,
+  .p-tr-c2,
+  .p-tr-1,
+  .p-tr-2,
+  .p-bl-c1,
+  .p-bl-c2,
+  .p-bl-1,
+  .p-bl-2,
+  .p-br-c1,
+  .p-br-c2,
+  .p-br-1,
+  .p-br-2 {
+    width: 13vw;
+  }
+
   .faces-container {
     gap: 16px;
   }
@@ -612,53 +657,18 @@ section:not(.first-section):not(.closing-section) {
   .wishes-item-text {
     font-size: 1rem;
   }
-}
 
-@media (min-width: 1025px) {
-  .face-image {
-    max-width: 175px;
-  }
-  .faces-container {
-    gap: 2.5rem;
-  }
-  .names-image {
-    max-width: 400px;
-  }
-  .board-names {
-    font-size: 2.2rem;
-  }
-}
-
-@media (min-width: 768px) and (max-width: 1024px) {
-  .face-image {
-    max-width: 140px;
-  }
-  .timer-number {
-    min-width: 110px;
-    padding: 30px 22px;
-  }
-  .gallery-image {
-    max-width: 240px;
-  }
-  .map-container {
-    height: 400px;
-  }
-  .checkbox-group {
-    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-  }
-}
-
-@media (max-width: 767px) {
   img {
     max-width: 100%;
     height: auto;
     display: block;
   }
 
+  /* The lift is disorienting next to an on-screen keyboard; the focus ring
+     is what actually marks focus. */
   .form-input:focus,
   .form-select:focus {
     transform: none;
-    box-shadow: 0 0 0 3px var(--shadow-color);
   }
 
   @media (hover: hover) {
@@ -684,6 +694,7 @@ section:not(.first-section):not(.closing-section) {
 @media (max-width: 767px) and (orientation: landscape) {
   section {
     min-height: 100vh;
+    min-height: 100svh;
     padding: 30px 40px;
   }
 
